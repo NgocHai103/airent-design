@@ -5,22 +5,214 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>RoomForRent – Cấu hình phòng</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* ===== SIDEBAR ===== */
+    .app-sidebar{
+      background:
+        radial-gradient(120% 55% at 0% 0%, rgba(99,102,241,.22), rgba(99,102,241,0) 60%),
+        radial-gradient(90% 45% at 100% 100%, rgba(20,184,166,.12), rgba(20,184,166,0) 60%),
+        linear-gradient(180deg,#0a0f1f 0%,#0e1528 45%,#0a0f1f 100%);
+      border-right:1px solid rgba(148,163,184,.12);
+      box-shadow:10px 0 40px -24px rgba(2,6,23,.9);
+    }
+    .app-sidebar nav{scrollbar-width:thin;scrollbar-color:rgba(148,163,184,.28) transparent;}
+    .app-sidebar nav::-webkit-scrollbar{width:6px}
+    .app-sidebar nav::-webkit-scrollbar-track{background:transparent}
+    .app-sidebar nav::-webkit-scrollbar-thumb{background:rgba(148,163,184,.25);border-radius:999px}
+    .app-sidebar nav::-webkit-scrollbar-thumb:hover{background:rgba(148,163,184,.4)}
+
+    .brand-mark{
+      width:40px;height:40px;border-radius:13px;display:grid;place-items:center;flex:none;color:#fff;
+      background:linear-gradient(135deg,#6366f1 0%,#8b5cf6 55%,#22d3ee 100%);
+      box-shadow:0 10px 22px -10px rgba(99,102,241,.9),inset 0 1px 0 rgba(255,255,255,.35);
+    }
+
+    .workspace-card{
+      display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:12px;
+      background:rgba(255,255,255,.04);border:1px solid rgba(148,163,184,.12);
+      transition:background .18s ease,border-color .18s ease;
+    }
+    .workspace-card:hover{background:rgba(255,255,255,.08);border-color:rgba(129,140,248,.35)}
+    .ws-avatar{
+      width:30px;height:30px;border-radius:10px;display:grid;place-items:center;flex:none;
+      font-size:10px;font-weight:800;letter-spacing:.04em;color:#c7d2fe;
+      background:rgba(99,102,241,.18);border:1px solid rgba(129,140,248,.32);
+    }
+
+    .nav-group-label{
+      padding:0 12px;margin-bottom:6px;font-size:10px;font-weight:700;
+      letter-spacing:.15em;text-transform:uppercase;color:rgba(148,163,184,.62);
+    }
+
+    .nav-link{
+      position:relative;display:flex;align-items:center;gap:10px;padding:9px 12px;margin-bottom:2px;
+      border-radius:10px;font-size:13px;font-weight:500;color:#cbd5e1;
+      transition:background .18s ease,color .18s ease,transform .18s ease;
+    }
+    .nav-link:hover{background:rgba(255,255,255,.055);color:#fff;transform:translateX(2px)}
+    .nav-ico{width:18px;height:18px;flex:none;color:#64748b;transition:color .18s ease}
+    .nav-link:hover .nav-ico{color:#a5b4fc}
+    .nav-link.active{
+      color:#fff;
+      background:linear-gradient(90deg,rgba(99,102,241,.30),rgba(99,102,241,.06));
+      box-shadow:inset 0 0 0 1px rgba(129,140,248,.26);
+    }
+    .nav-link.active .nav-ico{color:#c7d2fe}
+    .nav-link.active::before{
+      content:"";position:absolute;left:0;top:50%;transform:translateY(-50%);
+      width:3px;height:60%;border-radius:0 3px 3px 0;
+      background:linear-gradient(180deg,#818cf8,#22d3ee);
+    }
+
+    .nav-badge{
+      margin-left:auto;padding:3px 7px;border-radius:999px;font-size:10px;font-weight:700;line-height:1.4;
+      background:rgba(244,63,94,.16);color:#fda4af;border:1px solid rgba(244,63,94,.24);
+    }
+    .nav-badge.info{background:rgba(99,102,241,.18);color:#c7d2fe;border-color:rgba(129,140,248,.28)}
+
+    .nav-sub{
+      margin:2px 0 6px 21px;padding-left:12px;display:flex;flex-direction:column;gap:1px;
+      border-left:1px dashed rgba(148,163,184,.22);
+    }
+    .nav-sub-link{
+      position:relative;display:block;padding:6px 10px;border-radius:8px;font-size:12px;
+      color:#94a3b8;transition:background .15s ease,color .15s ease;
+    }
+    .nav-sub-link:hover{color:#e2e8f0;background:rgba(255,255,255,.05)}
+    .nav-sub-link.active{color:#c7d2fe;font-weight:600;background:rgba(99,102,241,.12)}
+    .nav-sub-link.active::before{
+      content:"";position:absolute;left:-14.5px;top:50%;transform:translateY(-50%);
+      width:5px;height:5px;border-radius:50%;background:#818cf8;
+      box-shadow:0 0 0 3px rgba(99,102,241,.18);
+    }
+
+    .user-avatar{
+      width:34px;height:34px;border-radius:11px;display:grid;place-items:center;flex:none;
+      font-size:11px;font-weight:800;color:#e0e7ff;
+      background:linear-gradient(135deg,rgba(99,102,241,.45),rgba(34,211,238,.35));
+      border:1px solid rgba(129,140,248,.35);
+    }
+  </style>
 </head>
 <body class="flex min-h-screen bg-gray-50 text-gray-800">
 
-  <!-- ===== SIDEBAR (khung sườn) ===== -->
-  <aside class="w-64 bg-gray-900 text-white min-h-screen p-4 fixed">
-    <h2 class="text-xl font-bold mb-6">RoomForRent</h2>
-    <nav class="space-y-2">
-      <a href="#" class="block bg-gray-700 px-3 py-2 rounded">Dashboard / Tổng quan</a>
-      <a href="#" class="block bg-gray-700 px-3 py-2 rounded">Tòa nhà</a>
-      <a href="#" class="block hover:bg-gray-800 px-3 py-2 rounded">Phòng</a>
-      <a href="#" class="block hover:bg-gray-800 px-3 py-2 rounded">Khách hàng</a>
-      <a href="#" class="block hover:bg-gray-800 px-3 py-2 rounded">Hợp đồng</a>
-      <a href="#" class="block hover:bg-gray-800 px-3 py-2 rounded">Hóa đơn / Thanh toán</a>
-      <a href="#" class="block hover:bg-gray-800 px-3 py-2 rounded">Tài chính</a>
-      <a href="#" class="block hover:bg-gray-800 px-3 py-2 rounded">Báo cáo</a>
+  <!-- ===== SIDEBAR ===== -->
+  <aside class="app-sidebar fixed inset-y-0 left-0 w-64 flex flex-col text-slate-300 z-40">
+    <svg aria-hidden="true" focusable="false" style="position:absolute;width:0;height:0;overflow:hidden">
+      <symbol id="i-logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.6 12 3l9 7.6"/><path d="M5.4 9.6V21h13.2V9.6"/><path d="M9.6 21v-5.8h4.8V21"/></symbol>
+      <symbol id="i-grid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.6"/><rect x="14" y="3" width="7" height="7" rx="1.6"/><rect x="3" y="14" width="7" height="7" rx="1.6"/><rect x="14" y="14" width="7" height="7" rx="1.6"/></symbol>
+      <symbol id="i-building" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v16"/><path d="M15 9h2a2 2 0 0 1 2 2v10"/><path d="M8.5 7h2M8.5 11h2M8.5 15h2"/></symbol>
+      <symbol id="i-door" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21h16"/><path d="M6.5 21V4.5A1.5 1.5 0 0 1 8 3h8a1.5 1.5 0 0 1 1.5 1.5V21"/><circle cx="14.6" cy="12.2" r=".9"/></symbol>
+      <symbol id="i-users" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-1.8a4 4 0 0 0-4-4H6.5a4 4 0 0 0-4 4V21"/><circle cx="9.2" cy="7.3" r="3.8"/><path d="M21.5 21v-1.8a4 4 0 0 0-3-3.87"/><path d="M15.8 3.4a3.8 3.8 0 0 1 0 7.4"/></symbol>
+      <symbol id="i-file" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6.5A2.5 2.5 0 0 0 4 4.5v15A2.5 2.5 0 0 0 6.5 22h11a2.5 2.5 0 0 0 2.5-2.5V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h5"/></symbol>
+      <symbol id="i-receipt" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2.8h12a1 1 0 0 1 1 1V21l-3-1.8-2 1.8-2-1.8-2 1.8-3-1.8V3.8a1 1 0 0 1 1-1z"/><path d="M9 8h6M9 12h6"/></symbol>
+      <symbol id="i-trend" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17.5 9 11l4 4 8-8"/><path d="M14.5 7H21v6.5"/></symbol>
+      <symbol id="i-chart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7.5 18v-6"/><path d="M12 18V8"/><path d="M16.5 18v-4"/><path d="M21 18V5"/></symbol>
+      <symbol id="i-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></symbol>
+      <symbol id="i-settings" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></symbol>
+    </svg>
+
+    <!-- Brand -->
+    <div class="relative px-5 pt-6 pb-4">
+      <a href="#" class="flex items-center gap-3">
+        <span class="brand-mark"><svg class="h-5 w-5"><use href="#i-logo"/></svg></span>
+        <span class="min-w-0">
+          <span class="block text-[15px] font-bold leading-tight tracking-tight text-white">RoomForRent</span>
+          <span class="block text-[10px] font-semibold uppercase tracking-[0.16em] text-indigo-300/70">Quản lý nhà trọ</span>
+        </span>
+      </a>
+    </div>
+
+    <!-- Workspace -->
+    <div class="px-4 pb-5">
+      <button type="button" class="workspace-card w-full text-left">
+        <span class="ws-avatar">TP</span>
+        <span class="min-w-0 flex-1">
+          <span class="block text-[10px] font-medium uppercase tracking-wider text-slate-400">Khu vực</span>
+          <span class="block truncate text-[13px] font-semibold text-white">Tân Phú · HCM</span>
+        </span>
+        <svg class="h-4 w-4 shrink-0 text-slate-500"><use href="#i-chevron"/></svg>
+      </button>
+    </div>
+
+    <!-- Nav -->
+    <nav class="flex-1 space-y-5 overflow-y-auto px-3 pb-4">
+      <div>
+        <p class="nav-group-label">Tổng quan</p>
+        <a href="#" class="nav-link">
+          <svg class="nav-ico"><use href="#i-grid"/></svg>
+          <span class="flex-1">Dashboard</span>
+        </a>
+      </div>
+
+      <div>
+        <p class="nav-group-label">Vận hành</p>
+        <a href="../Overview/BUILDING.html" class="nav-link active" aria-current="page">
+          <svg class="nav-ico"><use href="#i-building"/></svg>
+          <span class="flex-1">Tòa nhà</span>
+          <span class="nav-badge info">2</span>
+        </a>
+        <div class="nav-sub">
+          <a href="../Overview/BUILDING.html" class="nav-sub-link">Danh sách tòa nhà</a>
+          <a href="../Detail/BUILDING_DETAIL.html?building=A" class="nav-sub-link">Chi tiết tòa nhà</a>
+          <a href="ROOM_CONFIG.html" class="nav-sub-link active" aria-current="page">Cấu hình phòng</a>
+        </div>
+        <a href="#" class="nav-link">
+          <svg class="nav-ico"><use href="#i-door"/></svg>
+          <span class="flex-1">Phòng</span>
+        </a>
+        <a href="#" class="nav-link">
+          <svg class="nav-ico"><use href="#i-users"/></svg>
+          <span class="flex-1">Khách hàng</span>
+        </a>
+        <a href="#" class="nav-link">
+          <svg class="nav-ico"><use href="#i-file"/></svg>
+          <span class="flex-1">Hợp đồng</span>
+          <span class="nav-badge">2</span>
+        </a>
+      </div>
+
+      <div>
+        <p class="nav-group-label">Kinh doanh</p>
+        <a href="#" class="nav-link">
+          <svg class="nav-ico"><use href="#i-receipt"/></svg>
+          <span class="flex-1">Hóa đơn / Thanh toán</span>
+          <span class="nav-badge">3</span>
+        </a>
+        <a href="#" class="nav-link">
+          <svg class="nav-ico"><use href="#i-trend"/></svg>
+          <span class="flex-1">Tài chính</span>
+        </a>
+        <a href="#" class="nav-link">
+          <svg class="nav-ico"><use href="#i-chart"/></svg>
+          <span class="flex-1">Báo cáo</span>
+        </a>
+      </div>
     </nav>
+
+    <!-- Footer -->
+    <div>
+      <div class="mx-3 mb-3 rounded-xl border border-white/5 bg-white/[0.04] p-3">
+        <div class="flex items-center justify-between text-[11px]">
+          <span class="text-slate-400">Tỷ lệ lấp đầy</span>
+          <span class="font-semibold text-emerald-300">45%</span>
+        </div>
+        <div class="mt-2 h-1.5 overflow-hidden rounded-full bg-white/10">
+          <div class="h-full w-[45%] rounded-full bg-gradient-to-r from-emerald-400 to-teal-300"></div>
+        </div>
+        <p class="mt-2 text-[10px] text-slate-500">9/20 phòng đang thuê · đặt cọc</p>
+      </div>
+      <div class="border-t border-white/5 p-3">
+        <div class="flex cursor-pointer items-center gap-3 rounded-xl px-2 py-2 transition hover:bg-white/5">
+          <span class="user-avatar">MN</span>
+          <div class="min-w-0 flex-1">
+            <p class="truncate text-[13px] font-semibold text-white">Nguyễn Minh</p>
+            <p class="truncate text-[10px] text-slate-400">Quản trị viên</p>
+          </div>
+          <svg class="h-4 w-4 shrink-0 text-slate-500"><use href="#i-settings"/></svg>
+        </div>
+      </div>
+    </div>
   </aside>
 
   <!-- ===== CONTENT ===== -->
