@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RoomForRent – Quản lý Tòa nhà</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="flex min-h-screen bg-gray-50 text-gray-800">
+
+  <!-- ===== SIDEBAR (khung sườn) ===== -->
+  <aside class="w-64 bg-gray-900 text-white min-h-screen p-4 fixed">
+    <h2 class="text-xl font-bold mb-6">RoomForRent</h2>
+    <nav class="space-y-2">
+      <a href="#" class="block bg-gray-700 px-3 py-2 rounded">Dashboard / Tổng quan</a>
+      <a href="#" class="block bg-gray-700 px-3 py-2 rounded">Tòa nhà</a>
+      <a href="#" class="block hover:bg-gray-800 px-3 py-2 rounded">Phòng</a>
+      <a href="#" class="block hover:bg-gray-800 px-3 py-2 rounded">Khách hàng</a>
+      <a href="#" class="block hover:bg-gray-800 px-3 py-2 rounded">Hợp đồng</a>
+      <a href="#" class="block hover:bg-gray-800 px-3 py-2 rounded">Hóa đơn / Thanh toán</a>
+      <a href="#" class="block hover:bg-gray-800 px-3 py-2 rounded">Tài chính</a>
+      <a href="#" class="block hover:bg-gray-800 px-3 py-2 rounded">Báo cáo</a>
+    </nav>
+  </aside>
+
+  <!-- ===== CONTENT ===== -->
+  <main class="ml-64 flex-1 p-8">
+    <div class="flex flex-wrap justify-between items-center gap-4 mb-6">
+      <div>
+        <h1 class="text-2xl font-bold">Quản lý Tòa nhà</h1>
+        <p class="text-gray-500 text-sm">Tân Phú - Hồ Chí Minh</p>
+      </div>
+    </div>
+
+    <!-- ===== STATS ===== -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div class="bg-white rounded-lg shadow p-4">
+        <p class="text-xs text-gray-500 uppercase tracking-wide">Tòa nhà</p>
+        <p class="text-2xl font-bold mt-1" id="statBuildings">0</p>
+      </div>
+      <div class="bg-white rounded-lg shadow p-4">
+        <p class="text-xs text-gray-500 uppercase tracking-wide">Tổng phòng</p>
+        <p class="text-2xl font-bold mt-1" id="statRooms">0</p>
+      </div>
+      <div class="bg-white rounded-lg shadow p-4">
+        <p class="text-xs text-gray-500 uppercase tracking-wide">Phòng trống</p>
+        <p class="text-2xl font-bold mt-1 text-emerald-600" id="statAvailable">0</p>
+      </div>
+      <div class="bg-white rounded-lg shadow p-4">
+        <p class="text-xs text-gray-500 uppercase tracking-wide">Đã block / Đã đặt</p>
+        <p class="text-2xl font-bold mt-1 text-amber-600" id="statBlockedReserved">0</p>
+      </div>
+    </div>
+
+    <!-- ===== BUILDING LIST (1 TABLE) ===== -->
+    <div class="bg-white rounded-lg shadow p-4 mb-8">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="font-semibold">Danh sách tòa nhà</h3>
+        <a id="btnCreateBuilding" href="../Create/CREATE_BUILDING.html" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded inline-block">+ Tạo tòa nhà mới</a>
+      </div>
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="bg-gray-100">
+            <th class="p-2 text-left font-semibold">Tên tòa nhà</th>
+            <th class="p-2 text-left font-semibold">Địa chỉ</th>
+            <th class="p-2 text-left font-semibold">Số tầng</th>
+            <th class="p-2 text-left font-semibold">Số phòng</th>
+            <th class="p-2 text-left font-semibold">Sắp trống</th>
+            <th class="p-2 text-left font-semibold">Đã block</th>
+            <th class="p-2 text-left font-semibold">Đã đặt</th>
+          </tr>
+        </thead>
+        <tbody id="buildingTableBody" class="divide-y divide-gray-100"></tbody>
+      </table>
+      <div id="buildingPagination" class="flex flex-wrap justify-between items-center gap-2 mt-3 text-sm"></div>
+    </div>
+  </main>
+
+  <script>
+    let buildings = [
+      { id: 'A', name: 'Tòa nhà A', address: 'Tân Phú - Hồ Chí Minh', floors: 6 },
+      { id: 'B', name: 'Tòa nhà B', address: 'Tân Phú - Hồ Chí Minh', floors: 6 }
+    ];
+
+    let rooms = [
+      { b: 'A', f: 1, code: 'P101', status: 'available', price: 3400000, deposit: 1500000, furnish: true, note: '' },
+      { b: 'A', f: 1, code: 'P102', status: 'occupied', price: 3400000, deposit: 1500000, furnish: true, note: '' },
+      { b: 'A', f: 1, code: 'P103', status: 'reserved', price: 3400000, deposit: 1500000, furnish: true, note: '' },
+      { b: 'A', f: 1, code: 'P104', status: 'available', price: 3500000, deposit: 1500000, furnish: true, note: '' },
+      { b: 'A', f: 1, code: 'P105', status: 'maintenance', price: 3500000, deposit: 1500000, furnish: false, note: '' },
+      { b: 'A', f: 2, code: 'P201', status: 'available', price: 3500000, deposit: 1500000, furnish: true, note: '' },
+      { b: 'A', f: 2, code: 'P202', status: 'occupied', price: 3400000, deposit: 1500000, furnish: true, note: '' },
+      { b: 'A', f: 3, code: 'P301', status: 'available', price: 3600000, deposit: 1500000, furnish: true, note: '' },
+      { b: 'A', f: 3, code: 'P302', status: 'reserved', price: 3400000, deposit: 1500000, furnish: true, note: '' },
+      { b: 'A', f: 3, code: 'P303', status: 'occupied', price: 3200000, deposit: 1500000, furnish: false, note: '' },
+      { b: 'A', f: 4, code: 'P401', status: 'available', price: 3400000, deposit: 1500000, furnish: true, note: '' },
+      { b: 'A', f: 4, code: 'P402', status: 'occupied', price: 3300000, deposit: 1500000, furnish: true, note: '' },
+      { b: 'A', f: 4, code: 'P403', status: 'reserved', price: 3400000, deposit: 1500000, furnish: true, note: '' },
+      { b: 'A', f: 4, code: 'P404', status: 'available', price: 3400000, deposit: 1500000, furnish: true, note: '' },
+      { b: 'A', f: 4, code: 'P405', status: 'maintenance', price: 3400000, deposit: 1500000, furnish: false, note: '' },
+      { b: 'A', f: 5, code: 'P501', status: 'available', price: 3400000, deposit: 1500000, furnish: true, note: '' },
+      { b: 'A', f: 5, code: 'P502', status: 'occupied', price: 3200000, deposit: 1500000, furnish: true, note: '' },
+      { b: 'A', f: 5, code: 'P503', status: 'reserved', price: 3400000, deposit: 1500000, furnish: true, note: '' },
+      { b: 'A', f: 6, code: 'P601', status: 'available', price: 5800000, deposit: 1500000, furnish: true, note: '' },
+      { b: 'A', f: 6, code: 'P602', status: 'occupied', price: 6000000, deposit: 1500000, furnish: true, note: '' },
+      { b: 'B', f: 1, code: 'P101', status: 'available', price: 3000000, deposit: 1500000, furnish: true, note: '' },
+      { b: 'B', f: 1, code: 'P102', status: 'blocked', price: 3000000, deposit: 1500000, furnish: false, note: '' },
+      { b: 'B', f: 2, code: 'P201', status: 'reserved', price: 3000000, deposit: 1500000, furnish: true, note: '' },
+      { b: 'B', f: 2, code: 'P202', status: 'available', price: 3100000, deposit: 1500000, furnish: true, note: '' },
+      { b: 'B', f: 3, code: 'P301', status: 'occupied', price: 3100000, deposit: 1500000, furnish: true, note: '' },
+      { b: 'B', f: 3, code: 'P302', status: 'available', price: 3200000, deposit: 1500000, furnish: true, note: '' }
+    ];
+
+    var buildingPage = 1;
+    var buildingPageSize = 5;
+
+    function buildingStats(b) {
+      var rs = rooms.filter(function (r) { return r.b === b; });
+      return {
+        total: rs.length,
+        available: rs.filter(function (r) { return r.status === 'available'; }).length,
+        blocked: rs.filter(function (r) { return r.status === 'blocked'; }).length,
+        reserved: rs.filter(function (r) { return r.status === 'reserved'; }).length
+      };
+    }
+
+    function fmtPrice(n) {
+      return n ? n.toLocaleString('vi-VN') + ' đ' : '-';
+    }
+
+    function renderBuildingTable() {
+      var tbody = document.getElementById('buildingTableBody');
+      tbody.innerHTML = '';
+      var totalPages = Math.max(1, Math.ceil(buildings.length / buildingPageSize));
+      if (buildingPage > totalPages) { buildingPage = totalPages; }
+      if (buildingPage < 1) { buildingPage = 1; }
+      var startIdx = (buildingPage - 1) * buildingPageSize;
+      buildings.slice(startIdx, startIdx + buildingPageSize).forEach(function (b) {
+        var s = buildingStats(b.id);
+        var tr = document.createElement('tr');
+        tr.className = 'hover:bg-gray-50';
+        tr.innerHTML =
+          '<td class="p-2 font-medium">' + b.name + '</td>' +
+          '<td class="p-2">' + b.address + '</td>' +
+          '<td class="p-2">' + b.floors + '</td>' +
+          '<td class="p-2">' + s.total + '</td>' +
+          '<td class="p-2 text-emerald-600 font-semibold">' + s.available + '</td>' +
+          '<td class="p-2 text-rose-600 font-semibold">' + s.blocked + '</td>' +
+          '<td class="p-2 text-amber-600 font-semibold">' + s.reserved + '</td>';
+        tbody.appendChild(tr);
+      });
+
+      var all = rooms.slice();
+      var avail = 0, blocked = 0, reserved = 0;
+      all.forEach(function (r) {
+        if (r.status === 'available') avail++;
+        if (r.status === 'blocked') blocked++;
+        if (r.status === 'reserved') reserved++;
+      });
+      document.getElementById('statBuildings').textContent = buildings.length;
+      document.getElementById('statRooms').textContent = all.length;
+      document.getElementById('statAvailable').textContent = avail;
+      document.getElementById('statBlockedReserved').textContent = blocked + ' / ' + reserved;
+      renderBuildingPagination();
+    }
+
+    function renderBuildingPagination() {
+      var el = document.getElementById('buildingPagination');
+      var total = buildings.length;
+      var totalPages = Math.max(1, Math.ceil(total / buildingPageSize));
+      var start = total ? (buildingPage - 1) * buildingPageSize + 1 : 0;
+      var end = Math.min(buildingPage * buildingPageSize, total);
+
+      var sizeOptions = [5, 10, 20, 50].map(function (n) {
+        return '<option value="' + n + '"' + (n === buildingPageSize ? ' selected' : '') + '>' + n + '/trang</option>';
+      }).join('');
+
+      var pageButtons = '';
+      for (var i = 1; i <= totalPages; i++) {
+        pageButtons += '<button onclick="goToBuildingPage(' + i + ')" class="px-2.5 py-1 rounded border ' +
+          (i === buildingPage ? 'bg-blue-600 text-white border-blue-600' : 'bg-white hover:bg-gray-50') + '">' + i + '</button>';
+      }
+
+      el.innerHTML =
+        '<div class="text-gray-500">Hiển thị ' + start + '–' + end + ' / ' + total + ' tòa nhà</div>' +
+        '<div class="flex flex-wrap items-center gap-2">' +
+        '  <select onchange="setBuildingPageSize(this.value)" class="border rounded px-2 py-1 text-sm bg-white">' + sizeOptions + '</select>' +
+        '  <button onclick="goToBuildingPage(' + (buildingPage - 1) + ')"' + (buildingPage === 1 ? ' disabled' : '') + ' class="px-2.5 py-1 rounded border bg-white hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed">‹ Trước</button>' +
+        '  ' + pageButtons +
+        '  <button onclick="goToBuildingPage(' + (buildingPage + 1) + ')"' + (buildingPage === totalPages ? ' disabled' : '') + ' class="px-2.5 py-1 rounded border bg-white hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed">Sau ›</button>' +
+        '</div>';
+    }
+
+    function goToBuildingPage(p) {
+      var totalPages = Math.max(1, Math.ceil(buildings.length / buildingPageSize));
+      buildingPage = Math.min(Math.max(1, p), totalPages);
+      renderBuildingTable();
+    }
+
+    function setBuildingPageSize(size) {
+      buildingPageSize = parseInt(size, 10) || 5;
+      buildingPage = 1;
+      renderBuildingTable();
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      function init() {
+        renderBuildingTable();
+      }
+      init();
+    });
+  </script>
+</body>
+</html>

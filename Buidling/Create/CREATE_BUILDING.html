@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RoomForRent – Tạo Tòa nhà mới</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="flex min-h-screen bg-gray-50 text-gray-800">
+
+  <!-- ===== SIDEBAR (khung sườn) ===== -->
+  <aside class="w-64 bg-gray-900 text-white min-h-screen p-4 fixed">
+    <h2 class="text-xl font-bold mb-6">RoomForRent</h2>
+    <nav class="space-y-2">
+      <a href="#" class="block bg-gray-700 px-3 py-2 rounded">Dashboard / Tổng quan</a>
+      <a href="../Overview/BUILDING.html" class="block bg-gray-700 px-3 py-2 rounded">Tòa nhà</a>
+      <a href="#" class="block hover:bg-gray-800 px-3 py-2 rounded">Phòng</a>
+      <a href="#" class="block hover:bg-gray-800 px-3 py-2 rounded">Khách hàng</a>
+      <a href="#" class="block hover:bg-gray-800 px-3 py-2 rounded">Hợp đồng</a>
+      <a href="#" class="block hover:bg-gray-800 px-3 py-2 rounded">Hóa đơn / Thanh toán</a>
+      <a href="#" class="block hover:bg-gray-800 px-3 py-2 rounded">Tài chính</a>
+      <a href="#" class="block hover:bg-gray-800 px-3 py-2 rounded">Báo cáo</a>
+    </nav>
+  </aside>
+
+  <!-- ===== CONTENT ===== -->
+  <main class="ml-64 flex-1 p-8">
+    <a href="../Overview/BUILDING.html" class="text-sm text-indigo-600 hover:underline mb-4 inline-block">← Quản lý Tòa nhà</a>
+    <div class="mb-5">
+      <h1 class="text-2xl font-bold">Tạo tòa nhà mới</h1>
+      <p class="text-gray-500 text-sm">Bước 1: thông tin tòa nhà – Bước 2: thêm tầng và thiết lập danh sách phòng.</p>
+    </div>
+
+    <!-- ===== STEPPER ===== -->
+    <ol class="flex flex-wrap items-center gap-2 mb-6 text-sm">
+      <li id="stepBadge1" class="flex items-center gap-2 font-semibold text-blue-700">
+        <span id="stepNum1" class="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs">1</span>
+        Thông tin tòa nhà
+      </li>
+      <li class="text-gray-300">———</li>
+      <li id="stepBadge2" class="flex items-center gap-2 font-semibold text-gray-400">
+        <span id="stepNum2" class="w-6 h-6 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center text-xs">2</span>
+        Tầng &amp; Phòng
+      </li>
+    </ol>
+
+    <form id="createBuildingForm" novalidate class="grid grid-cols-1 xl:grid-cols-3 gap-6 items-start">
+      <div class="xl:col-span-2 space-y-6">
+
+        <!-- ===================== STEP 1 ===================== -->
+        <section id="step1" class="space-y-6">
+
+          <!-- THÔNG TIN CƠ BẢN -->
+          <div class="bg-white rounded-lg shadow p-4">
+            <h3 class="font-semibold mb-4">Thông tin cơ bản</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div class="sm:col-span-2">
+                <label class="text-xs text-gray-500">Tên tòa nhà <span class="text-rose-600">*</span></label>
+                <input id="c_name" type="text" placeholder="VD: Tòa nhà A" class="w-full border rounded px-2 py-1.5 text-sm">
+                <p data-error-for="c_name" class="hidden text-xs text-rose-600 mt-1"></p>
+              </div>
+              <div class="sm:col-span-2">
+                <label class="text-xs text-gray-500">Địa chỉ <span class="text-rose-600">*</span></label>
+                <input id="c_address" type="text" placeholder="VD: Tân Phú - Hồ Chí Minh" class="w-full border rounded px-2 py-1.5 text-sm">
+                <p data-error-for="c_address" class="hidden text-xs text-rose-600 mt-1"></p>
+              </div>
+              <div>
+                <label class="text-xs text-gray-500">Số tầng <span class="text-rose-600">*</span></label>
+                <input id="c_floors" type="number" min="1" max="50" value="6" class="w-full border rounded px-2 py-1.5 text-sm">
+                <p data-error-for="c_floors" class="hidden text-xs text-rose-600 mt-1"></p>
+              </div>
+              <div>
+                <label class="text-xs text-gray-500">Hoa hồng % (CLB vận hành, không phải chủ)</label>
+                <input id="c_commission" type="number" min="0" max="100" value="10" class="w-full border rounded px-2 py-1.5 text-sm">
+                <p data-error-for="c_commission" class="hidden text-xs text-rose-600 mt-1"></p>
+              </div>
+              <div>
+                <label class="text-xs text-gray-500">Chủ nhà</label>
+                <input id="c_ownerName" type="text" placeholder="VD: Anh Nam" class="w-full border rounded px-2 py-1.5 text-sm">
+              </div>
+              <div>
+                <label class="text-xs text-gray-500">SĐĐ chủ</label>
+                <input id="c_ownerPhone" type="text" placeholder="VD: 0909 123 456" class="w-full border rounded px-2 py-1.5 text-sm">
+              </div>
+            </div>
+          </div>
+
+          <!-- CHI PHÍ – CỌC – WIFI -->
+          <div class="bg-white rounded-lg shadow p-4">
+            <h3 class="font-semibold mb-4">Chi phí – Cọc – Wifi</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="text-xs text-gray-500">Phí quản lý (đ/phòng/tháng)</label>
+                <input id="c_managementFee" type="number" min="0" value="300000" class="w-full border rounded px-2 py-1.5 text-sm">
+              </div>
+              <div>
+                <label class="text-xs text-gray-500">Điện (đ/số)</label>
+                <input id="c_electricity" type="number" min="0" value="4000" class="w-full border rounded px-2 py-1.5 text-sm">
+              </div>
+              <div>
+                <label class="text-xs text-gray-500">Nước (đ/khối)</label>
+                <input id="c_water" type="number" min="0" value="30000" class="w-full border rounded px-2 py-1.5 text-sm">
+              </div>
+              <div>
+                <label class="text-xs text-gray-500">Quản lý (đ/người)</label>
+                <input id="c_managementPerPerson" type="number" min="0" value="100000" class="w-full border rounded px-2 py-1.5 text-sm">
+              </div>
+              <div>
+                <label class="text-xs text-gray-500">Cọc (tháng)</label>
+                <input id="c_depositMonths" type="number" min="0" step="0.5" value="1.5" class="w-full border rounded px-2 py-1.5 text-sm">
+              </div>
+              <div>
+                <label class="text-xs text-gray-500">Wifi – user</label>
+                <input id="c_wifiUser" type="text" placeholder="VD: toanhaA" class="w-full border rounded px-2 py-1.5 text-sm">
+              </div>
+              <div>
+                <label class="text-xs text-gray-500">Wifi – password</label>
+                <input id="c_wifiPass" type="text" placeholder="VD: 12345678" class="w-full border rounded px-2 py-1.5 text-sm">
+              </div>
+            </div>
+          </div>
+
+          <!-- TIỆN ÍCH -->
+          <div class="bg-white rounded-lg shadow p-4">
+            <h3 class="font-semibold mb-1">TIỆN ÍCH TÒA NHÀ: MIỄN PHÍ</h3>
+            <p class="text-xs text-gray-500 mb-3">Chọn các tiện ích có sẵn (miễn phí) của tòa nhà.</p>
+            <div id="amenityChips" class="flex flex-wrap gap-2"></div>
+          </div>
+
+          <!-- NỘI THẤT -->
+          <div class="bg-white rounded-lg shadow p-4">
+            <h3 class="font-semibold mb-1">NỘI THẤT CÓ SẴN MIỄN PHÍ SỬ DỤNG</h3>
+            <p class="text-xs text-gray-500 mb-3">Chọn các nội thất mặc định có sẵn trong phòng.</p>
+            <div id="furnishingChips" class="flex flex-wrap gap-2"></div>
+          </div>
+
+          <!-- CHÍNH SÁCH -->
+          <div class="bg-white rounded-lg shadow p-4">
+            <h3 class="font-semibold mb-4">Chính sách tòa nhà</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="text-xs text-gray-500">Nhận cọc tối đa (tháng)</label>
+                <input id="c_maxDeposit" type="number" min="0" step="0.5" value="1.5" class="w-full border rounded px-2 py-1.5 text-sm">
+              </div>
+              <div>
+                <label class="text-xs text-gray-500">Cọc đầu tháng (tháng)</label>
+                <input id="c_firstDeposit" type="number" min="0" value="1" class="w-full border rounded px-2 py-1.5 text-sm">
+              </div>
+              <div>
+                <label class="text-xs text-gray-500">Cọc giữ chỗ tối thiểu (đ)</label>
+                <input id="c_holdMin" type="number" min="0" value="2000000" class="w-full border rounded px-2 py-1.5 text-sm">
+              </div>
+              <div>
+                <label class="text-xs text-gray-500">Số ngày bổ sung cọc (ngày)</label>
+                <input id="c_holdDays" type="number" min="0" value="3" class="w-full border rounded px-2 py-1.5 text-sm">
+              </div>
+              <div>
+                <label class="text-xs text-gray-500">Hợp đồng sau (ngày)</label>
+                <input id="c_contractDays" type="number" min="0" value="7" class="w-full border rounded px-2 py-1.5 text-sm">
+              </div>
+              <div>
+                <label class="text-xs text-gray-500">Tối đa xe máy / phòng</label>
+                <input id="c_bikeMax" type="number" min="0" value="2" class="w-full border rounded px-2 py-1.5 text-sm">
+              </div>
+              <div class="flex items-center gap-2 sm:col-span-2">
+                <input id="c_bikeFree" type="checkbox" class="w-4 h-4" checked>
+                <span class="text-sm">Xe máy miễn phí để xe</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- GHI CHÚ -->
+          <div class="bg-white rounded-lg shadow p-4">
+            <label class="text-xs text-gray-500">Ghi chú nội bộ</label>
+            <textarea id="c_note" rows="3" placeholder="Thông tin thêm về tòa nhà..." class="w-full border rounded px-2 py-1.5 text-sm"></textarea>
+          </div>
+        </section>
+
+        <!-- ===================== STEP 2 ===================== -->
+        <section id="step2" class="space-y-6 hidden">
+
+          <!-- THÊM TẦNG -->
+          <div class="bg-white rounded-lg shadow p-4">
+            <h3 class="font-semibold mb-1">Thêm tầng</h3>
+            <p class="text-xs text-gray-500 mb-3">Nhập tầng và số phòng – hệ thống tự sinh danh sách phòng cho tầng đó.</p>
+            <p id="floorFormError" class="hidden text-xs text-rose-600 mb-2"></p>
+            <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 items-end">
+              <div>
+                <label class="text-xs text-gray-500">Tầng <span class="text-rose-600">*</span></label>
+                <input id="f_number" type="number" min="1" max="50" placeholder="VD: 1" class="w-full border rounded px-2 py-1.5 text-sm">
+              </div>
+              <div>
+                <label class="text-xs text-gray-500">Số phòng <span class="text-rose-600">*</span></label>
+                <input id="f_rooms" type="number" min="1" max="50" placeholder="VD: 4" class="w-full border rounded px-2 py-1.5 text-sm">
+              </div>
+              <div>
+                <label class="text-xs text-gray-500">Giá thuê mặc định (đ)</label>
+                <input id="f_price" type="number" min="0" step="100000" value="3400000" class="w-full border rounded px-2 py-1.5 text-sm">
+              </div>
+              <div>
+                <label class="text-xs text-gray-500">Diện tích mặc định (m²)</label>
+                <input id="f_area" type="number" min="0" step="1" placeholder="VD: 25" class="w-full border rounded px-2 py-1.5 text-sm">
+              </div>
+              <div>
+                <button type="button" onclick="addFloor()" class="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-3 py-2 rounded">+ Tạo tầng</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- THANH CHỌN / HÀNG LOẠT -->
+          <div class="bg-white rounded-lg shadow p-3 flex flex-wrap justify-between items-center gap-3">
+            <label class="flex items-center gap-2 text-sm cursor-pointer">
+              <input id="selectAllRooms" type="checkbox" class="w-4 h-4" onchange="toggleAllRooms(this.checked)">
+              <span>Chọn tất cả phòng</span>
+            </label>
+            <div class="flex flex-wrap items-center gap-2">
+              <span id="selectedRoomCount" class="text-xs text-gray-500">Chưa chọn phòng</span>
+              <button type="button" onclick="openBulkRoomPopup()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold px-3 py-2 rounded">⚙ Đặt giá trị hàng loạt</button>
+            </div>
+          </div>
+
+          <!-- DANH SÁCH TẦNG + PHÒNG -->
+          <div id="floorsContainer" class="space-y-6"></div>
+        </section>
+      </div>
+
+      <!-- ===== TÓM TẮT / ĐIỀU HƯỚNG ===== -->
+      <aside class="bg-white rounded-lg shadow p-4 sticky top-4">
+        <h3 class="font-semibold mb-3">Tóm tắt</h3>
+        <div id="summaryContent" class="space-y-2 text-sm"></div>
+        <div class="mt-4 space-y-2">
+          <button id="btnPrimary" type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2 rounded">Tiếp tục →</button>
+          <button id="btnBackToStep1" type="button" onclick="goToStep(1)" class="hidden w-full bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-semibold py-2 rounded">← Quay lại bước 1</button>
+          <a href="../Overview/BUILDING.html" class="block text-center bg-white border hover:bg-gray-50 text-gray-600 text-sm font-semibold py-2 rounded">Hủy</a>
+        </div>
+        <p class="text-[11px] text-gray-400 mt-3">Dữ liệu minh hoạ – chưa kết nối backend.</p>
+      </aside>
+    </form>
+  </main>
+
+  <!-- ===== ROOM EDITOR (modal) ===== -->
+  <div id="roomEditorOverlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto">
+      <h3 id="roomEditorTitle" class="font-semibold mb-3">Thêm phòng</h3>
+      <p id="roomFormError" class="hidden text-xs text-rose-600 mb-2"></p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label class="text-xs text-gray-500">Mã phòng mặc định <span class="text-rose-600">*</span></label>
+          <input id="r_code" type="text" placeholder="VD: P101" class="w-full border rounded px-2 py-1.5 text-sm">
+        </div>
+        <div>
+          <label class="text-xs text-gray-500">Giá thuê (đ) <span class="text-rose-600">*</span></label>
+          <input id="r_price" type="number" min="0" step="100000" value="3400000" class="w-full border rounded px-2 py-1.5 text-sm">
+        </div>
+        <div>
+          <label class="text-xs text-gray-500">Diện tích (m²)</label>
+          <input id="r_area" type="number" min="0" step="1" placeholder="VD: 25" class="w-full border rounded px-2 py-1.5 text-sm">
+        </div>
+        <div>
+          <label class="text-xs text-gray-500">Chỉ số điện ban đầu</label>
+          <input id="r_electric" type="number" min="0" value="0" class="w-full border rounded px-2 py-1.5 text-sm">
+        </div>
+        <div>
+          <label class="text-xs text-gray-500">Chỉ số nước ban đầu</label>
+          <input id="r_water" type="number" min="0" value="0" class="w-full border rounded px-2 py-1.5 text-sm">
+        </div>
+        <div class="sm:col-span-2">
+          <label class="text-xs text-gray-500">Kiểu phòng (chọn nhiều)</label>
+          <div id="roomTypeChips" class="flex flex-wrap gap-2 mt-2"></div>
+        </div>
+        <div class="sm:col-span-2">
+          <label class="text-xs text-gray-500">Nội thất (chọn nhiều)</label>
+          <div id="roomFurnishChips" class="flex flex-wrap gap-2 mt-2"></div>
+        </div>
+        <div class="sm:col-span-2">
+          <label class="text-xs text-gray-500">Ghi chú</label>
+          <textarea id="r_note" rows="2" placeholder="Ghi chú cho phòng..." class="w-full border rounded px-2 py-1.5 text-sm"></textarea>
+        </div>
+      </div>
+      <div class="flex justify-end gap-2 mt-4">
+        <button type="button" onclick="closeRoomEditor()" class="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300 text-sm font-semibold">Hủy</button>
+        <button type="button" onclick="saveRoomFromEditor()" class="px-4 py-2 rounded bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold">Lưu phòng</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== BULK ROOM VALUES (modal) ===== -->
+  <div id="bulkRoomOverlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto">
+      <h3 class="font-semibold mb-1">Đặt giá trị hàng loạt</h3>
+      <p id="bulkRoomInfo" class="text-xs text-gray-500 mb-3"></p>
+      <p id="bulkRoomError" class="hidden text-xs text-rose-600 mb-2"></p>
+
+      <div class="space-y-3">
+        <div class="flex flex-wrap items-center gap-2">
+          <label class="flex items-center gap-2 w-40 text-sm"><input id="bulk_use_price" type="checkbox" class="w-4 h-4"> Giá thuê (đ)</label>
+          <input id="bulk_price" type="number" min="0" step="100000" class="flex-1 border rounded px-2 py-1.5 text-sm" placeholder="Nhập giá">
+        </div>
+        <div class="flex flex-wrap items-center gap-2">
+          <label class="flex items-center gap-2 w-40 text-sm"><input id="bulk_use_area" type="checkbox" class="w-4 h-4"> Diện tích (m²)</label>
+          <input id="bulk_area" type="number" min="0" step="1" class="flex-1 border rounded px-2 py-1.5 text-sm" placeholder="Nhập diện tích">
+        </div>
+        <div class="flex flex-wrap items-center gap-2">
+          <label class="flex items-center gap-2 w-40 text-sm"><input id="bulk_use_electric" type="checkbox" class="w-4 h-4"> Chỉ số điện</label>
+          <input id="bulk_electric" type="number" min="0" class="flex-1 border rounded px-2 py-1.5 text-sm" placeholder="Nhập chỉ số">
+        </div>
+        <div class="flex flex-wrap items-center gap-2">
+          <label class="flex items-center gap-2 w-40 text-sm"><input id="bulk_use_water" type="checkbox" class="w-4 h-4"> Chỉ số nước</label>
+          <input id="bulk_water" type="number" min="0" class="flex-1 border rounded px-2 py-1.5 text-sm" placeholder="Nhập chỉ số">
+        </div>
+        <div>
+          <label class="flex items-center gap-2 text-sm"><input id="bulk_use_types" type="checkbox" class="w-4 h-4"> Kiểu phòng</label>
+          <div id="bulkTypeChips" class="flex flex-wrap gap-2 mt-2"></div>
+        </div>
+        <div>
+          <label class="flex items-center gap-2 text-sm"><input id="bulk_use_furnish" type="checkbox" class="w-4 h-4"> Nội thất</label>
+          <div id="bulkFurnishChips" class="flex flex-wrap gap-2 mt-2"></div>
+        </div>
+        <div class="flex flex-wrap items-center gap-2">
+          <label class="flex items-center gap-2 w-40 text-sm"><input id="bulk_use_note" type="checkbox" class="w-4 h-4"> Ghi chú</label>
+          <input id="bulk_note" type="text" class="flex-1 border rounded px-2 py-1.5 text-sm" placeholder="Nhập ghi chú">
+        </div>
+      </div>
+
+      <div class="flex justify-end gap-2 mt-5">
+        <button type="button" onclick="closeBulkRoomPopup()" class="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300 text-sm font-semibold">Hủy</button>
+        <button type="button" onclick="applyBulkRoomValues()" class="px-4 py-2 rounded bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold">Áp dụng</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var AMENITY_OPTIONS = ['Camera', 'Thang máy', 'Thang bộ', 'Hành lang', 'Vân tay', 'FaceId', 'Vệ sinh hạ tầng', 'Wifi', 'Chỗ để xe máy'];
+    var FURNISHING_OPTIONS = ['Tủ lạnh', 'Máy giặt + sấy', 'Máy lạnh', 'Tủ giày', 'Bàn học', 'Giường', 'Nệm', 'Tủ bếp trên/dưới', 'Bàn ghế ăn', 'Máy hút mùi', 'Sofa', 'Tủ quần áo'];
+    var ROOM_TYPE_OPTIONS = ['Tách bếp', 'Ban công', '1PN', '2PN', '3PN', 'CS trời', 'Duplex'];
+    var DEFAULT_AMENITIES = ['Camera', 'Thang máy', 'Vân tay', 'FaceId', 'Vệ sinh hạ tầng', 'Wifi'];
+    var DEFAULT_FURNISHINGS = ['Tủ lạnh', 'Tủ quần áo', 'Giường', 'Bàn ghế ăn', 'Sofa'];
+
+    var currentStep = 1;
+    var floorSeq = 0;
+    var roomSeq = 0;
+    var floorsDraft = [];          // [{ id, number, name, defaultPrice, defaultArea, rooms: [] }]
+    var selectedRoomUids = [];
+    var editingContext = { floorId: null, uid: null };
+
+    function renderChips(containerId, name, options, selected) {
+      var c = document.getElementById(containerId);
+      c.innerHTML = options.map(function (o) {
+        var checked = selected.indexOf(o) !== -1 ? ' checked' : '';
+        return '<label class="flex items-center gap-2 border border-gray-200 rounded-full px-3 py-1 text-xs bg-white cursor-pointer hover:bg-gray-50">' +
+          '<input type="checkbox" name="' + name + '" value="' + o + '" class="w-4 h-4"' + checked + '>' +
+          '<span>' + o + '</span></label>';
+      }).join('');
+    }
+
+    function collectChecks(name) {
+      return Array.prototype.slice.call(document.querySelectorAll('input[name="' + name + '"]:checked'))
+        .map(function (el) { return el.value; });
+    }
+
+    function fmtK(n) {
+      if (!n && n !== 0) { return '-'; }
+      return n >= 1000 ? (n / 1000).toLocaleString('vi-VN') + 'K' : n.toLocaleString('vi-VN') + ' đ';
+    }
+    function fmtMoney(n) { return n ? n.toLocaleString('vi-VN') + ' đ' : '-'; }
+
+    function val(id) { return document.getElementById(id).value; }
+    function num(id) { return parseInt(document.getElementById(id).value, 10) || 0; }
+    function floatVal(id) { return parseFloat(document.getElementById(id).value) || 0; }
+    function floorsValue() { return parseInt(val('c_floors'), 10) || 0; }
+
+    function allRooms() {
+      var out = [];
+      floorsDraft.forEach(function (f) {
+        f.rooms.forEach(function (r) { out.push(r); });
+      });
+      return out;
+    }
+    function totalRooms() { return allRooms().length; }
+
+    function isFloorDuplicate(number) {
+      return floorsDraft.some(function (f) { return f.number === number; });
+    }
+    function codeExists(code, exceptUid) {
+      return allRooms().some(function (r) {
+        return r.uid !== exceptUid && r.code.toLowerCase() === code.toLowerCase();
+      });
+    }
+    function uniqueCode(base) {
+      var c = base;
+      var k = 2;
+      while (codeExists(c, null)) { c = base + '-' + k; k++; }
+      return c;
+    }
+    function pad2(n) { return n < 10 ? '0' + n : '' + n; }
+
+    function updateSummary() {
+      var amenities = collectChecks('amenity');
+      var furnishings = collectChecks('furnishing');
+      var name = val('c_name').trim();
+      var address = val('c_address').trim();
+      var depositMonths = floatVal('c_depositMonths');
+      document.getElementById('summaryContent').innerHTML =
+        '<div class="flex justify-between gap-3"><span class="text-gray-500">Tên tòa nhà</span><span class="font-semibold text-right">' + (name || '-') + '</span></div>' +
+        '<div class="flex justify-between gap-3"><span class="text-gray-500">Địa chỉ</span><span class="font-semibold text-right">' + (address || '-') + '</span></div>' +
+        '<div class="flex justify-between"><span class="text-gray-500">Số tầng</span><span class="font-semibold">' + floorsValue() + '</span></div>' +
+        '<div class="flex justify-between"><span class="text-gray-500">Tầng đã tạo</span><span class="font-semibold">' + floorsDraft.length + '</span></div>' +
+        '<div class="flex justify-between"><span class="text-gray-500">Phòng đã tạo</span><span class="font-semibold">' + totalRooms() + '</span></div>' +
+        '<div class="flex justify-between"><span class="text-gray-500">Hoa hồng</span><span class="font-semibold">' + num('c_commission') + '%</span></div>' +
+        '<div class="flex justify-between"><span class="text-gray-500">Cọc</span><span class="font-semibold">' + depositMonths.toLocaleString('vi-VN') + ' tháng</span></div>' +
+        '<div class="flex justify-between"><span class="text-gray-500">Phí quản lý</span><span class="font-semibold">' + fmtK(num('c_managementFee')) + '/phòng</span></div>' +
+        '<div class="flex justify-between"><span class="text-gray-500">Điện / Nước</span><span class="font-semibold">' + fmtK(num('c_electricity')) + ' / ' + fmtK(num('c_water')) + '</span></div>' +
+        '<div class="flex justify-between"><span class="text-gray-500">Tiện ích đã chọn</span><span class="font-semibold">' + amenities.length + '</span></div>' +
+        '<div class="flex justify-between"><span class="text-gray-500">Nội thất đã chọn</span><span class="font-semibold">' + furnishings.length + '</span></div>';
+    }
+
+    function applyStepUI() {
+      var isStep1 = currentStep === 1;
+      document.getElementById('step1').classList.toggle('hidden', !isStep1);
+      document.getElementById('step2').classList.toggle('hidden', isStep1);
+
+      document.getElementById('stepBadge1').className = 'flex items-center gap-2 font-semibold ' + (isStep1 ? 'text-blue-700' : 'text-gray-500');
+      document.getElementById('stepBadge2').className = 'flex items-center gap-2 font-semibold ' + (isStep1 ? 'text-gray-400' : 'text-blue-700');
+      document.getElementById('stepNum1').className = 'w-6 h-6 rounded-full flex items-center justify-center text-xs ' + (isStep1 ? 'bg-blue-600 text-white' : 'bg-emerald-500 text-white');
+      document.getElementById('stepNum2').className = 'w-6 h-6 rounded-full flex items-center justify-center text-xs ' + (isStep1 ? 'bg-gray-200 text-gray-500' : 'bg-blue-600 text-white');
+
+      var primary = document.getElementById('btnPrimary');
+      primary.textContent = isStep1 ? 'Tiếp tục →' : 'Tạo tòa nhà';
+      document.getElementById('btnBackToStep1').classList.toggle('hidden', isStep1);
+    }
+
+    function goToStep(step) {
+      if (step === 2 && !validateStep1()) { return; }
+      currentStep = step;
+      applyStepUI();
+      window.scrollTo(0, 0);
+    }
+
+    function setFieldError(id, message) {
+      var input = document.getElementById(id);
+      var err = document.querySelector('[data-error-for="' + id + '"]');
+      if (message) {
+        input.classList.add('border-rose-500', 'ring-2', 'ring-rose-200');
+        if (err) { err.textContent = message; err.classList.remove('hidden'); }
+      } else {
+        input.classList.remove('border-rose-500', 'ring-2', 'ring-rose-200');
+        if (err) { err.classList.add('hidden'); }
+      }
+    }
+
+    function validateStep1() {
+      var ok = true;
+      var firstInvalid = null;
+
+      setFieldError('c_name', '');
+      setFieldError('c_address', '');
+      setFieldError('c_floors', '');
+      setFieldError('c_commission', '');
+
+      if (!val('c_name').trim()) { setFieldError('c_name', 'Vui lòng nhập tên tòa nhà.'); ok = false; firstInvalid = firstInvalid || 'c_name'; }
+      if (!val('c_address').trim()) { setFieldError('c_address', 'Vui lòng nhập địa chỉ.'); ok = false; firstInvalid = firstInvalid || 'c_address'; }
+      if (floorsValue() < 1) { setFieldError('c_floors', 'Số tầng phải lớn hơn 0.'); ok = false; firstInvalid = firstInvalid || 'c_floors'; }
+      if (num('c_commission') < 0 || num('c_commission') > 100) { setFieldError('c_commission', 'Hoa hồng phải trong khoảng 0–100.'); ok = false; firstInvalid = firstInvalid || 'c_commission'; }
+
+      if (firstInvalid) { document.getElementById(firstInvalid).focus(); }
+      return ok;
+    }
+
+    // ---------- FLOORS ----------
+    function addFloor() {
+      var errorEl = document.getElementById('floorFormError');
+      errorEl.classList.add('hidden');
+
+      var floorNumber = num('f_number');
+      var roomCount = num('f_rooms');
+
+      if (!floorNumber || floorNumber < 1) {
+        errorEl.textContent = 'Vui lòng nhập số tầng hợp lệ.';
+        errorEl.classList.remove('hidden');
+        document.getElementById('f_number').focus();
+        return;
+      }
+      if (isFloorDuplicate(floorNumber)) {
+        errorEl.textContent = 'Tầng ' + floorNumber + ' đã được tạo.';
+        errorEl.classList.remove('hidden');
+        document.getElementById('f_number').focus();
+        return;
+      }
+      if (!roomCount || roomCount < 1) {
+        errorEl.textContent = 'Số phòng phải lớn hơn 0.';
+        errorEl.classList.remove('hidden');
+        document.getElementById('f_rooms').focus();
+        return;
+      }
+
+      var price = num('f_price');
+      var area = val('f_area') === '' ? null : num('f_area');
+      var defaultFurnishings = collectChecks('furnishing').slice();
+
+      var floor = {
+        id: ++floorSeq,
+        number: floorNumber,
+        name: 'Tầng ' + floorNumber,
+        defaultPrice: price,
+        defaultArea: area,
+        rooms: []
+      };
+
+      for (var i = 1; i <= roomCount; i++) {
+        floor.rooms.push({
+          uid: ++roomSeq,
+          code: uniqueCode('P' + floorNumber + pad2(i)),
+          price: price,
+          area: area,
+          electric: 0,
+          water: 0,
+          types: [],
+          furnishings: defaultFurnishings.slice(),
+          note: ''
+        });
+      }
+
+      floorsDraft.push(floor);
+      document.getElementById('f_number').value = '';
+      document.getElementById('f_rooms').value = '';
+      renderFloors();
+      updateSelectionUI();
+      updateSummary();
+    }
+
+    function nextCodeForFloor(floor) {
+      var i = 1;
+      while (i < 100) {
+        var candidate = 'P' + floor.number + pad2(i);
+        if (!codeExists(candidate, null)) { return candidate; }
+        i++;
+      }
+      return uniqueCode('P' + floor.number);
+    }
+
+    function deleteFloor(floorId) {
+      var floor = floorsDraft.filter(function (f) { return f.id === floorId; })[0];
+      if (!floor) { return; }
+      if (!window.confirm('Xóa ' + floor.name + ' và toàn bộ ' + floor.rooms.length + ' phòng của tầng này?')) { return; }
+
+      floor.rooms.forEach(function (r) {
+        var idx = selectedRoomUids.indexOf(r.uid);
+        if (idx !== -1) { selectedRoomUids.splice(idx, 1); }
+      });
+      floorsDraft = floorsDraft.filter(function (f) { return f.id !== floorId; });
+      renderFloors();
+      updateSelectionUI();
+      updateSummary();
+    }
+
+    function applyFloorDefaults(floorId) {
+      var floor = floorsDraft.filter(function (f) { return f.id === floorId; })[0];
+      if (!floor) { return; }
+
+      var priceEl = document.getElementById('floorPrice' + floorId);
+      var areaEl = document.getElementById('floorArea' + floorId);
+      if (!priceEl || !areaEl) { return; }
+
+      var price = parseInt(priceEl.value, 10) || 0;
+      var area = areaEl.value === '' ? null : (parseInt(areaEl.value, 10) || 0);
+
+      if (!floor.rooms.length) {
+        window.alert(floor.name + ' chưa có phòng nào để áp dụng.');
+        return;
+      }
+      if (!window.confirm('Áp dụng giá ' + fmtMoney(price) + ' và diện tích ' + (area === null ? 'trống' : area + ' m²') + ' cho toàn bộ ' + floor.rooms.length + ' phòng của ' + floor.name + '?')) {
+        return;
+      }
+
+      floor.defaultPrice = price;
+      floor.defaultArea = area;
+      floor.rooms.forEach(function (r) {
+        r.price = price;
+        r.area = area;
+      });
+
+      renderFloors();
+      updateSummary();
+    }
+
+    // ---------- ROOMS ----------
+    function findRoom(uid) {
+      for (var i = 0; i < floorsDraft.length; i++) {
+        for (var j = 0; j < floorsDraft[i].rooms.length; j++) {
+          if (floorsDraft[i].rooms[j].uid === uid) {
+            return { floor: floorsDraft[i], room: floorsDraft[i].rooms[j], index: j };
+          }
+        }
+      }
+      return null;
+    }
+
+    function openRoomEditor(floorId, uid) {
+      var floor = floorsDraft.filter(function (f) { return f.id === floorId; })[0];
+      if (!floor) { return; }
+
+      var room;
+      if (uid === null || typeof uid === 'undefined') {
+        room = {
+          uid: null,
+          code: nextCodeForFloor(floor),
+          price: floor.defaultPrice || 0,
+          area: floor.defaultArea,
+          electric: 0,
+          water: 0,
+          types: [],
+          furnishings: collectChecks('furnishing').slice(),
+          note: ''
+        };
+      } else {
+        var found = findRoom(uid);
+        if (!found) { return; }
+        room = found.room;
+      }
+
+      editingContext = { floorId: floorId, uid: (uid === null || typeof uid === 'undefined') ? null : uid };
+
+      document.getElementById('roomEditorTitle').textContent = (editingContext.uid === null ? 'Thêm phòng' : 'Sửa phòng ' + room.code) + ' – ' + floor.name;
+      document.getElementById('r_code').value = room.code;
+      document.getElementById('r_price').value = room.price;
+      document.getElementById('r_area').value = (room.area === null || room.area === undefined) ? '' : room.area;
+      document.getElementById('r_electric').value = room.electric;
+      document.getElementById('r_water').value = room.water;
+      document.getElementById('r_note').value = room.note || '';
+      document.getElementById('roomFormError').classList.add('hidden');
+
+      renderChips('roomTypeChips', 'room_type', ROOM_TYPE_OPTIONS, room.types || []);
+      renderChips('roomFurnishChips', 'room_furnish', FURNISHING_OPTIONS, room.furnishings || []);
+
+      document.getElementById('roomEditorOverlay').classList.remove('hidden');
+      document.getElementById('r_code').focus();
+    }
+
+    function closeRoomEditor() {
+      document.getElementById('roomEditorOverlay').classList.add('hidden');
+      editingContext = { floorId: null, uid: null };
+    }
+
+    function saveRoomFromEditor() {
+      var errorEl = document.getElementById('roomFormError');
+      var code = val('r_code').trim();
+      var price = num('r_price');
+
+      if (!code) {
+        errorEl.textContent = 'Vui lòng nhập mã phòng.';
+        errorEl.classList.remove('hidden');
+        document.getElementById('r_code').focus();
+        return;
+      }
+      if (codeExists(code, editingContext.uid)) {
+        errorEl.textContent = 'Mã phòng "' + code + '" đã tồn tại trong tòa nhà.';
+        errorEl.classList.remove('hidden');
+        document.getElementById('r_code').focus();
+        return;
+      }
+      if (price < 0) {
+        errorEl.textContent = 'Giá thuê không hợp lệ.';
+        errorEl.classList.remove('hidden');
+        document.getElementById('r_price').focus();
+        return;
+      }
+
+      var roomData = {
+        code: code,
+        price: price,
+        area: val('r_area') === '' ? null : num('r_area'),
+        electric: num('r_electric'),
+        water: num('r_water'),
+        types: collectChecks('room_type'),
+        furnishings: collectChecks('room_furnish'),
+        note: val('r_note').trim()
+      };
+
+      if (editingContext.uid === null) {
+        roomData.uid = ++roomSeq;
+        var floor = floorsDraft.filter(function (f) { return f.id === editingContext.floorId; })[0];
+        if (floor) { floor.rooms.push(roomData); }
+      } else {
+        var found = findRoom(editingContext.uid);
+        if (found) {
+          roomData.uid = found.room.uid;
+          found.floor.rooms[found.index] = roomData;
+        }
+      }
+
+      closeRoomEditor();
+      renderFloors();
+      updateSelectionUI();
+      updateSummary();
+    }
+
+    function deleteRoom(floorId, uid) {
+      var floor = floorsDraft.filter(function (f) { return f.id === floorId; })[0];
+      if (!floor) { return; }
+      floor.rooms = floor.rooms.filter(function (r) { return r.uid !== uid; });
+      var idx = selectedRoomUids.indexOf(uid);
+      if (idx !== -1) { selectedRoomUids.splice(idx, 1); }
+      renderFloors();
+      updateSelectionUI();
+      updateSummary();
+    }
+
+    // ---------- SELECTION ----------
+    function toggleRoomUid(uid, checked) {
+      var idx = selectedRoomUids.indexOf(uid);
+      if (checked && idx === -1) { selectedRoomUids.push(uid); }
+      if (!checked && idx !== -1) { selectedRoomUids.splice(idx, 1); }
+      updateSelectionUI();
+    }
+
+    function toggleAllRooms(checked) {
+      selectedRoomUids = checked ? allRooms().map(function (r) { return r.uid; }) : [];
+      renderFloors();
+      updateSelectionUI();
+    }
+
+    function updateSelectionUI() {
+      var el = document.getElementById('selectedRoomCount');
+      el.textContent = selectedRoomUids.length ? ('Đã chọn ' + selectedRoomUids.length + ' phòng') : 'Chưa chọn phòng';
+      var all = allRooms();
+      var selectAll = document.getElementById('selectAllRooms');
+      selectAll.checked = all.length > 0 && selectedRoomUids.length === all.length;
+    }
+
+    // ---------- BULK ----------
+    function openBulkRoomPopup() {
+      if (!selectedRoomUids.length) {
+        window.alert('Vui lòng chọn ít nhất 1 phòng.');
+        return;
+      }
+      document.getElementById('bulkRoomInfo').textContent = 'Áp dụng cho ' + selectedRoomUids.length + ' phòng đã chọn.';
+      document.getElementById('bulkRoomError').classList.add('hidden');
+
+      ['bulk_use_price', 'bulk_use_area', 'bulk_use_electric', 'bulk_use_water', 'bulk_use_types', 'bulk_use_furnish', 'bulk_use_note'].forEach(function (id) {
+        document.getElementById(id).checked = false;
+      });
+      document.getElementById('bulk_price').value = '';
+      document.getElementById('bulk_area').value = '';
+      document.getElementById('bulk_electric').value = '';
+      document.getElementById('bulk_water').value = '';
+      document.getElementById('bulk_note').value = '';
+
+      renderChips('bulkTypeChips', 'bulk_type', ROOM_TYPE_OPTIONS, []);
+      renderChips('bulkFurnishChips', 'bulk_furnish', FURNISHING_OPTIONS, []);
+
+      document.getElementById('bulkRoomOverlay').classList.remove('hidden');
+    }
+
+    function closeBulkRoomPopup() {
+      document.getElementById('bulkRoomOverlay').classList.add('hidden');
+    }
+
+    function applyBulkRoomValues() {
+      var errorEl = document.getElementById('bulkRoomError');
+      var use = {
+        price: document.getElementById('bulk_use_price').checked,
+        area: document.getElementById('bulk_use_area').checked,
+        electric: document.getElementById('bulk_use_electric').checked,
+        water: document.getElementById('bulk_use_water').checked,
+        types: document.getElementById('bulk_use_types').checked,
+        furnish: document.getElementById('bulk_use_furnish').checked,
+        note: document.getElementById('bulk_use_note').checked
+      };
+
+      if (!use.price && !use.area && !use.electric && !use.water && !use.types && !use.furnish && !use.note) {
+        errorEl.textContent = 'Chọn ít nhất 1 trường cần đặt giá trị.';
+        errorEl.classList.remove('hidden');
+        return;
+      }
+
+      var types = use.types ? collectChecks('bulk_type') : null;
+      var furnishings = use.furnish ? collectChecks('bulk_furnish') : null;
+
+      selectedRoomUids.forEach(function (uid) {
+        var found = findRoom(uid);
+        if (!found) { return; }
+        var r = found.room;
+        if (use.price) { r.price = parseInt(val('bulk_price'), 10) || 0; }
+        if (use.area) { r.area = val('bulk_area') === '' ? null : (parseInt(val('bulk_area'), 10) || 0); }
+        if (use.electric) { r.electric = parseInt(val('bulk_electric'), 10) || 0; }
+        if (use.water) { r.water = parseInt(val('bulk_water'), 10) || 0; }
+        if (use.types) { r.types = types.slice(); }
+        if (use.furnish) { r.furnishings = furnishings.slice(); }
+        if (use.note) { r.note = val('bulk_note').trim(); }
+      });
+
+      closeBulkRoomPopup();
+      selectedRoomUids = [];
+      renderFloors();
+      updateSelectionUI();
+      updateSummary();
+    }
+
+    // ---------- RENDER FLOORS ----------
+    function renderFloors() {
+      var container = document.getElementById('floorsContainer');
+      container.innerHTML = '';
+
+      if (!floorsDraft.length) {
+        container.innerHTML =
+          '<div class="bg-white rounded-lg shadow p-8 text-center text-sm text-gray-400">' +
+          'Chưa có tầng nào. Nhập tầng và số phòng ở trên rồi bấm “+ Tạo tầng”.' +
+          '</div>';
+        return;
+      }
+
+      floorsDraft.forEach(function (floor) {
+        var card = document.createElement('div');
+        card.className = 'bg-white rounded-lg shadow';
+
+        var rows = '';
+        if (!floor.rooms.length) {
+          rows = '<tr><td colspan="10" class="p-4 text-center text-sm text-gray-400">Tầng này chưa có phòng.</td></tr>';
+        } else {
+          floor.rooms.forEach(function (r) {
+            var checked = selectedRoomUids.indexOf(r.uid) !== -1 ? ' checked' : '';
+            rows +=
+              '<tr class="hover:bg-gray-50">' +
+              '<td class="p-2"><input type="checkbox" class="w-4 h-4" onchange="toggleRoomUid(' + r.uid + ', this.checked)"' + checked + '></td>' +
+              '<td class="p-2 font-medium">' + r.code + '</td>' +
+              '<td class="p-2">' + fmtMoney(r.price) + '</td>' +
+              '<td class="p-2">' + (r.area ? r.area + ' m²' : '-') + '</td>' +
+              '<td class="p-2">' + r.electric + '</td>' +
+              '<td class="p-2">' + r.water + '</td>' +
+              '<td class="p-2 text-gray-600">' + (r.types.length ? r.types.join(', ') : '-') + '</td>' +
+              '<td class="p-2 text-gray-600">' + (r.furnishings.length ? r.furnishings.join(', ') : '-') + '</td>' +
+              '<td class="p-2 text-gray-500">' + (r.note ? r.note : '-') + '</td>' +
+              '<td class="p-2">' +
+              '<div class="flex flex-wrap gap-1">' +
+              '<button type="button" onclick="openRoomEditor(' + floor.id + ', ' + r.uid + ')" class="px-2 py-1 text-xs rounded bg-sky-100 text-sky-800">Sửa</button>' +
+              '<button type="button" onclick="deleteRoom(' + floor.id + ', ' + r.uid + ')" class="px-2 py-1 text-xs rounded bg-rose-100 text-rose-800">Xóa</button>' +
+              '</div>' +
+              '</td>' +
+              '</tr>';
+          });
+        }
+
+        card.innerHTML =
+          '<div class="p-3 border-b bg-gray-50 rounded-t-lg space-y-2">' +
+          '  <div class="flex flex-wrap justify-between items-center gap-2">' +
+          '    <div class="flex items-center gap-2">' +
+          '      <h4 class="font-semibold">' + floor.name + '</h4>' +
+          '      <span class="text-xs px-2 py-0.5 rounded-full bg-gray-200 text-gray-600">' + floor.rooms.length + ' phòng</span>' +
+          '    </div>' +
+          '    <div class="flex flex-wrap gap-2">' +
+          '      <button type="button" onclick="openRoomEditor(' + floor.id + ', null)" class="px-2 py-1 text-xs rounded bg-blue-100 text-blue-800 font-semibold">+ Thêm phòng</button>' +
+          '      <button type="button" onclick="deleteFloor(' + floor.id + ')" class="px-2 py-1 text-xs rounded bg-rose-100 text-rose-800 font-semibold">Xóa tầng</button>' +
+          '    </div>' +
+          '  </div>' +
+          '  <div class="flex flex-wrap items-center gap-2 text-xs text-gray-600">' +
+          '    <span>Mặc định tầng:</span>' +
+          '    <input id="floorPrice' + floor.id + '" type="number" min="0" step="100000" value="' + (floor.defaultPrice || 0) + '" class="w-28 border rounded px-2 py-1 text-xs">' +
+          '    <span>đ</span>' +
+          '    <input id="floorArea' + floor.id + '" type="number" min="0" step="1" value="' + (floor.defaultArea === null || floor.defaultArea === undefined ? '' : floor.defaultArea) + '" placeholder="DT" class="w-20 border rounded px-2 py-1 text-xs">' +
+          '    <span>m²</span>' +
+          '    <button type="button" onclick="applyFloorDefaults(' + floor.id + ')" class="px-2 py-1 text-xs rounded bg-gray-200 text-gray-700 font-semibold">Áp dụng cho tất cả phòng</button>' +
+          '  </div>' +
+          '</div>' +
+          '<div class="overflow-x-auto">' +
+          '  <table class="w-full text-sm">' +
+          '    <thead><tr class="bg-gray-100">' +
+          '      <th class="p-2 text-left font-semibold">Chọn</th>' +
+          '      <th class="p-2 text-left font-semibold">Mã phòng</th>' +
+          '      <th class="p-2 text-left font-semibold">Giá thuê</th>' +
+          '      <th class="p-2 text-left font-semibold">Diện tích</th>' +
+          '      <th class="p-2 text-left font-semibold">Chỉ số điện</th>' +
+          '      <th class="p-2 text-left font-semibold">Chỉ số nước</th>' +
+          '      <th class="p-2 text-left font-semibold">Kiểu phòng</th>' +
+          '      <th class="p-2 text-left font-semibold">Nội thất</th>' +
+          '      <th class="p-2 text-left font-semibold">Ghi chú</th>' +
+          '      <th class="p-2 text-left font-semibold">Hành động</th>' +
+          '    </tr></thead>' +
+          '    <tbody class="divide-y divide-gray-100">' + rows + '</tbody>' +
+          '  </table>' +
+          '</div>';
+
+        container.appendChild(card);
+      });
+    }
+
+    // ---------- EVENTS ----------
+    document.getElementById('createBuildingForm').addEventListener('input', function (e) {
+      if (e.target && e.target.id) { setFieldError(e.target.id, ''); }
+      updateSummary();
+    });
+    document.getElementById('createBuildingForm').addEventListener('change', updateSummary);
+
+    // Tránh Enter trong ô nhập tự động submit form.
+    document.getElementById('createBuildingForm').addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' && e.target && e.target.tagName !== 'TEXTAREA' && e.target.type !== 'submit') {
+        e.preventDefault();
+      }
+    });
+
+    document.getElementById('createBuildingForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      if (currentStep === 1) {
+        if (validateStep1()) { goToStep(2); }
+        return;
+      }
+
+      if (!validateStep1()) { goToStep(1); return; }
+
+      var buildingId = 'T' + Math.random().toString(36).slice(2, 6).toUpperCase();
+      var depositMonths = floatVal('c_depositMonths');
+
+      var roomsOut = [];
+      floorsDraft.forEach(function (f) {
+        f.rooms.forEach(function (r) {
+          roomsOut.push({
+            b: buildingId,
+            f: f.number,
+            floorName: f.name,
+            code: r.code,
+            status: 'available',
+            price: r.price,
+            deposit: Math.round(r.price * depositMonths),
+            area: r.area,
+            electricStart: r.electric,
+            waterStart: r.water,
+            types: r.types,
+            furnishings: r.furnishings,
+            furnish: true,
+            note: r.note
+          });
+        });
+      });
+
+      var payload = {
+        id: buildingId,
+        name: val('c_name').trim(),
+        address: val('c_address').trim(),
+        floors: floorsValue(),
+        commission: num('c_commission'),
+        ownerName: val('c_ownerName').trim(),
+        ownerPhone: val('c_ownerPhone').trim(),
+        managementFee: num('c_managementFee'),
+        electricity: num('c_electricity'),
+        water: num('c_water'),
+        managementPerPerson: num('c_managementPerPerson'),
+        depositMonths: depositMonths,
+        wifiUser: val('c_wifiUser').trim(),
+        wifiPass: val('c_wifiPass').trim(),
+        amenities: collectChecks('amenity'),
+        furnishings: collectChecks('furnishing'),
+        note: val('c_note').trim(),
+        policies: {
+          maxDepositMonths: floatVal('c_maxDeposit'),
+          firstDepositMonths: floatVal('c_firstDeposit'),
+          holdMinDeposit: num('c_holdMin'),
+          holdDays: num('c_holdDays'),
+          contractDays: num('c_contractDays'),
+          bikeFree: document.getElementById('c_bikeFree').checked,
+          bikeMax: num('c_bikeMax')
+        },
+        rooms: roomsOut
+      };
+
+      console.log('Create building payload:', payload);
+      showSuccess(payload);
+    });
+
+    function showSuccess(payload) {
+      var overlay = document.createElement('div');
+      overlay.id = 'createSuccessPopup';
+      overlay.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+      overlay.innerHTML =
+        '<div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">' +
+        '  <h3 class="font-semibold text-lg mb-1">Tạo tòa nhà thành công</h3>' +
+        '  <p class="text-sm text-gray-500 mb-4">' + payload.name + '</p>' +
+        '  <div class="text-sm space-y-1 mb-4">' +
+        '    <div class="flex justify-between"><span class="text-gray-500">Địa chỉ</span><span class="font-semibold">' + payload.address + '</span></div>' +
+        '    <div class="flex justify-between"><span class="text-gray-500">Số tầng</span><span class="font-semibold">' + payload.floors + '</span></div>' +
+        '    <div class="flex justify-between"><span class="text-gray-500">Tầng đã tạo</span><span class="font-semibold">' + floorsDraft.length + '</span></div>' +
+        '    <div class="flex justify-between"><span class="text-gray-500">Phòng đã tạo</span><span class="font-semibold">' + payload.rooms.length + '</span></div>' +
+        '    <div class="flex justify-between"><span class="text-gray-500">Tiện ích</span><span class="font-semibold">' + payload.amenities.length + '</span></div>' +
+        '    <div class="flex justify-between"><span class="text-gray-500">Nội thất</span><span class="font-semibold">' + payload.furnishings.length + '</span></div>' +
+        '  </div>' +
+        '  <div class="flex justify-end gap-2">' +
+        '    <button id="btnCreateAgain" class="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300 text-sm font-semibold">Tạo tòa nhà khác</button>' +
+        '    <a href="../Overview/BUILDING.html" class="px-4 py-2 rounded bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold">Về danh sách</a>' +
+        '  </div>' +
+        '</div>';
+      document.body.appendChild(overlay);
+
+      document.getElementById('btnCreateAgain').onclick = function () {
+        overlay.remove();
+        document.getElementById('createBuildingForm').reset();
+        floorsDraft = [];
+        selectedRoomUids = [];
+        floorSeq = 0;
+        roomSeq = 0;
+        currentStep = 1;
+        renderChips('amenityChips', 'amenity', AMENITY_OPTIONS, DEFAULT_AMENITIES);
+        renderChips('furnishingChips', 'furnishing', FURNISHING_OPTIONS, DEFAULT_FURNISHINGS);
+        closeRoomEditor();
+        closeBulkRoomPopup();
+        renderFloors();
+        updateSelectionUI();
+        applyStepUI();
+        updateSummary();
+        window.scrollTo(0, 0);
+      };
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      renderChips('amenityChips', 'amenity', AMENITY_OPTIONS, DEFAULT_AMENITIES);
+      renderChips('furnishingChips', 'furnishing', FURNISHING_OPTIONS, DEFAULT_FURNISHINGS);
+      renderFloors();
+      updateSelectionUI();
+      applyStepUI();
+      updateSummary();
+    });
+  </script>
+</body>
+</html>
