@@ -68,6 +68,7 @@ tiền cọc, phí quản lý, nội thất, tài chính và booking.
 - File HTML: Buidling/Overview/BUILDING.html
 - Dùng Tailwind CSS (CDN) + sidebar + bảng danh sách tòa nhà + stats (đã gỡ sơ đồ tầng/phòng).
 - Mỗi lần sửa: cập nhật đồng bộ txt + html + feature list.
+- Thiết kế mới (cùng hệ thống với BUILDING_DETAIL.html): hero tối (gradient + lưới nền + icon + eyebrow/chip) + hero stats dạng glass card + vòng tỷ lệ lấp đầy SVG (occupancy ring) + panel danh sách tòa nhà (bảng room-table) + animation riseIn.
 
 ---------------------------------------------------------------------
 9. VIEW CHI TIẾT TÒA NHÀ – BUILDING_DETAIL.HTML
@@ -90,6 +91,7 @@ tiền cọc, phí quản lý, nội thất, tài chính và booking.
 - Chọn nhiều phòng bằng checkbox ở cột “Chọn” -> mở menu 3 chấm -> chọn công cụ hàng loạt -> popup điều chỉnh giá trị -> nhấn OK/Cancel.
 - Phân trang danh sách phòng (`roomPagination`): chọn số dòng/trang (5/10/20/50), hiển thị “Hiển thị a–b / N phòng”, nút Trước/Sau + số trang; tự reset về trang 1 khi đổi tòa nhà, tìm kiếm hoặc áp dụng/xóa bộ lọc.
 - Sơ đồ tầng/phòng (SVG) không còn hiển thị trong view chi tiết.
+- Thiết kế mới (cùng hệ thống với BUILDING_DETAIL.html): hero tối + hero stats glass (tòa nhà/tổng phòng/có sẵn/đã đặt) + vòng occupancy SVG + panel thông tin + panel chính sách + panel danh sách phòng (room-table + status pill/floor tag/price + pagination + hover tip).
 - Chọn tòa nhà: dropdown `detailBuildingSelect` trong view chi tiết, hoặc query `?building=A|B` trên URL.
 - Nút “⚙ Cấu hình phòng” (`btnRoomConfig`) ở header view chi tiết → mở `../Config/ROOM_CONFIG.html?building=<id tòa đang chọn>`; href tự cập nhật khi đổi tòa nhà.
 
@@ -119,6 +121,7 @@ tiền cọc, phí quản lý, nội thất, tài chính và booking.
 - Validate bước 1: bắt buộc tên + địa chỉ, số tầng > 0, hoa hồng 0–100; lỗi hiển thị dưới từng trường.
 - Sau khi tạo: hiện popup “Tạo tòa nhà thành công” (thông tin tóm tắt + số phòng đã tạo) với nút “Tạo tòa nhà khác” hoặc “Về danh sách”. Payload (gồm `rooms` với types/furnishings/chỉ số điện nước) cũng được `console.log` để kiểm tra.
 - Dữ liệu minh hoạ – chưa kết nối backend (không ghi vào BUILDING.html).
+- Thiết kế mới (cùng hệ thống với BUILDING_DETAIL.html): hero tối + stepper dạng pill (step-pill/step-num) + panel cho từng bước (panel + panel-head/panel-ico/panel-title/panel-sub) + sidebar “Tóm tắt” kiểu panel sticky.
 
 ---------------------------------------------------------------------
 11. VIEW CẤU HÌNH PHÒNG – ROOM_CONFIG.HTML
@@ -140,6 +143,7 @@ tiền cọc, phí quản lý, nội thất, tài chính và booking.
 - Lưu: hiện popup xác nhận (số tầng, tổng phòng, phòng thêm mới/đã xóa) với nút “Tiếp tục chỉnh sửa” hoặc “Về chi tiết tòa nhà”; payload (`rooms[]` giữ `status`, `deposit`, types/furnishings) được `console.log`.
 - Hủy / đổi tòa nhà khi có thay đổi chưa lưu → confirm trước khi rời trang. ESC đóng modal đang mở.
 - Dữ liệu minh hoạ – chưa kết nối backend (thay đổi không ghi ngược vào BUILDING_DETAIL.html).
+- Thiết kế mới (cùng hệ thống với BUILDING_DETAIL.html): hero tối + hero stats glass (số tầng, tổng phòng, giá thuê TB, đang thuê/đặt cọc) + vòng occupancy SVG + panel “Thêm tầng” (panel-head + panel-ico + panel-title + panel-sub) + panel hàng loạt + panel sidebar “Tóm tắt cấu hình” (sticky).
 
 ---------------------------------------------------------------------
 12. FEATURE LIST – QUẢN LÝ TÒA NHÀ (BUILDING)
