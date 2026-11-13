@@ -414,11 +414,6 @@
             </div>
             <h1 id="cfgBuildingName" class="mt-1.5 text-3xl font-bold tracking-tight text-white">Tòa nhà A</h1>
             <p id="cfgBuildingAddress" class="mt-1 text-sm text-slate-300/85">Tân Phú - Hồ Chí Minh</p>
-            <div class="mt-3.5 flex flex-wrap items-center gap-2">
-              <span class="hero-chip">🏢 <b id="cfgHeroFloors">6</b> tầng</span>
-              <span class="hero-chip">🚪 <b id="cfgHeroRooms">20</b> phòng</span>
-              <span class="hero-chip">🛠️ <b id="cfgHeroAvg">340K</b>/phòng TB</span>
-            </div>
           </div>
         </div>
 
@@ -430,66 +425,9 @@
               <option value="B">Tòa nhà B</option>
             </select>
           </div>
-          <div class="occ-card" id="occCard">
-            <svg viewBox="0 0 88 88" class="h-[76px] w-[76px] -rotate-90">
-              <defs>
-                <linearGradient id="occGrad" x1="0" y1="0" x2="1" y2="1">
-                  <stop offset="0" stop-color="#34d399"/><stop offset="1" stop-color="#22d3ee"/>
-                </linearGradient>
-              </defs>
-              <circle cx="44" cy="44" r="34" fill="none" stroke="rgba(255,255,255,.16)" stroke-width="8"/>
-              <circle id="occRingArc" cx="44" cy="44" r="34" fill="none" stroke="url(#occGrad)" stroke-width="8" stroke-linecap="round" stroke-dasharray="213.63" stroke-dashoffset="213.63"/>
-            </svg>
-            <div class="pointer-events-none absolute inset-0 grid place-items-center">
-              <div class="text-center leading-none">
-                <p id="occRingValue" class="text-base font-bold text-white">0%</p>
-                <p class="mt-1 text-[8px] font-semibold uppercase tracking-[0.14em] text-slate-400">lấp đầy</p>
-              </div>
-            </div>
-          </div>
-          <div class="flex flex-col gap-2">
-            <a id="btnHeroConfig" href="../Config/ROOM_CONFIG.html?building=A" class="hero-btn">
-              <span>⚙</span> Cấu hình phòng
-            </a>
-          </div>
         </div>
       </div>
 
-      <!-- Stats -->
-      <div class="relative z-10 mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <div class="hero-stat">
-          <div class="flex items-center justify-between">
-            <p class="hs-label">Số tầng</p>
-            <span class="hs-dot bg-violet-400"></span>
-          </div>
-          <p id="cfgStatFloors" class="hs-value text-white">0</p>
-          <p class="hs-sub">Số tầng đã tạo</p>
-        </div>
-        <div class="hero-stat">
-          <div class="flex items-center justify-between">
-            <p class="hs-label">Tổng phòng</p>
-            <span class="hs-dot bg-cyan-400"></span>
-          </div>
-          <p id="cfgStatRooms" class="hs-value text-white">0</p>
-          <p class="hs-sub">Phòng hiện có</p>
-        </div>
-        <div class="hero-stat">
-          <div class="flex items-center justify-between">
-            <p class="hs-label">Giá thuê TB</p>
-            <span class="hs-dot bg-indigo-400"></span>
-          </div>
-          <p id="cfgStatAvgPrice" class="hs-value text-indigo-200">0</p>
-          <p class="hs-sub">Giá thuê trung bình</p>
-        </div>
-        <div class="hero-stat">
-          <div class="flex items-center justify-between">
-            <p class="hs-label">Đang thuê / Đặt cọc</p>
-            <span class="hs-dot bg-amber-400"></span>
-          </div>
-          <p id="cfgStatBusy" class="hs-value text-amber-300">0</p>
-          <p class="hs-sub">Phòng có khách</p>
-        </div>
-      </div>
     </section>
 
     <div class="grid grid-cols-1 xl:grid-cols-3 gap-6 items-start">
@@ -836,11 +774,6 @@
       var busy = all.filter(function (r) { return r.status === 'occupied' || r.status === 'reserved'; }).length;
       var avg = all.length ? Math.round(all.reduce(function (s, r) { return s + (r.price || 0); }, 0) / all.length) : 0;
       var b = BUILDINGS[currentBuildingId];
-
-      document.getElementById('cfgStatFloors').textContent = floorsDraft.length;
-      document.getElementById('cfgStatRooms').textContent = all.length;
-      document.getElementById('cfgStatAvgPrice').textContent = fmtMoneyShort(avg);
-      document.getElementById('cfgStatBusy').textContent = busy;
 
       var heroCode = document.getElementById('cfgHeroCode');
       if (heroCode) { heroCode.textContent = b.code || currentBuildingId; }
