@@ -148,6 +148,7 @@ tiền cọc, phí quản lý, nội thất, tài chính và booking.
 - [x] Phân trang danh sách tòa nhà (`buildingPagination`): số dòng/trang (5/10/20/50), “Hiển thị a–b / N tòa nhà”, Trước/Sau + số trang.
 - [x] Xem chi tiết tòa nhà (BUILDING_DETAIL.html) – gồm dropdown chọn tòa, stats, thông tin + chính sách (có nút sửa), danh sách phòng + nút hành động (từng dòng/hàng loạt), tooltip hợp đồng khi hover dòng phòng (khách thuê, thiết bị/xe máy, ngày HĐ & ngày hết hạn). Sơ đồ SVG đã gỡ.
 - [x] Cấu hình phòng (Buidling/Config/ROOM_CONFIG.html): mở từ nút “⚙ Cấu hình phòng” ở view chi tiết, dùng lại đúng UI bước 2 của luồng tạo (thêm tầng, sinh phòng, sửa từng phòng, đặt giá trị hàng loạt) nhưng nạp sẵn dữ liệu phòng hiện có của tòa nhà; có chấm màu trạng thái, cảnh báo khi xóa phòng/tầng đang thuê, lưu bằng popup xác nhận.
+- [x] Xem chi tiết phòng (Buidling/RoomDetail/ROOM_DETAIL.html): mở từ mã phòng ở danh sách phòng; hiển thị thông tin phòng, nội thất/tiện ích, hợp đồng & khách thuê, hóa đơn gần đây, chỉ số điện nước; đổi trạng thái phòng, sửa thông tin qua modal, đổi tòa nhà/phòng bằng dropdown (query `?building=&room=`).
 - [ ] Sơ đồ tầng/phòng (đã gỡ khỏi view Quản lý Tòa nhà – BUILDING.html).
 - [ ] Phòng.
 - [ ] Giá.
@@ -158,7 +159,53 @@ tiền cọc, phí quản lý, nội thất, tài chính và booking.
 - [ ] Thiết bị.
 
 ---------------------------------------------------------------------
-13. KẾT LUẬN
+13. VIEW CHI TIẾT PHÒNG – ROOM_DETAIL.HTML
+- File HTML: Buidling/RoomDetail/ROOM_DETAIL.html
+- Mở từ mã phòng trong bảng danh sách phòng của BUILDING_DETAIL.html:
+  `../RoomDetail/ROOM_DETAIL.html?building=A|B&room=<mã phòng>`.
+- Header: mã phòng + badge trạng thái, dòng “Tòa nhà · Tầng · Địa chỉ”; dropdown đổi tòa nhà và đổi phòng
+  (điều hướng theo query); nút “⚙ Cấu hình phòng” sang `../Config/ROOM_CONFIG.html?building=<id>`.
+- Cấu trúc 3 tab (thanh tab ngay dưới stats, sidebar phải giữ nguyên ở mọi tab):
+  + “🏠 Tổng quan”: thông tin phòng, nội thất & tiện ích, hình ảnh phòng.
+  + “📄 Hợp đồng & khách thuê” (badge = số khách thuê): hợp đồng, khách thuê, xe, dòng thời gian hợp đồng.
+  + “🧾 Hóa đơn & công nợ” (badge = số kỳ hóa đơn, màu hổ phách nếu còn kỳ chưa thu): chi tiết kỳ, lịch sử hóa đơn,
+    nút “+ Tạo hóa đơn”.
+  + Tab đang chọn lưu vào query `?tab=overview|contract|bills` (mặc định `overview`), giữ tab khi đổi tòa nhà/phòng;
+    thao tác nhanh “Thêm khách thuê” nhảy tới tab hợp đồng, “Xem hóa đơn” nhảy tới tab hóa đơn.
+- Stats: giá thuê theo hợp đồng, đã cọc, diện tích, số khách thuê; phụ chú cho biết giá niêm yết/định giá.
+- Thông tin phòng: mã, tòa nhà, tầng, diện tích, giá phòng HĐ, định giá phòng, đã cọc, tiền cọc niêm yết,
+  chỉ số điện/nước, kiểu phòng (chips), ghi chú; nút “✏️ Sửa thông tin” mở modal sửa (giá niêm yết, tiền cọc,
+  giá phòng hợp đồng, đã cọc, diện tích, chỉ số điện/nước, kiểu phòng, nội thất, ghi chú) – lưu tạm trong bộ nhớ.
+- Nội thất & tiện ích: kiểu phòng (indigo), nội thất trong phòng (amber), tiện ích tòa nhà (emerald).
+- Hình ảnh phòng: lưới 4 ảnh minh hoạ (phòng ngủ, khu bếp, WC, ban công) + ô “Thêm ảnh” để tải ảnh từ máy
+  (lưu tạm trong bộ nhớ); bấm ảnh mở lightbox xem lớn kèm chú thích “mã phòng · khu vực · tòa nhà”.
+- Hợp đồng & khách thuê (theo file Billing/TOA NHA A - NAM 2026.xlsx):
+  + Thông tin HĐ: ngày nhận phòng, ngày kết thúc HĐ, thời hạn, hiệu lực (cảnh báo ≤ 30 ngày/đã hết hạn).
+  + Tài chính: giá phòng trong HĐ (cơ sở tính tiền phòng thay cho định giá khi tạo), đã cọc, định giá phòng,
+    số người / số xe.
+  + Khách thuê: họ tên, vai trò (đại diện/ở cùng), CCCD (số + nút xem ảnh hồ sơ), SĐT.
+  + Xe: ảnh xe (thumbnail, bấm mở lightbox), biển số + loại xe; form thêm xe có chọn ảnh từ máy.
+  + Thêm trực tiếp khách thuê mới và biển số xe mới ngay trong hợp đồng (form inline, có xóa từng dòng);
+    phòng chưa có HĐ thì CTA tạo hợp đồng nháp rồi thêm khách.
+- Dòng thời gian hợp đồng: các đoạn theo tháng từ HĐ cũ → HĐ hiện tại (chỉ hiển thị chủ hợp đồng), đoạn gạch chéo
+  “Trống” cho khoảng thời gian không có hợp đồng, mốc “Hôm nay”, trục năm, thống kê số tháng có HĐ/không HĐ và
+  danh sách HĐ kèm trạng thái (đang hiệu lực / chờ ký / đã kết thúc).
+- Hóa đơn & công nợ: chọn kỳ + chi tiết kỳ đang xem gồm số ngày ở, số điện cũ → mới, điện tiêu thụ,
+  thành tiền điện (4.000đ/kWh), số nước cũ → mới, nước tiêu thụ, thành tiền nước (30.000đ/m³), tiền phòng
+  (giá HĐ ÷ 30 × số ngày ở), tiền xe (100.000đ/xe), phí quản lý (150.000đ/người), tủ lạnh/máy giặt (200k/300k),
+  nợ cũ/giảm giá, phải thu, đã thu, còn lại, ghi chú; bảng lịch sử hóa đơn chọn kỳ nhanh.
+- Tạo hóa đơn (modal “+ Tạo hóa đơn”): chỉ bật khi phòng ở trạng thái “Đang thuê” và có hợp đồng; trạng thái khác
+  nút bị disable kèm gợi ý. Trong modal: chọn kỳ, nhập số điện/nước cũ → mới, số ngày ở tự tính theo thời gian
+  hợp đồng hiệu lực trong kỳ (tháng đủ = 30 ngày, tháng nhận/trả giữa tháng = số ngày thực ở), các khoản tiền phòng,
+  xe, quản lý, tủ lạnh/máy giặt được chia theo số ngày ở; nhập nợ cũ/giảm giá, đã thu, ghi chú; xem tạm tính ngay
+  khi nhập và lưu vào lịch sử hóa đơn (cập nhật chỉ số điện/nước của phòng).
+  Phòng không “đang thuê” hiển thị trạng thái trống phù hợp (đặt cọc / chưa có hóa đơn).
+- Sidebar phải: chọn trạng thái phòng (5 trạng thái, cập nhật ngay badge + ghi chú), thao tác nhanh
+  (sửa phòng, cấu hình phòng, thêm khách, xem hóa đơn, về tòa nhà), chỉ số điện nước, thông tin tòa nhà.
+- Toast xác nhận cho các thao tác minh hoạ; dữ liệu minh hoạ – chưa kết nối backend.
+
+---------------------------------------------------------------------
+14. KẾT LUẬN
 - View Quản lý Tòa nhà cần đầy đủ: thông tin tòa nhà, danh sách phòng + giá,
   trạng thái/cọc, tài chính/booking, thiết bị.
 - View hiện tại đã đạt: thông tin tòa nhà, danh sách phòng + giá, trạng thái/cọc,

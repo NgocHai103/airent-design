@@ -194,12 +194,12 @@
       <div class="mx-3 mb-3 rounded-xl border border-white/5 bg-white/[0.04] p-3">
         <div class="flex items-center justify-between text-[11px]">
           <span class="text-slate-400">Tỷ lệ lấp đầy</span>
-          <span class="font-semibold text-emerald-300">45%</span>
+          <span class="font-semibold text-emerald-300">46%</span>
         </div>
         <div class="mt-2 h-1.5 overflow-hidden rounded-full bg-white/10">
-          <div class="h-full w-[45%] rounded-full bg-gradient-to-r from-emerald-400 to-teal-300"></div>
+          <div class="h-full w-[46%] rounded-full bg-gradient-to-r from-emerald-400 to-teal-300"></div>
         </div>
-        <p class="mt-2 text-[10px] text-slate-500">9/20 phòng đang thuê · đặt cọc</p>
+        <p class="mt-2 text-[10px] text-slate-500">12/26 phòng đang thuê · đặt cọc</p>
       </div>
       <div class="border-t border-white/5 p-3">
         <div class="flex cursor-pointer items-center gap-3 rounded-xl px-2 py-2 transition hover:bg-white/5">
@@ -259,6 +259,7 @@
             <th class="p-2 text-left font-semibold">Sắp trống</th>
             <th class="p-2 text-left font-semibold">Đã block</th>
             <th class="p-2 text-left font-semibold">Đã đặt</th>
+            <th class="p-2 w-10" aria-label="Mở chi tiết"></th>
           </tr>
         </thead>
         <tbody id="buildingTableBody" class="divide-y divide-gray-100"></tbody>
@@ -319,6 +320,10 @@
       return n ? n.toLocaleString('vi-VN') + ' đ' : '-';
     }
 
+    function openBuildingDetail(id) {
+      window.location.href = '../Detail/BUILDING_DETAIL.html?building=' + encodeURIComponent(id);
+    }
+
     function renderBuildingTable() {
       var tbody = document.getElementById('buildingTableBody');
       tbody.innerHTML = '';
@@ -329,15 +334,27 @@
       buildings.slice(startIdx, startIdx + buildingPageSize).forEach(function (b) {
         var s = buildingStats(b.id);
         var tr = document.createElement('tr');
-        tr.className = 'hover:bg-gray-50';
+        tr.className = 'group cursor-pointer transition-colors hover:bg-indigo-50/70 focus:outline-none focus-visible:bg-indigo-50';
+        tr.tabIndex = 0;
+        tr.setAttribute('role', 'link');
+        tr.setAttribute('aria-label', 'Xem chi tiết ' + b.name);
+        tr.title = 'Xem chi tiết ' + b.name;
         tr.innerHTML =
-          '<td class="p-2 font-medium">' + b.name + '</td>' +
+          '<td class="p-2 font-medium text-gray-800 group-hover:text-indigo-700">' + b.name + '</td>' +
           '<td class="p-2">' + b.address + '</td>' +
           '<td class="p-2">' + b.floors + '</td>' +
           '<td class="p-2">' + s.total + '</td>' +
           '<td class="p-2 text-emerald-600 font-semibold">' + s.available + '</td>' +
           '<td class="p-2 text-rose-600 font-semibold">' + s.blocked + '</td>' +
-          '<td class="p-2 text-amber-600 font-semibold">' + s.reserved + '</td>';
+          '<td class="p-2 text-amber-600 font-semibold">' + s.reserved + '</td>' +
+          '<td class="p-2 text-right text-gray-300 transition group-hover:translate-x-0.5 group-hover:text-indigo-500">→</td>';
+        tr.addEventListener('click', function () { openBuildingDetail(b.id); });
+        tr.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+            e.preventDefault();
+            openBuildingDetail(b.id);
+          }
+        });
         tbody.appendChild(tr);
       });
 

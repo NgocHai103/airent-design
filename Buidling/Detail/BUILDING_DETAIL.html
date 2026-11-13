@@ -195,12 +195,12 @@
       <div class="mx-3 mb-3 rounded-xl border border-white/5 bg-white/[0.04] p-3">
         <div class="flex items-center justify-between text-[11px]">
           <span class="text-slate-400">Tỷ lệ lấp đầy</span>
-          <span class="font-semibold text-emerald-300">45%</span>
+          <span class="font-semibold text-emerald-300">46%</span>
         </div>
         <div class="mt-2 h-1.5 overflow-hidden rounded-full bg-white/10">
-          <div class="h-full w-[45%] rounded-full bg-gradient-to-r from-emerald-400 to-teal-300"></div>
+          <div class="h-full w-[46%] rounded-full bg-gradient-to-r from-emerald-400 to-teal-300"></div>
         </div>
-        <p class="mt-2 text-[10px] text-slate-500">9/20 phòng đang thuê · đặt cọc</p>
+        <p class="mt-2 text-[10px] text-slate-500">12/26 phòng đang thuê · đặt cọc</p>
       </div>
       <div class="border-t border-white/5 p-3">
         <div class="flex cursor-pointer items-center gap-3 rounded-xl px-2 py-2 transition hover:bg-white/5">
@@ -838,7 +838,8 @@
         tr.setAttribute('data-tip-code', r.code);
         tr.innerHTML =
           '<td class="p-2"><input type="checkbox" class="w-4 h-4" data-code="' + r.code + '" onchange="toggleRoomSelection(\'' + r.code + '\')"' + (selectedRoomIds.indexOf(r.code) !== -1 ? ' checked' : '') + '></td>' +
-          '<td class="p-2 font-medium whitespace-nowrap">' + r.code +
+          '<td class="p-2 font-medium whitespace-nowrap">' +
+            '<a href="../RoomDetail/ROOM_DETAIL.html?building=' + encodeURIComponent(r.b) + '&room=' + encodeURIComponent(r.code) + '" class="text-gray-800 hover:text-indigo-600 hover:underline" title="Xem chi tiết phòng ' + r.code + '">' + r.code + '</a>' +
             (r.contract ? '<span class="ml-1 text-[10px] text-indigo-400" aria-hidden="true">ⓘ</span>' : '') +
           '</td>' +
           '<td class="p-2">' + r.f + '</td>' +

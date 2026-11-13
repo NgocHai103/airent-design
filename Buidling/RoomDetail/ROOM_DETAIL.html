@@ -1,0 +1,2477 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RoomForRent – Chi tiết phòng</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* ===== SIDEBAR ===== */
+    .app-sidebar{
+      background:
+        radial-gradient(120% 55% at 0% 0%, rgba(99,102,241,.22), rgba(99,102,241,0) 60%),
+        radial-gradient(90% 45% at 100% 100%, rgba(20,184,166,.12), rgba(20,184,166,0) 60%),
+        linear-gradient(180deg,#0a0f1f 0%,#0e1528 45%,#0a0f1f 100%);
+      border-right:1px solid rgba(148,163,184,.12);
+      box-shadow:10px 0 40px -24px rgba(2,6,23,.9);
+    }
+    .app-sidebar nav{scrollbar-width:thin;scrollbar-color:rgba(148,163,184,.28) transparent;}
+    .app-sidebar nav::-webkit-scrollbar{width:6px}
+    .app-sidebar nav::-webkit-scrollbar-track{background:transparent}
+    .app-sidebar nav::-webkit-scrollbar-thumb{background:rgba(148,163,184,.25);border-radius:999px}
+    .app-sidebar nav::-webkit-scrollbar-thumb:hover{background:rgba(148,163,184,.4)}
+
+    .brand-mark{
+      width:40px;height:40px;border-radius:13px;display:grid;place-items:center;flex:none;color:#fff;
+      background:linear-gradient(135deg,#6366f1 0%,#8b5cf6 55%,#22d3ee 100%);
+      box-shadow:0 10px 22px -10px rgba(99,102,241,.9),inset 0 1px 0 rgba(255,255,255,.35);
+    }
+
+    .workspace-card{
+      display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:12px;
+      background:rgba(255,255,255,.04);border:1px solid rgba(148,163,184,.12);
+      transition:background .18s ease,border-color .18s ease;
+    }
+    .workspace-card:hover{background:rgba(255,255,255,.08);border-color:rgba(129,140,248,.35)}
+    .ws-avatar{
+      width:30px;height:30px;border-radius:10px;display:grid;place-items:center;flex:none;
+      font-size:10px;font-weight:800;letter-spacing:.04em;color:#c7d2fe;
+      background:rgba(99,102,241,.18);border:1px solid rgba(129,140,248,.32);
+    }
+
+    .nav-group-label{
+      padding:0 12px;margin-bottom:6px;font-size:10px;font-weight:700;
+      letter-spacing:.15em;text-transform:uppercase;color:rgba(148,163,184,.62);
+    }
+
+    .nav-link{
+      position:relative;display:flex;align-items:center;gap:10px;padding:9px 12px;margin-bottom:2px;
+      border-radius:10px;font-size:13px;font-weight:500;color:#cbd5e1;
+      transition:background .18s ease,color .18s ease,transform .18s ease;
+    }
+    .nav-link:hover{background:rgba(255,255,255,.055);color:#fff;transform:translateX(2px)}
+    .nav-ico{width:18px;height:18px;flex:none;color:#64748b;transition:color .18s ease}
+    .nav-link:hover .nav-ico{color:#a5b4fc}
+    .nav-link.active{
+      color:#fff;
+      background:linear-gradient(90deg,rgba(99,102,241,.30),rgba(99,102,241,.06));
+      box-shadow:inset 0 0 0 1px rgba(129,140,248,.26);
+    }
+    .nav-link.active .nav-ico{color:#c7d2fe}
+    .nav-link.active::before{
+      content:"";position:absolute;left:0;top:50%;transform:translateY(-50%);
+      width:3px;height:60%;border-radius:0 3px 3px 0;
+      background:linear-gradient(180deg,#818cf8,#22d3ee);
+    }
+
+    .nav-badge{
+      margin-left:auto;padding:3px 7px;border-radius:999px;font-size:10px;font-weight:700;line-height:1.4;
+      background:rgba(244,63,94,.16);color:#fda4af;border:1px solid rgba(244,63,94,.24);
+    }
+    .nav-badge.info{background:rgba(99,102,241,.18);color:#c7d2fe;border-color:rgba(129,140,248,.28)}
+
+    .nav-sub{
+      margin:2px 0 6px 21px;padding-left:12px;display:flex;flex-direction:column;gap:1px;
+      border-left:1px dashed rgba(148,163,184,.22);
+    }
+    .nav-sub-link{
+      position:relative;display:block;padding:6px 10px;border-radius:8px;font-size:12px;
+      color:#94a3b8;transition:background .15s ease,color .15s ease;
+    }
+    .nav-sub-link:hover{color:#e2e8f0;background:rgba(255,255,255,.05)}
+    .nav-sub-link.active{color:#c7d2fe;font-weight:600;background:rgba(99,102,241,.12)}
+    .nav-sub-link.active::before{
+      content:"";position:absolute;left:-14.5px;top:50%;transform:translateY(-50%);
+      width:5px;height:5px;border-radius:50%;background:#818cf8;
+      box-shadow:0 0 0 3px rgba(99,102,241,.18);
+    }
+
+    .user-avatar{
+      width:34px;height:34px;border-radius:11px;display:grid;place-items:center;flex:none;
+      font-size:11px;font-weight:800;color:#e0e7ff;
+      background:linear-gradient(135deg,rgba(99,102,241,.45),rgba(34,211,238,.35));
+      border:1px solid rgba(129,140,248,.35);
+    }
+
+    /* ===== ROOM DETAIL ===== */
+    .status-option{
+      display:flex;align-items:center;gap:10px;width:100%;padding:9px 10px;border-radius:10px;
+      border:1px solid transparent;font-size:13px;color:#374151;text-align:left;
+      transition:background .15s ease,border-color .15s ease;
+    }
+    .status-option:hover{background:#f8fafc;border-color:#e5e7eb}
+    .status-option.is-active{background:#eef2ff;border-color:#c7d2fe;color:#3730a3;font-weight:600}
+    .status-dot{width:8px;height:8px;border-radius:999px;flex:none}
+
+    .toast-enter{animation:toastIn .22s ease-out}
+    @keyframes toastIn{
+      from{opacity:0;transform:translateY(8px)}
+      to{opacity:1;transform:translateY(0)}
+    }
+
+    /* ===== CONTRACT TIMELINE ===== */
+    .timeline-track{
+      display:flex;height:40px;border-radius:10px;overflow:hidden;
+      background:#f1f5f9;border:1px solid #e5e7eb;
+    }
+    .timeline-seg{
+      position:relative;display:flex;align-items:center;justify-content:center;
+      min-width:0;font-size:11px;font-weight:600;color:#fff;white-space:nowrap;
+      border-right:1px solid rgba(255,255,255,.45);overflow:hidden;
+      transition:filter .15s ease;
+    }
+    .timeline-seg:last-child{border-right:0}
+    .timeline-seg:hover{filter:brightness(1.06)}
+    .timeline-seg.past{background:linear-gradient(135deg,#818cf8,#6366f1)}
+    .timeline-seg.current{background:linear-gradient(135deg,#34d399,#059669)}
+    .timeline-seg.pending{background:linear-gradient(135deg,#fbbf24,#f59e0b)}
+    .timeline-seg.gap{
+      background:repeating-linear-gradient(135deg,#f8fafc,#f8fafc 7px,#e2e8f0 7px,#e2e8f0 14px);
+      color:#94a3b8;
+    }
+    .timeline-today{
+      position:absolute;top:0;bottom:-2px;width:0;border-left:2px dashed #ef4444;z-index:2;
+    }
+    .timeline-today span{
+      position:absolute;top:-18px;left:50%;transform:translateX(-50%);
+      font-size:9px;font-weight:700;color:#ef4444;white-space:nowrap;
+      background:#fff;padding:0 4px;border-radius:4px;
+    }
+
+    .bill-tile{border:1px solid #eef2f7;border-radius:10px;background:#fbfcfe;padding:10px 12px}
+    .bill-row td{padding:7px 12px;border-top:1px solid #f3f4f6}
+    .bill-row:first-child td{border-top:0}
+
+    /* ===== ROOM / VEHICLE PHOTOS ===== */
+    .gallery-tile{position:relative;display:block;overflow:hidden;border-radius:12px;border:1px solid #e5e7eb;background:#f8fafc;cursor:zoom-in;padding:0}
+    .gallery-tile img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .35s ease}
+    .gallery-tile:hover img{transform:scale(1.05)}
+    .gallery-cap{position:absolute;left:0;right:0;bottom:0;padding:20px 8px 6px;font-size:10px;font-weight:600;color:#fff;background:linear-gradient(to top,rgba(15,23,42,.78),rgba(15,23,42,0))}
+    .gallery-add{display:grid;place-items:center;border:2px dashed #c7d2fe;border-radius:12px;background:#eef2ff;color:#6366f1;cursor:pointer;text-align:center;transition:background .15s ease}
+    .gallery-add:hover{background:#e0e7ff}
+    .vehicle-thumb{display:block;height:46px;width:66px;overflow:hidden;border-radius:8px;border:1px solid #e5e7eb;background:#f1f5f9;cursor:zoom-in;flex-shrink:0}
+    .vehicle-thumb img{height:100%;width:100%;object-fit:cover}
+    .vehicle-thumb:hover{border-color:#a5b4fc}
+
+    /* ===== TABS ===== */
+    .tab-btn{display:inline-flex;align-items:center;gap:8px;white-space:nowrap;border-radius:10px;padding:9px 14px;font-size:13px;font-weight:600;color:#64748b;transition:background .15s ease,color .15s ease}
+    .tab-btn:hover{background:#f1f5f9;color:#334155}
+    .tab-btn.is-active{background:#eef2ff;color:#4338ca;box-shadow:inset 0 0 0 1px #c7d2fe}
+    .tab-badge{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;border-radius:9999px;padding:0 6px;font-size:10px;font-weight:700;background:#e2e8f0;color:#475569}
+    .tab-btn.is-active .tab-badge{background:#c7d2fe;color:#3730a3}
+    .tab-badge.is-warn{background:#fef3c7;color:#b45309}
+  </style>
+</head>
+<body class="flex min-h-screen bg-gray-50 text-gray-800">
+
+  <!-- ===== SIDEBAR ===== -->
+  <aside class="app-sidebar fixed inset-y-0 left-0 w-64 flex flex-col text-slate-300 z-40">
+    <svg aria-hidden="true" focusable="false" style="position:absolute;width:0;height:0;overflow:hidden">
+      <symbol id="i-logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.6 12 3l9 7.6"/><path d="M5.4 9.6V21h13.2V9.6"/><path d="M9.6 21v-5.8h4.8V21"/></symbol>
+      <symbol id="i-grid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.6"/><rect x="14" y="3" width="7" height="7" rx="1.6"/><rect x="3" y="14" width="7" height="7" rx="1.6"/><rect x="14" y="14" width="7" height="7" rx="1.6"/></symbol>
+      <symbol id="i-building" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v16"/><path d="M15 9h2a2 2 0 0 1 2 2v10"/><path d="M8.5 7h2M8.5 11h2M8.5 15h2"/></symbol>
+      <symbol id="i-door" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21h16"/><path d="M6.5 21V4.5A1.5 1.5 0 0 1 8 3h8a1.5 1.5 0 0 1 1.5 1.5V21"/><circle cx="14.6" cy="12.2" r=".9"/></symbol>
+      <symbol id="i-users" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-1.8a4 4 0 0 0-4-4H6.5a4 4 0 0 0-4 4V21"/><circle cx="9.2" cy="7.3" r="3.8"/><path d="M21.5 21v-1.8a4 4 0 0 0-3-3.87"/><path d="M15.8 3.4a3.8 3.8 0 0 1 0 7.4"/></symbol>
+      <symbol id="i-file" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6.5A2.5 2.5 0 0 0 4 4.5v15A2.5 2.5 0 0 0 6.5 22h11a2.5 2.5 0 0 0 2.5-2.5V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h5"/></symbol>
+      <symbol id="i-receipt" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2.8h12a1 1 0 0 1 1 1V21l-3-1.8-2 1.8-2-1.8-2 1.8-3-1.8V3.8a1 1 0 0 1 1-1z"/><path d="M9 8h6M9 12h6"/></symbol>
+      <symbol id="i-trend" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17.5 9 11l4 4 8-8"/><path d="M14.5 7H21v6.5"/></symbol>
+      <symbol id="i-chart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7.5 18v-6"/><path d="M12 18V8"/><path d="M16.5 18v-4"/><path d="M21 18V5"/></symbol>
+      <symbol id="i-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></symbol>
+      <symbol id="i-settings" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></symbol>
+    </svg>
+
+    <!-- Brand -->
+    <div class="relative px-5 pt-6 pb-4">
+      <a href="#" class="flex items-center gap-3">
+        <span class="brand-mark"><svg class="h-5 w-5"><use href="#i-logo"/></svg></span>
+        <span class="min-w-0">
+          <span class="block text-[15px] font-bold leading-tight tracking-tight text-white">RoomForRent</span>
+          <span class="block text-[10px] font-semibold uppercase tracking-[0.16em] text-indigo-300/70">Quản lý nhà trọ</span>
+        </span>
+      </a>
+    </div>
+
+    <!-- Workspace -->
+    <div class="px-4 pb-5">
+      <button type="button" class="workspace-card w-full text-left">
+        <span class="ws-avatar">TP</span>
+        <span class="min-w-0 flex-1">
+          <span class="block text-[10px] font-medium uppercase tracking-wider text-slate-400">Khu vực</span>
+          <span class="block truncate text-[13px] font-semibold text-white">Tân Phú · HCM</span>
+        </span>
+        <svg class="h-4 w-4 shrink-0 text-slate-500"><use href="#i-chevron"/></svg>
+      </button>
+    </div>
+
+    <!-- Nav -->
+    <nav class="flex-1 space-y-5 overflow-y-auto px-3 pb-4">
+      <div>
+        <p class="nav-group-label">Tổng quan</p>
+        <a href="#" class="nav-link">
+          <svg class="nav-ico"><use href="#i-grid"/></svg>
+          <span class="flex-1">Dashboard</span>
+        </a>
+      </div>
+
+      <div>
+        <p class="nav-group-label">Vận hành</p>
+        <a href="../Overview/BUILDING.html" class="nav-link">
+          <svg class="nav-ico"><use href="#i-building"/></svg>
+          <span class="flex-1">Tòa nhà</span>
+          <span class="nav-badge info">2</span>
+        </a>
+        <a href="../Detail/BUILDING_DETAIL.html?building=A" id="navRoomList" class="nav-link active" aria-current="page">
+          <svg class="nav-ico"><use href="#i-door"/></svg>
+          <span class="flex-1">Phòng</span>
+        </a>
+        <div class="nav-sub">
+          <a href="../Detail/BUILDING_DETAIL.html?building=A" id="navRoomListSub" class="nav-sub-link">Danh sách phòng</a>
+          <a href="ROOM_DETAIL.html" class="nav-sub-link active" aria-current="page">Chi tiết phòng</a>
+        </div>
+        <a href="#" class="nav-link">
+          <svg class="nav-ico"><use href="#i-users"/></svg>
+          <span class="flex-1">Khách hàng</span>
+        </a>
+        <a href="#" class="nav-link">
+          <svg class="nav-ico"><use href="#i-file"/></svg>
+          <span class="flex-1">Hợp đồng</span>
+          <span class="nav-badge">2</span>
+        </a>
+      </div>
+
+      <div>
+        <p class="nav-group-label">Kinh doanh</p>
+        <a href="#" class="nav-link">
+          <svg class="nav-ico"><use href="#i-receipt"/></svg>
+          <span class="flex-1">Hóa đơn / Thanh toán</span>
+          <span class="nav-badge">3</span>
+        </a>
+        <a href="#" class="nav-link">
+          <svg class="nav-ico"><use href="#i-trend"/></svg>
+          <span class="flex-1">Tài chính</span>
+        </a>
+        <a href="#" class="nav-link">
+          <svg class="nav-ico"><use href="#i-chart"/></svg>
+          <span class="flex-1">Báo cáo</span>
+        </a>
+      </div>
+    </nav>
+
+    <!-- Footer -->
+    <div>
+      <div class="mx-3 mb-3 rounded-xl border border-white/5 bg-white/[0.04] p-3">
+        <div class="flex items-center justify-between text-[11px]">
+          <span class="text-slate-400">Tỷ lệ lấp đầy</span>
+          <span id="occLabel" class="font-semibold text-emerald-300">0%</span>
+        </div>
+        <div class="mt-2 h-1.5 overflow-hidden rounded-full bg-white/10">
+          <div id="occBar" class="h-full w-0 rounded-full bg-gradient-to-r from-emerald-400 to-teal-300"></div>
+        </div>
+        <p id="occText" class="mt-2 text-[10px] text-slate-500">—</p>
+      </div>
+      <div class="border-t border-white/5 p-3">
+        <div class="flex cursor-pointer items-center gap-3 rounded-xl px-2 py-2 transition hover:bg-white/5">
+          <span class="user-avatar">MN</span>
+          <div class="min-w-0 flex-1">
+            <p class="truncate text-[13px] font-semibold text-white">Nguyễn Minh</p>
+            <p class="truncate text-[10px] text-slate-400">Quản trị viên</p>
+          </div>
+          <svg class="h-4 w-4 shrink-0 text-slate-500"><use href="#i-settings"/></svg>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ===== CONTENT ===== -->
+  <main class="ml-64 flex-1 p-8">
+    <a id="backToDetail" href="../Detail/BUILDING_DETAIL.html?building=A" class="text-sm text-indigo-600 hover:underline mb-4 inline-block">← Chi tiết tòa nhà</a>
+
+    <!-- ===== HEADER ===== -->
+    <div class="flex flex-wrap justify-between items-start gap-4 mb-6">
+      <div>
+        <div class="flex flex-wrap items-center gap-3">
+          <h1 id="rdRoomTitle" class="text-2xl font-bold">Phòng P102</h1>
+          <span id="rdStatusBadge" class="text-xs font-semibold px-2.5 py-1 rounded-full bg-indigo-100 text-indigo-800">Đang thuê</span>
+        </div>
+        <p id="rdSubtitle" class="text-gray-500 text-sm mt-1">Tòa nhà A · Tầng 1 · Tân Phú - Hồ Chí Minh</p>
+      </div>
+      <div class="flex flex-wrap items-center gap-2">
+        <select id="rdBuildingSelect" class="border rounded px-3 py-2 text-sm bg-white shadow-sm" aria-label="Chọn tòa nhà"></select>
+        <select id="rdRoomSelect" class="border rounded px-3 py-2 text-sm bg-white shadow-sm" aria-label="Chọn phòng"></select>
+        <a id="btnRoomConfig" href="../Config/ROOM_CONFIG.html?building=A" class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold px-3 py-2 rounded shadow-sm">⚙ Cấu hình phòng</a>
+      </div>
+    </div>
+
+    <!-- ===== STATS ===== -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <div class="bg-white rounded-lg shadow p-4">
+        <p class="text-xs text-gray-500 uppercase tracking-wide">Giá thuê (HĐ)</p>
+        <p id="statPrice" class="text-2xl font-bold mt-1 text-indigo-600">-</p>
+        <p id="statPriceHint" class="text-[10px] text-gray-400 mt-1">Giá niêm yết</p>
+      </div>
+      <div class="bg-white rounded-lg shadow p-4">
+        <p class="text-xs text-gray-500 uppercase tracking-wide">Đã cọc</p>
+        <p id="statDeposit" class="text-2xl font-bold mt-1">-</p>
+        <p id="statDepositHint" class="text-[10px] text-gray-400 mt-1">Mức cọc niêm yết</p>
+      </div>
+      <div class="bg-white rounded-lg shadow p-4">
+        <p class="text-xs text-gray-500 uppercase tracking-wide">Diện tích</p>
+        <p id="statArea" class="text-2xl font-bold mt-1">-</p>
+      </div>
+      <div class="bg-white rounded-lg shadow p-4">
+        <p class="text-xs text-gray-500 uppercase tracking-wide">Khách thuê</p>
+        <p id="statTenants" class="text-2xl font-bold mt-1 text-emerald-600">0</p>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 xl:grid-cols-3 gap-6 items-start">
+      <div class="xl:col-span-2">
+
+        <!-- ===== TABS ===== -->
+        <div id="rdTabs" class="mb-4 flex gap-1 overflow-x-auto rounded-xl bg-white p-1.5 shadow" role="tablist" aria-label="Nội dung chi tiết phòng">
+          <button type="button" data-tab="overview" role="tab" aria-selected="true" class="tab-btn is-active">🏠 Tổng quan</button>
+          <button type="button" data-tab="contract" role="tab" aria-selected="false" class="tab-btn">
+            <span>📄 Hợp đồng &amp; khách thuê</span>
+            <span id="tabContractCount" class="tab-badge">0</span>
+          </button>
+          <button type="button" data-tab="bills" role="tab" aria-selected="false" class="tab-btn">
+            <span>🧾 Hóa đơn &amp; công nợ</span>
+            <span id="tabBillCount" class="tab-badge">0</span>
+          </button>
+        </div>
+
+        <!-- ===== TAB: TỔNG QUAN ===== -->
+        <div data-tab-panel="overview" class="space-y-6">
+
+        <!-- ===== THÔNG TIN PHÒNG ===== -->
+        <div class="bg-white rounded-lg shadow p-4">
+          <div class="flex flex-wrap justify-between items-center gap-2 mb-4">
+            <h3 class="font-semibold">Thông tin phòng</h3>
+            <button id="btnEditRoom" type="button" class="bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-semibold px-3 py-2 rounded">✏️ Sửa thông tin</button>
+          </div>
+          <div id="roomInfoContent" class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3 text-sm"></div>
+        </div>
+
+        <!-- ===== NỘI THẤT & TIỆN ÍCH ===== -->
+        <div class="bg-white rounded-lg shadow p-4">
+          <h3 class="font-semibold mb-4">Nội thất &amp; tiện ích</h3>
+          <div class="space-y-4">
+            <div>
+              <p class="text-xs text-gray-500 uppercase tracking-wide mb-2">Kiểu phòng</p>
+              <div id="roomTypes" class="flex flex-wrap gap-2"></div>
+            </div>
+            <div>
+              <p class="text-xs text-gray-500 uppercase tracking-wide mb-2">Nội thất trong phòng</p>
+              <div id="roomFurnishings" class="flex flex-wrap gap-2"></div>
+            </div>
+            <div>
+              <p class="text-xs text-gray-500 uppercase tracking-wide mb-2">Tiện ích tòa nhà (miễn phí)</p>
+              <div id="buildingAmenities" class="flex flex-wrap gap-2"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== HÌNH ẢNH PHÒNG ===== -->
+        <div class="bg-white rounded-lg shadow p-4">
+          <div class="flex flex-wrap justify-between items-center gap-2 mb-3">
+            <div>
+              <h3 class="font-semibold">Hình ảnh phòng</h3>
+              <p class="text-xs text-gray-500"><span id="roomPhotoCount">0</span> ảnh · bấm ảnh để xem lớn.</p>
+            </div>
+            <span class="rounded-full bg-indigo-50 px-2 py-0.5 text-[10px] font-semibold text-indigo-600">Ảnh minh hoạ</span>
+          </div>
+          <div id="roomGallery" class="grid grid-cols-2 sm:grid-cols-4 gap-3"></div>
+        </div>
+
+        </div><!-- /tab: overview -->
+
+        <!-- ===== TAB: HỢP ĐỒNG ===== -->
+        <div data-tab-panel="contract" class="space-y-6 hidden">
+
+        <!-- ===== HỢP ĐỒNG & KHÁCH THUÊ ===== -->
+        <div class="bg-white rounded-lg shadow p-4">
+          <div class="flex flex-wrap justify-between items-center gap-2 mb-4">
+            <div>
+              <h3 class="font-semibold">Hợp đồng &amp; khách thuê</h3>
+              <p class="text-xs text-gray-500">Giá phòng trong hợp đồng là cơ sở tính tiền phòng hàng tháng.</p>
+            </div>
+            <span id="contractStatus" class="text-xs font-semibold px-2.5 py-1 rounded-full bg-gray-100 text-gray-600">Chưa có hợp đồng</span>
+          </div>
+          <div id="contractContent"></div>
+        </div>
+
+        <!-- ===== DÒNG THỜI GIAN HỢP ĐỒNG ===== -->
+        <div class="bg-white rounded-lg shadow p-4">
+          <div class="flex flex-wrap justify-between items-start gap-2 mb-3">
+            <div>
+              <h3 class="font-semibold">Dòng thời gian hợp đồng</h3>
+              <p class="text-xs text-gray-500">Các giai đoạn có hợp đồng, chủ hợp đồng và khoảng thời gian phòng không có hợp đồng.</p>
+            </div>
+            <div class="flex flex-wrap items-center gap-3 text-[11px] text-gray-500">
+              <span class="inline-flex items-center gap-1.5"><span class="h-2.5 w-2.5 rounded-sm bg-indigo-500"></span>Có HĐ</span>
+              <span class="inline-flex items-center gap-1.5"><span class="h-2.5 w-2.5 rounded-sm bg-emerald-500"></span>HĐ hiện tại</span>
+              <span class="inline-flex items-center gap-1.5"><span class="h-2.5 w-2.5 rounded-sm bg-amber-400"></span>Chờ ký</span>
+              <span class="inline-flex items-center gap-1.5"><span class="h-2.5 w-2.5 rounded-sm bg-gray-300"></span>Không có HĐ</span>
+            </div>
+          </div>
+          <div id="contractTimeline"></div>
+        </div>
+
+        </div><!-- /tab: contract -->
+
+        <!-- ===== TAB: HÓA ĐƠN ===== -->
+        <div data-tab-panel="bills" class="space-y-6 hidden">
+
+        <!-- ===== HÓA ĐƠN & CÔNG NỢ ===== -->
+        <div class="bg-white rounded-lg shadow p-4">
+          <div class="flex flex-wrap justify-between items-start gap-2 mb-3">
+            <div>
+              <h3 class="font-semibold">Hóa đơn &amp; công nợ</h3>
+              <p class="text-xs text-gray-500">Điện 4.000đ/kWh · nước 30.000đ/m³ · xe 100.000đ/xe · quản lý 150.000đ/người.</p>
+              <p id="billCreateHint" class="mt-0.5 text-[11px] text-gray-400"></p>
+            </div>
+            <div class="flex flex-wrap items-center gap-2">
+              <select id="billPeriodSelect" class="border rounded px-2.5 py-1.5 text-sm bg-white" aria-label="Chọn kỳ hóa đơn"></select>
+              <button id="btnCreateInvoice" type="button" class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold px-3 py-1.5 rounded">+ Tạo hóa đơn</button>
+            </div>
+          </div>
+          <div id="billDetail"></div>
+          <div class="mt-5">
+            <div class="flex flex-wrap justify-between items-center gap-2 mb-2">
+              <h4 class="text-sm font-semibold">Lịch sử hóa đơn</h4>
+              <button id="btnViewAllInvoices" type="button" class="text-sm text-indigo-600 hover:underline">Xem tất cả</button>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm">
+                <thead>
+                  <tr class="bg-gray-100 text-[11px] uppercase tracking-wide text-gray-600">
+                    <th class="p-2 text-left font-semibold whitespace-nowrap">Kỳ</th>
+                    <th class="p-2 text-right font-semibold whitespace-nowrap">Số ngày ở</th>
+                    <th class="p-2 text-right font-semibold whitespace-nowrap">Điện (cũ → mới)</th>
+                    <th class="p-2 text-right font-semibold whitespace-nowrap">Nước (cũ → mới)</th>
+                    <th class="p-2 text-right font-semibold whitespace-nowrap">Phải thu</th>
+                    <th class="p-2 text-right font-semibold whitespace-nowrap">Đã thu</th>
+                    <th class="p-2 text-left font-semibold whitespace-nowrap">Trạng thái</th>
+                  </tr>
+                </thead>
+                <tbody id="invoiceBody" class="divide-y divide-gray-100"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        </div><!-- /tab: bills -->
+      </div>
+
+      <!-- ===== RIGHT COLUMN ===== -->
+      <div class="space-y-6 xl:sticky xl:top-4">
+
+        <!-- Trạng thái -->
+        <div class="bg-white rounded-lg shadow p-4">
+          <h3 class="font-semibold mb-1">Trạng thái phòng</h3>
+          <p class="text-xs text-gray-500 mb-3">Chọn trạng thái để cập nhật phòng.</p>
+          <div id="statusList" class="space-y-1"></div>
+          <p id="statusHint" class="text-[11px] text-gray-400 mt-3"></p>
+        </div>
+
+        <!-- Thao tác nhanh -->
+        <div class="bg-white rounded-lg shadow p-4">
+          <h3 class="font-semibold mb-3">Thao tác nhanh</h3>
+          <div class="space-y-2">
+            <button id="btnQuickEdit" type="button" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold py-2 rounded">✏️ Sửa phòng</button>
+            <a id="btnQuickConfig" href="../Config/ROOM_CONFIG.html?building=A" class="block text-center w-full bg-white border hover:bg-gray-50 text-gray-700 text-sm font-semibold py-2 rounded">⚙ Cấu hình phòng</a>
+            <button id="btnAddTenant" type="button" class="w-full bg-white border hover:bg-gray-50 text-gray-700 text-sm font-semibold py-2 rounded">👤 Thêm khách thuê</button>
+            <button id="btnQuickInvoice" type="button" class="w-full bg-white border hover:bg-gray-50 text-gray-700 text-sm font-semibold py-2 rounded">🧾 Xem hóa đơn</button>
+            <a id="btnBackBuilding" href="../Detail/BUILDING_DETAIL.html?building=A" class="block text-center w-full bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-semibold py-2 rounded">🏢 Về tòa nhà</a>
+          </div>
+        </div>
+
+        <!-- Chỉ số điện nước -->
+        <div class="bg-white rounded-lg shadow p-4">
+          <h3 class="font-semibold mb-3">Chỉ số điện nước</h3>
+          <div class="grid grid-cols-2 gap-3">
+            <div class="rounded-lg border border-gray-100 bg-gray-50 p-3">
+              <p class="text-[11px] uppercase tracking-wide text-gray-500">Điện</p>
+              <p id="readElectric" class="text-xl font-bold mt-1">0</p>
+              <p class="text-[10px] text-gray-400">kWh</p>
+            </div>
+            <div class="rounded-lg border border-gray-100 bg-gray-50 p-3">
+              <p class="text-[11px] uppercase tracking-wide text-gray-500">Nước</p>
+              <p id="readWater" class="text-xl font-bold mt-1">0</p>
+              <p class="text-[10px] text-gray-400">m³</p>
+            </div>
+          </div>
+          <p class="text-[11px] text-gray-400 mt-3">Cập nhật gần nhất 01/11/2026 · dùng để tính hóa đơn kỳ 11/2026.</p>
+        </div>
+
+        <!-- Tòa nhà -->
+        <div class="bg-white rounded-lg shadow p-4">
+          <h3 class="font-semibold mb-3">Tòa nhà</h3>
+          <div id="miniBuildingContent" class="text-sm space-y-2"></div>
+          <a id="btnOpenBuilding" href="../Detail/BUILDING_DETAIL.html?building=A" class="mt-3 block text-center w-full bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-semibold py-2 rounded">Mở chi tiết tòa nhà →</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ===== ROOM EDITOR (modal) ===== -->
+  <div id="roomEditOverlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto">
+      <h3 id="roomEditTitle" class="font-semibold mb-1">Sửa phòng</h3>
+      <p class="text-xs text-gray-500 mb-4">Cập nhật thông tin phòng (dữ liệu minh hoạ).</p>
+      <p id="roomEditError" class="hidden text-xs text-rose-600 mb-2"></p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label class="text-xs text-gray-500">Mã phòng</label>
+          <input id="e_code" type="text" class="w-full border rounded px-2 py-1.5 text-sm bg-gray-100 text-gray-500" readonly>
+        </div>
+        <div>
+          <label class="text-xs text-gray-500">Giá thuê (đ) <span class="text-rose-600">*</span></label>
+          <input id="e_price" type="number" min="0" step="100000" class="w-full border rounded px-2 py-1.5 text-sm">
+        </div>
+        <div>
+          <label class="text-xs text-gray-500">Tiền cọc niêm yết (đ)</label>
+          <input id="e_deposit" type="number" min="0" step="100000" class="w-full border rounded px-2 py-1.5 text-sm">
+        </div>
+        <div>
+          <label class="text-xs text-gray-500">Giá phòng hợp đồng (đ)</label>
+          <input id="e_rent" type="number" min="0" step="100000" class="w-full border rounded px-2 py-1.5 text-sm disabled:bg-gray-100 disabled:text-gray-400">
+          <p class="text-[10px] text-gray-400 mt-1">Cơ sở tính tiền phòng hàng tháng.</p>
+        </div>
+        <div>
+          <label class="text-xs text-gray-500">Đã cọc theo hợp đồng (đ)</label>
+          <input id="e_deposit_paid" type="number" min="0" step="100000" class="w-full border rounded px-2 py-1.5 text-sm disabled:bg-gray-100 disabled:text-gray-400">
+        </div>
+        <div>
+          <label class="text-xs text-gray-500">Diện tích (m²)</label>
+          <input id="e_area" type="number" min="0" step="1" class="w-full border rounded px-2 py-1.5 text-sm">
+        </div>
+        <div>
+          <label class="text-xs text-gray-500">Chỉ số điện</label>
+          <input id="e_electric" type="number" min="0" class="w-full border rounded px-2 py-1.5 text-sm">
+        </div>
+        <div>
+          <label class="text-xs text-gray-500">Chỉ số nước</label>
+          <input id="e_water" type="number" min="0" class="w-full border rounded px-2 py-1.5 text-sm">
+        </div>
+        <div class="sm:col-span-2">
+          <label class="text-xs text-gray-500">Kiểu phòng (chọn nhiều)</label>
+          <div id="editTypeChips" class="flex flex-wrap gap-2 mt-2"></div>
+        </div>
+        <div class="sm:col-span-2">
+          <label class="text-xs text-gray-500">Nội thất (chọn nhiều)</label>
+          <div id="editFurnishChips" class="flex flex-wrap gap-2 mt-2"></div>
+        </div>
+        <div class="sm:col-span-2">
+          <label class="text-xs text-gray-500">Ghi chú</label>
+          <textarea id="e_note" rows="2" class="w-full border rounded px-2 py-1.5 text-sm" placeholder="Ghi chú cho phòng..."></textarea>
+        </div>
+      </div>
+      <div class="flex justify-end gap-2 mt-5">
+        <button type="button" onclick="closeRoomEditor()" class="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300 text-sm font-semibold">Hủy</button>
+        <button type="button" onclick="saveRoomEditor()" class="px-4 py-2 rounded bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold">Lưu thay đổi</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== CCCD PREVIEW (modal) ===== -->
+  <div id="cccdOverlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-xl shadow-lg p-5 w-full max-w-md">
+      <div class="flex items-start justify-between gap-3">
+        <div>
+          <h3 class="font-semibold">Ảnh CCCD / hồ sơ</h3>
+          <p class="text-xs text-gray-500">Số CCCD và ảnh lưu theo mã hồ sơ.</p>
+        </div>
+        <button type="button" onclick="closeCccd()" class="text-gray-400 hover:text-gray-700 text-xl leading-none">✕</button>
+      </div>
+      <div class="mt-4 rounded-xl border-2 border-dashed border-indigo-200 bg-gradient-to-br from-indigo-50 to-white p-4">
+        <div class="flex items-center justify-between text-[10px] font-bold uppercase tracking-widest text-indigo-500">
+          <span>Căn cước công dân</span>
+          <span class="rounded bg-white/70 px-1.5 py-0.5 text-[9px] text-gray-500">Minh hoạ</span>
+        </div>
+        <div class="mt-4 flex gap-4">
+          <div class="grid h-24 w-20 shrink-0 place-items-center rounded-lg bg-gray-200 text-3xl text-gray-400">👤</div>
+          <div class="min-w-0">
+            <p id="cccdName" class="truncate font-semibold text-gray-800"></p>
+            <p id="cccdNumber" class="mt-1 font-mono text-sm text-gray-700"></p>
+            <p id="cccdRef" class="mt-1 text-[10px] text-gray-400"></p>
+          </div>
+        </div>
+      </div>
+      <p class="mt-3 text-[11px] text-gray-400">Ảnh minh hoạ – chưa kết nối kho ảnh thật.</p>
+      <button type="button" onclick="closeCccd()" class="mt-4 w-full rounded bg-gray-200 py-2 text-sm font-semibold hover:bg-gray-300">Đóng</button>
+    </div>
+  </div>
+
+  <!-- ===== IMAGE LIGHTBOX (modal) ===== -->
+  <div id="imgOverlay" class="fixed inset-0 bg-black/80 flex items-center justify-center z-[70] hidden p-4">
+    <div class="w-full max-w-3xl" onclick="event.stopPropagation()">
+      <div class="overflow-hidden rounded-xl bg-slate-900 shadow-2xl">
+        <img id="imgViewer" src="" alt="" class="mx-auto max-h-[72vh] w-auto max-w-full object-contain">
+      </div>
+      <div class="mt-3 flex items-center justify-between gap-3 text-white">
+        <p id="imgCaption" class="text-sm"></p>
+        <button type="button" onclick="closeImage()" class="rounded bg-white/15 px-4 py-2 text-sm font-semibold hover:bg-white/25">Đóng</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== CREATE BILL (modal) ===== -->
+  <div id="billOverlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-2xl max-h-[92vh] overflow-y-auto">
+      <div class="flex items-start justify-between gap-3">
+        <div>
+          <h3 class="font-semibold">Tạo hóa đơn tháng</h3>
+          <p id="billModalSub" class="text-xs text-gray-500">Nhập chỉ số điện / nước mới.</p>
+        </div>
+        <button type="button" onclick="closeBillModal()" class="text-gray-400 hover:text-gray-700 text-xl leading-none" aria-label="Đóng">✕</button>
+      </div>
+      <p id="billError" class="hidden mt-3 rounded-lg bg-rose-50 px-3 py-2 text-xs font-semibold text-rose-600"></p>
+
+      <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label class="text-xs text-gray-500">Kỳ hóa đơn</label>
+          <select id="b_period" class="w-full border rounded px-2 py-1.5 text-sm bg-white"></select>
+        </div>
+        <div>
+          <label class="text-xs text-gray-500">Số ngày ở (tự tính theo hợp đồng)</label>
+          <input id="b_days" type="text" readonly class="w-full border rounded px-2 py-1.5 text-sm bg-gray-100 text-gray-600">
+        </div>
+        <div class="rounded-lg border border-amber-100 bg-amber-50/50 p-3">
+          <p class="text-[11px] font-semibold uppercase tracking-wide text-amber-700">Điện · 4.000đ/kWh</p>
+          <div class="mt-2 grid grid-cols-2 gap-2">
+            <div>
+              <label class="text-[10px] text-gray-500">Số cũ</label>
+              <input id="b_e_old" type="number" readonly class="w-full border rounded px-2 py-1.5 text-sm bg-white/70 text-gray-600">
+            </div>
+            <div>
+              <label class="text-[10px] text-gray-500">Số mới <span class="text-rose-600">*</span></label>
+              <input id="b_e_new" type="number" min="0" class="w-full border rounded px-2 py-1.5 text-sm bg-white">
+            </div>
+          </div>
+        </div>
+        <div class="rounded-lg border border-sky-100 bg-sky-50/50 p-3">
+          <p class="text-[11px] font-semibold uppercase tracking-wide text-sky-700">Nước · 30.000đ/m³</p>
+          <div class="mt-2 grid grid-cols-2 gap-2">
+            <div>
+              <label class="text-[10px] text-gray-500">Số cũ</label>
+              <input id="b_w_old" type="number" readonly class="w-full border rounded px-2 py-1.5 text-sm bg-white/70 text-gray-600">
+            </div>
+            <div>
+              <label class="text-[10px] text-gray-500">Số mới <span class="text-rose-600">*</span></label>
+              <input id="b_w_new" type="number" min="0" class="w-full border rounded px-2 py-1.5 text-sm bg-white">
+            </div>
+          </div>
+        </div>
+        <div>
+          <label class="text-xs text-gray-500">Nợ cũ / giảm giá (đ)</label>
+          <input id="b_debt" type="number" step="1000" class="w-full border rounded px-2 py-1.5 text-sm">
+        </div>
+        <div>
+          <label class="text-xs text-gray-500">Đã thu (đ)</label>
+          <input id="b_paid" type="number" min="0" step="1000" class="w-full border rounded px-2 py-1.5 text-sm">
+        </div>
+        <div class="sm:col-span-2">
+          <label class="text-xs text-gray-500">Ghi chú</label>
+          <input id="b_note" type="text" class="w-full border rounded px-2 py-1.5 text-sm" placeholder="VD: thu tiền mặt, hẹn ngày 05/12...">
+        </div>
+      </div>
+
+      <div id="billPreview" class="mt-4"></div>
+
+      <div class="mt-5 flex flex-wrap justify-end gap-2">
+        <button type="button" onclick="closeBillModal()" class="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300 text-sm font-semibold">Hủy</button>
+        <button type="button" onclick="saveBill()" class="px-4 py-2 rounded bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold">Lưu hóa đơn</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TOAST ===== -->
+  <div id="toast" class="hidden fixed bottom-6 right-6 z-[60] items-center gap-2 rounded-lg bg-gray-900 text-white text-sm px-4 py-3 shadow-xl">
+    <span class="text-emerald-400">✓</span>
+    <span id="toastMsg">Đã cập nhật.</span>
+  </div>
+
+  <script>
+    var STATUS_ORDER = ['available', 'occupied', 'reserved', 'maintenance', 'blocked'];
+    var STATUS_META = {
+      available:   { label: 'Sắp trống', dot: 'bg-emerald-500', badge: 'bg-emerald-100 text-emerald-800', hint: 'Phòng đang trống, sẵn sàng cho thuê.' },
+      occupied:    { label: 'Đang thuê', dot: 'bg-indigo-500', badge: 'bg-indigo-100 text-indigo-800', hint: 'Phòng đang có khách thuê và hợp đồng hiệu lực.' },
+      reserved:    { label: 'Đặt cọc / Chờ HĐ', dot: 'bg-amber-500', badge: 'bg-amber-100 text-amber-800', hint: 'Khách đã đặt cọc, đang chờ ký hợp đồng.' },
+      maintenance: { label: 'Bảo trì', dot: 'bg-sky-500', badge: 'bg-sky-100 text-sky-800', hint: 'Phòng đang sửa chữa / bảo trì.' },
+      blocked:     { label: 'Đã block', dot: 'bg-rose-500', badge: 'bg-rose-100 text-rose-800', hint: 'Phòng tạm khóa, không cho thuê.' }
+    };
+
+    var AMENITY_OPTIONS = ['Camera', 'Thang máy', 'Thang bộ', 'Hành lang', 'Vân tay', 'FaceId', 'Vệ sinh hạ tầng', 'Wifi', 'Chỗ để xe máy'];
+    var FURNISHING_OPTIONS = ['Tủ lạnh', 'Máy giặt + sấy', 'Máy lạnh', 'Tủ giày', 'Bàn học', 'Giường', 'Nệm', 'Tủ bếp trên/dưới', 'Bàn ghế ăn', 'Máy hút mùi', 'Sofa', 'Tủ quần áo'];
+    var ROOM_TYPE_OPTIONS = ['Tách bếp', 'Ban công', '1PN', '2PN', '3PN', 'CS trời', 'Duplex'];
+    var DEFAULT_FURNISHINGS = ['Tủ lạnh', 'Tủ quần áo', 'Giường', 'Bàn ghế ăn', 'Sofa'];
+
+    var BUILDINGS = {
+      A: {
+        id: 'A', name: 'Tòa nhà A', address: 'Tân Phú - Hồ Chí Minh', floors: 6,
+        ownerName: 'Anh Nam', ownerPhone: '0909 123 456',
+        managementFee: 300000, electricity: 4000, water: 30000,
+        amenities: ['Camera', 'Thang máy', 'Vân tay', 'FaceId', 'Vệ sinh hạ tầng', 'Wifi']
+      },
+      B: {
+        id: 'B', name: 'Tòa nhà B', address: 'Tân Phú - Hồ Chí Minh', floors: 6,
+        ownerName: 'Anh Nam', ownerPhone: '0909 123 456',
+        managementFee: 300000, electricity: 4000, water: 30000,
+        amenities: ['Camera', 'Thang máy', 'Vân tay', 'FaceId', 'Vệ sinh hạ tầng', 'Wifi']
+      }
+    };
+
+    // ===== HỢP ĐỒNG (khớp BUILDING_DETAIL.html) =====
+    var CONTRACTS = {
+      'A|P102': {
+        signed: true, startDate: '2026-03-01', endDate: '2027-02-28',
+        rent: 3500000, deposit: 3500000,
+        note: 'Khách ở 2 người, có nuôi mèo.',
+        tenants: [
+          { name: 'Nguyễn Văn An', phone: '0901 234 567', role: 'Đại diện', cccd: '079201012345', cccdRef: 'TPP - P102' },
+          { name: 'Trần Thị Bích', phone: '0902 345 678', role: 'Ở cùng', cccd: '079202023456', cccdRef: 'TPP - P102' }
+        ],
+        devices: [
+          { plate: '59-X1 123.45', note: 'Honda Vision' },
+          { plate: '59-X2 678.90', note: 'Yamaha Exciter' }
+        ]
+      },
+      'A|P103': {
+        signed: false, startDate: '2026-11-20', endDate: '2027-11-19',
+        tenants: [{ name: 'Lê Minh Tuấn', phone: '0903 456 789', role: 'Đại diện' }],
+        devices: [{ plate: '59-X3 111.22', note: 'Yamaha Janus' }]
+      },
+      'A|P202': {
+        signed: true, startDate: '2026-01-15', endDate: '2027-01-14',
+        tenants: [{ name: 'Phạm Thu Hà', phone: '0904 567 890', role: 'Đại diện' }],
+        devices: [{ plate: '59-X4 222.33', note: 'Honda Lead' }]
+      },
+      'A|P302': {
+        signed: false, startDate: '2026-11-25', endDate: '2027-11-24',
+        tenants: [{ name: 'Võ Quốc Bảo', phone: '0905 678 901', role: 'Đại diện' }],
+        devices: []
+      },
+      'A|P303': {
+        signed: true, startDate: '2025-12-01', endDate: '2026-11-30',
+        rent: 3300000, deposit: 3300000,
+        tenants: [
+          { name: 'Đặng Hoài Nam', phone: '0906 789 012', role: 'Đại diện' },
+          { name: 'Bùi Kim Ngân', phone: '0907 890 123', role: 'Ở cùng' }
+        ],
+        devices: [{ plate: '59-X5 333.44', note: 'Honda Air Blade' }]
+      },
+      'A|P402': {
+        signed: true, startDate: '2026-06-01', endDate: '2027-05-31',
+        tenants: [{ name: 'Hoàng Anh Tú', phone: '0908 901 234', role: 'Đại diện' }],
+        devices: [
+          { plate: '59-X6 444.55', note: 'Honda SH' },
+          { plate: '59-X7 555.66', note: 'Xe đạp điện' }
+        ]
+      },
+      'A|P403': {
+        signed: false, startDate: '2026-12-01', endDate: '2027-11-30',
+        tenants: [{ name: 'Ngô Thanh Vy', phone: '0909 012 345', role: 'Đại diện' }],
+        devices: [{ plate: '59-X8 999.00', note: 'VinFast Klara' }]
+      },
+      'A|P502': {
+        signed: true, startDate: '2026-02-01', endDate: '2027-01-31',
+        tenants: [
+          { name: 'Trịnh Văn Hùng', phone: '0910 123 456', role: 'Đại diện' },
+          { name: 'Lý Thị Mai', phone: '0911 234 567', role: 'Ở cùng' }
+        ],
+        devices: [{ plate: '59-X9 666.77', note: 'Yamaha Grande' }]
+      },
+      'A|P503': {
+        signed: false, startDate: '2026-11-18', endDate: '2027-11-17',
+        tenants: [{ name: 'Đỗ Gia Hân', phone: '0912 345 678', role: 'Đại diện' }],
+        devices: []
+      },
+      'A|P602': {
+        signed: true, startDate: '2026-04-01', endDate: '2027-03-31',
+        rent: 6200000, deposit: 6200000,
+        tenants: [{ name: 'Nguyễn Đức Thịnh', phone: '0913 456 789', role: 'Đại diện' }],
+        devices: [{ plate: '59-X9 777.88', note: 'Honda Winner' }]
+      },
+      'B|P201': {
+        signed: false, startDate: '2026-11-22', endDate: '2027-11-21',
+        tenants: [{ name: 'Mai Phương Thảo', phone: '0914 567 890', role: 'Đại diện' }],
+        devices: []
+      },
+      'B|P301': {
+        signed: true, startDate: '2026-05-01', endDate: '2027-04-30',
+        rent: 3200000, deposit: 3200000,
+        tenants: [{ name: 'Trần Quốc Cường', phone: '0915 678 901', role: 'Đại diện' }],
+        devices: [{ plate: '59-Y1 888.99', note: 'Honda Future' }]
+      }
+    };
+
+    // ===== DỮ LIỆU PHÒNG (khớp BUILDING_DETAIL.html) =====
+    function R(b, f, code, status, price, deposit, area, electric, water, types, furnish) {
+      return {
+        b: b, f: f, code: code, status: status,
+        price: price, deposit: deposit, area: area,
+        electric: electric, water: water, types: types,
+        furnishings: furnish ? DEFAULT_FURNISHINGS.slice() : [],
+        note: '', contract: null
+      };
+    }
+
+    var ROOMS = [
+      R('A', 1, 'P101', 'available', 3400000, 1500000, 25, 1200, 45, ['Ban công'], true),
+      R('A', 1, 'P102', 'occupied', 3400000, 1500000, 25, 1180, 40, ['Ban công'], true),
+      R('A', 1, 'P103', 'reserved', 3400000, 1500000, 25, 0, 0, ['Ban công'], true),
+      R('A', 1, 'P104', 'available', 3500000, 1500000, 28, 0, 0, ['Ban công', '1PN'], true),
+      R('A', 1, 'P105', 'maintenance', 3500000, 1500000, 28, 1150, 38, [], false),
+      R('A', 2, 'P201', 'available', 3500000, 1500000, 26, 0, 0, ['1PN'], true),
+      R('A', 2, 'P202', 'occupied', 3400000, 1500000, 26, 1320, 52, ['1PN'], true),
+      R('A', 3, 'P301', 'available', 3600000, 1500000, 30, 0, 0, ['1PN', 'Ban công'], true),
+      R('A', 3, 'P302', 'reserved', 3400000, 1500000, 30, 0, 0, ['1PN'], true),
+      R('A', 3, 'P303', 'occupied', 3200000, 1500000, 24, 980, 30, [], false),
+      R('A', 4, 'P401', 'available', 3400000, 1500000, 24, 0, 0, ['Tách bếp'], true),
+      R('A', 4, 'P402', 'occupied', 3300000, 1500000, 24, 1420, 60, ['Tách bếp'], true),
+      R('A', 4, 'P403', 'reserved', 3400000, 1500000, 24, 0, 0, ['Tách bếp'], true),
+      R('A', 4, 'P404', 'available', 3400000, 1500000, 24, 0, 0, ['Tách bếp'], true),
+      R('A', 4, 'P405', 'maintenance', 3400000, 1500000, 24, 1100, 35, [], false),
+      R('A', 5, 'P501', 'available', 3400000, 1500000, 22, 0, 0, ['CS trời'], true),
+      R('A', 5, 'P502', 'occupied', 3200000, 1500000, 22, 1250, 48, ['CS trời'], true),
+      R('A', 5, 'P503', 'reserved', 3400000, 1500000, 22, 0, 0, ['CS trời'], true),
+      R('A', 6, 'P601', 'available', 5800000, 1500000, 45, 0, 0, ['2PN', 'Ban công'], true),
+      R('A', 6, 'P602', 'occupied', 6000000, 1500000, 48, 1560, 70, ['2PN', 'Duplex'], true),
+      R('B', 1, 'P101', 'available', 3000000, 1500000, 20, 0, 0, ['1PN'], true),
+      R('B', 1, 'P102', 'blocked', 3000000, 1500000, 20, 0, 0, [], false),
+      R('B', 2, 'P201', 'reserved', 3000000, 1500000, 21, 0, 0, ['1PN'], true),
+      R('B', 2, 'P202', 'available', 3100000, 1500000, 21, 0, 0, ['1PN'], true),
+      R('B', 3, 'P301', 'occupied', 3100000, 1500000, 22, 1050, 32, ['1PN'], true),
+      R('B', 3, 'P302', 'available', 3200000, 1500000, 22, 0, 0, ['1PN'], true)
+    ];
+
+    var ROOM_NOTES = {
+      'A|P102': 'Khách ở 2 người, có nuôi mèo.',
+      'A|P105': 'Đang sửa điều hòa – dự kiến xong 20/11.',
+      'A|P602': 'Phòng duplex, khách thuê dài hạn.',
+      'B|P301': 'Khách đã đăng ký 1 xe máy.'
+    };
+
+    function fakeCccd(room, i) {
+      var seed = hashStr(room.b + '|' + room.code + '|' + i);
+      return '079' + String(200000000 + (seed % 799999999));
+    }
+
+    ROOMS.forEach(function (r) {
+      r.note = ROOM_NOTES[r.b + '|' + r.code] || '';
+      r.contract = CONTRACTS[r.b + '|' + r.code] || null;
+      r.photos = r.photos || buildRoomPhotos(r);
+      r.customBills = r.customBills || {};
+
+      var c = r.contract;
+      if (!c) { return; }
+      c.code = c.code || ('HĐ-' + r.b + '-' + r.code);
+      c.rent = c.rent || r.price;
+      c.deposit = c.deposit || r.deposit || c.rent;
+      c.tenants = c.tenants || [];
+      c.vehicles = (c.vehicles || c.devices || []).map(function (v) {
+        var plate = v.plate || '';
+        return {
+          plate: plate,
+          type: v.type || v.note || '',
+          note: v.note || '',
+          image: v.image || vehiclePhotoSvg(plate, hashStr(plate + '|' + r.code))
+        };
+      });
+      c.tenants.forEach(function (t, i) {
+        t.cccd = t.cccd || fakeCccd(r, i);
+        t.cccdRef = t.cccdRef || ('TPP - ' + r.code);
+        t.cccdImage = true;
+      });
+      if (!c.note) { c.note = r.note || ''; }
+    });
+
+    // Vài phòng có thêm máy giặt để minh hoạ dòng "Tủ lạnh / Máy giặt" trong hóa đơn.
+    ['A|P602', 'B|P301'].forEach(function (key) {
+      var target = ROOMS.filter(function (r) { return r.b + '|' + r.code === key; })[0];
+      if (target && target.furnishings.indexOf('Máy giặt + sấy') === -1) {
+        target.furnishings.push('Máy giặt + sấy');
+      }
+    });
+
+    // ---------- STATE ----------
+    var currentBuildingId = 'A';
+    var currentRoomCode = 'P102';
+    var currentBillPeriod = null;
+    var currentTab = 'overview';
+    var addingTenant = false;
+    var addingVehicle = false;
+    var pendingVehiclePhoto = null;
+    var OWNER_POOL = ['Lê Văn Hùng', 'Trần Thị Mai', 'Phạm Quốc Bảo', 'Nguyễn Thị Lan', 'Đỗ Minh Khoa', 'Vũ Hoàng Nam'];
+
+    // ---------- HELPERS ----------
+    function fmtMoney(n) {
+      return (n || n === 0) ? Number(n).toLocaleString('vi-VN') + ' đ' : '-';
+    }
+    function fmtDateVN(iso) {
+      if (!iso) { return '—'; }
+      var p = String(iso).split('-');
+      return p.length === 3 ? p[2] + '/' + p[1] + '/' + p[0] : String(iso);
+    }
+    function pad2(n) { return n < 10 ? '0' + n : '' + n; }
+    function isoOf(d) { return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate()); }
+    function todayISO() { return isoOf(new Date()); }
+    function addMonths(iso, n) {
+      var d = new Date(iso + 'T00:00:00');
+      var day = d.getDate();
+      d.setDate(1);
+      d.setMonth(d.getMonth() + n);
+      var last = new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
+      d.setDate(Math.min(day, last));
+      return isoOf(d);
+    }
+    function addDays(iso, n) {
+      var d = new Date(iso + 'T00:00:00');
+      d.setDate(d.getDate() + n);
+      return isoOf(d);
+    }
+    function hashStr(s) {
+      var h = 0;
+      for (var i = 0; i < String(s).length; i++) {
+        h = ((h << 5) - h + String(s).charCodeAt(i)) | 0;
+      }
+      return Math.abs(h);
+    }
+    function periodLabel(d) { return pad2(d.getMonth() + 1) + '/' + d.getFullYear(); }
+    function periodIndex(p) {
+      var parts = String(p).split('/');
+      return (parseInt(parts[1], 10) || 0) * 12 + (parseInt(parts[0], 10) || 0);
+    }
+
+    // ---------- PHOTO HELPERS (ảnh minh hoạ, không cần backend) ----------
+    function svgUri(svg) { return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg); }
+    function escXml(s) {
+      return String(s == null ? '' : s)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    function roomPhotoSvg(variant, hue, code) {
+      var wall1 = 'hsl(' + hue + ',44%,96%)';
+      var wall2 = 'hsl(' + hue + ',34%,87%)';
+      var accent = 'hsl(' + hue + ',52%,60%)';
+      var head = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">' +
+        '<defs><linearGradient id="w" x1="0" y1="0" x2="0" y2="1">' +
+        '<stop offset="0" stop-color="' + wall1 + '"/><stop offset="1" stop-color="' + wall2 + '"/></linearGradient>' +
+        '<linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">' +
+        '<stop offset="0" stop-color="#bfe3ff"/><stop offset="1" stop-color="#eaf7ff"/></linearGradient></defs>' +
+        '<rect width="800" height="600" fill="url(#w)"/>';
+      var tail = '<text x="22" y="584" font-family="Segoe UI,Arial" font-size="18" fill="#94a3b8" opacity=".8">' +
+        escXml(code || '') + '</text></svg>';
+      var body = '';
+
+      if (variant === 'bed') {
+        body = '<rect y="430" width="800" height="170" fill="#e7d6c0"/>' +
+          '<path d="M0 468h800M0 516h800M0 564h800" stroke="#d8c4a9" stroke-width="2"/>' +
+          '<rect x="84" y="84" width="246" height="180" rx="6" fill="url(#sky)" stroke="#ffffff" stroke-width="12"/>' +
+          '<path d="M207 84v180M84 174h246" stroke="#ffffff" stroke-width="8"/>' +
+          '<rect x="58" y="76" width="24" height="196" rx="6" fill="' + accent + '" opacity=".5"/>' +
+          '<rect x="332" y="76" width="24" height="196" rx="6" fill="' + accent + '" opacity=".5"/>' +
+          '<rect x="430" y="246" width="300" height="120" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="3"/>' +
+          '<rect x="430" y="326" width="300" height="122" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="3"/>' +
+          '<rect x="430" y="368" width="300" height="80" rx="8" fill="' + accent + '" opacity=".85"/>' +
+          '<rect x="446" y="340" width="84" height="36" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="2"/>' +
+          '<rect x="544" y="340" width="84" height="36" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="2"/>' +
+          '<rect x="350" y="352" width="62" height="70" rx="8" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="2"/>' +
+          '<rect x="376" y="302" width="8" height="50" fill="#94a3b8"/>' +
+          '<path d="M350 302h58l-13-34h-32z" fill="#fbbf24"/>' +
+          '<ellipse cx="262" cy="472" rx="132" ry="24" fill="' + accent + '" opacity=".2"/>' +
+          '<rect x="648" y="300" width="86" height="140" rx="8" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="2"/>' +
+          '<path d="M648 352h86" stroke="#cbd5e1" stroke-width="2"/>' +
+          '<circle cx="726" cy="326" r="5" fill="#94a3b8"/><circle cx="726" cy="376" r="5" fill="#94a3b8"/>' +
+          '<rect x="606" y="392" width="52" height="56" rx="8" fill="#c08457"/>' +
+          '<ellipse cx="632" cy="362" rx="40" ry="32" fill="#34d399" opacity=".85"/>' +
+          '<ellipse cx="606" cy="376" rx="24" ry="20" fill="#10b981" opacity=".9"/>';
+      } else if (variant === 'kitchen') {
+        body = '<rect y="430" width="800" height="170" fill="#e2d6c8"/>' +
+          '<path d="M0 468h800M0 516h800M0 564h800" stroke="#d2c3b2" stroke-width="2"/>' +
+          '<rect x="60" y="184" width="680" height="116" fill="#f1f5f9"/>' +
+          '<path d="M60 224h680M60 262h680M140 184v116M220 184v116M300 184v116M380 184v116M460 184v116M540 184v116M620 184v116" stroke="#e2e8f0" stroke-width="2"/>' +
+          '<rect x="60" y="66" width="320" height="102" rx="6" fill="#ffffff" stroke="#dbe3ec" stroke-width="3"/>' +
+          '<path d="M60 118h320M168 66v102M276 66v102" stroke="#e2e8f0" stroke-width="2"/>' +
+          '<rect x="150" y="104" width="22" height="6" rx="3" fill="#94a3b8"/>' +
+          '<rect x="258" y="104" width="22" height="6" rx="3" fill="#94a3b8"/>' +
+          '<rect x="60" y="298" width="680" height="26" fill="#cbd5e1"/>' +
+          '<rect x="60" y="324" width="680" height="128" fill="#f8fafc" stroke="#e2e8f0" stroke-width="3"/>' +
+          '<path d="M220 324v128M380 324v128M540 324v128" stroke="#e2e8f0" stroke-width="2"/>' +
+          '<rect x="120" y="344" width="26" height="7" rx="3" fill="#94a3b8"/>' +
+          '<rect x="280" y="344" width="26" height="7" rx="3" fill="#94a3b8"/>' +
+          '<rect x="440" y="344" width="26" height="7" rx="3" fill="#94a3b8"/>' +
+          '<rect x="470" y="286" width="150" height="16" rx="5" fill="#334155"/>' +
+          '<circle cx="505" cy="294" r="8" fill="#64748b"/><circle cx="555" cy="294" r="8" fill="#64748b"/>' +
+          '<circle cx="505" cy="312" r="8" fill="#64748b"/><circle cx="555" cy="312" r="8" fill="#64748b"/>' +
+          '<path d="M478 184h132l22 62H456z" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="3"/>' +
+          '<rect x="644" y="178" width="96" height="272" rx="10" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="3"/>' +
+          '<path d="M644 256h96" stroke="#cbd5e1" stroke-width="3"/>' +
+          '<rect x="686" y="206" width="8" height="32" rx="4" fill="#94a3b8"/>' +
+          '<rect x="686" y="280" width="8" height="32" rx="4" fill="#94a3b8"/>' +
+          '<ellipse cx="180" cy="292" rx="34" ry="10" fill="#94a3b8" opacity=".5"/>';
+      } else if (variant === 'bath') {
+        body = '<rect y="430" width="800" height="170" fill="#dbe7ee"/>' +
+          '<path d="M0 80h800M0 160h800M0 240h800M0 320h800M0 400h800M80 0v430M160 0v430M240 0v430M320 0v430M400 0v430M480 0v430M560 0v430M640 0v430M720 0v430" stroke="#d3e4ef" stroke-width="2"/>' +
+          '<path d="M0 480h800M0 540h800M100 430v170M220 430v170M340 430v170M460 430v170M580 430v170M700 430v170" stroke="#c7d9e4" stroke-width="2"/>' +
+          '<rect x="122" y="54" width="10" height="96" fill="#9ca3af"/>' +
+          '<circle cx="182" cy="152" r="28" fill="#94a3b8"/>' +
+          '<circle cx="182" cy="152" r="14" fill="#cbd5e1"/>' +
+          '<path d="M164 182l-8 62M182 184v64M200 182l8 62" stroke="#7dd3fc" stroke-width="5" stroke-linecap="round"/>' +
+          '<rect x="300" y="76" width="14" height="356" fill="#bae6fd" opacity=".8"/>' +
+          '<rect x="470" y="96" width="214" height="152" rx="12" fill="#e0f2fe" stroke="#ffffff" stroke-width="9"/>' +
+          '<rect x="448" y="298" width="256" height="26" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>' +
+          '<ellipse cx="576" cy="298" rx="72" ry="17" fill="#e2e8f0"/>' +
+          '<path d="M576 258v40" stroke="#94a3b8" stroke-width="9" stroke-linecap="round"/>' +
+          '<path d="M576 258h30" stroke="#94a3b8" stroke-width="9" stroke-linecap="round"/>' +
+          '<rect x="470" y="330" width="170" height="74" rx="8" fill="' + accent + '" opacity=".45"/>' +
+          '<rect x="60" y="336" width="120" height="10" rx="5" fill="#94a3b8"/>' +
+          '<rect x="76" y="300" width="88" height="40" rx="6" fill="#ffffff" opacity=".8"/>';
+      } else {
+        body = '<rect width="800" height="432" fill="url(#sky)"/>' +
+          '<circle cx="646" cy="92" r="44" fill="#fde68a" opacity=".9"/>' +
+          '<rect x="40" y="266" width="110" height="166" fill="#c7d2fe" opacity=".75"/>' +
+          '<rect x="164" y="216" width="88" height="216" fill="#bfdbfe" opacity=".8"/>' +
+          '<rect x="266" y="286" width="120" height="146" fill="#c7d2fe" opacity=".7"/>' +
+          '<rect x="400" y="238" width="96" height="194" fill="#bfdbfe" opacity=".8"/>' +
+          '<rect x="510" y="300" width="130" height="132" fill="#c7d2fe" opacity=".7"/>' +
+          '<rect x="656" y="252" width="104" height="180" fill="#bfdbfe" opacity=".8"/>' +
+          '<path d="M76 300h44M76 330h44M190 250h38M190 280h38M300 320h54M300 350h54M428 272h42M428 302h42M548 334h60M684 286h48" stroke="#ffffff" stroke-width="8" opacity=".7"/>' +
+          '<rect y="432" width="800" height="168" fill="#d6c3a8"/>' +
+          '<path d="M0 472h800M0 520h800M0 568h800" stroke="#c8b295" stroke-width="2"/>' +
+          '<rect y="356" width="800" height="10" fill="#94a3b8"/>' +
+          '<rect y="404" width="800" height="7" fill="#cbd5e1"/>' +
+          '<path d="M60 366v66M160 366v66M260 366v66M360 366v66M460 366v66M560 366v66M660 366v66M760 366v66" stroke="#94a3b8" stroke-width="7"/>' +
+          '<rect x="596" y="388" width="110" height="14" rx="7" fill="#c08457"/>' +
+          '<path d="M612 402v36M690 402v36" stroke="#a97142" stroke-width="8"/>' +
+          '<ellipse cx="651" cy="388" rx="30" ry="9" fill="#fde68a"/>' +
+          '<rect x="120" y="392" width="58" height="56" rx="8" fill="#c08457"/>' +
+          '<ellipse cx="149" cy="362" rx="42" ry="32" fill="#34d399" opacity=".85"/>' +
+          '<ellipse cx="122" cy="378" rx="24" ry="19" fill="#10b981" opacity=".9"/>' +
+          '<rect x="236" y="402" width="46" height="46" rx="8" fill="#b45309"/>' +
+          '<ellipse cx="259" cy="378" rx="34" ry="26" fill="#22c55e" opacity=".85"/>';
+      }
+
+      return svgUri(head + body + tail);
+    }
+
+    function vehiclePhotoSvg(plate, seed) {
+      var hue = Math.abs(seed) % 360;
+      var body = 'hsl(' + hue + ',56%,56%)';
+      var dark = 'hsl(' + hue + ',56%,40%)';
+      var svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 480">' +
+        '<defs><linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">' +
+        '<stop offset="0" stop-color="#f8fafc"/><stop offset="1" stop-color="hsl(' + hue + ',40%,91%)"/></linearGradient></defs>' +
+        '<rect width="640" height="480" fill="url(#bg)"/>' +
+        '<ellipse cx="320" cy="404" rx="236" ry="26" fill="#cbd5e1" opacity=".55"/>' +
+        '<circle cx="206" cy="356" r="62" fill="#1f2937"/><circle cx="206" cy="356" r="30" fill="#94a3b8"/><circle cx="206" cy="356" r="10" fill="#475569"/>' +
+        '<circle cx="470" cy="356" r="62" fill="#1f2937"/><circle cx="470" cy="356" r="30" fill="#94a3b8"/><circle cx="470" cy="356" r="10" fill="#475569"/>' +
+        '<path d="M168 352c0-20 10-34 28-40l148-48c16-6 30-4 42 6l56 40c10 7 16 18 16 30v12H168z" fill="' + body + '"/>' +
+        '<path d="M362 316l50-64c8-10 18-16 30-16h32c14 0 22 8 18 20l-16 46c-4 12-12 18-26 18h-88z" fill="' + dark + '"/>' +
+        '<rect x="194" y="272" width="160" height="30" rx="15" fill="#1f2937"/>' +
+        '<rect x="352" y="284" width="62" height="24" rx="12" fill="' + dark + '"/>' +
+        '<path d="M468 248l44-34" stroke="#334155" stroke-width="10" stroke-linecap="round"/>' +
+        '<circle cx="516" cy="210" r="9" fill="#334155"/>' +
+        '<ellipse cx="486" cy="286" rx="20" ry="14" fill="#fef08a"/>' +
+        '<path d="M424 336c0-30 8-52 22-70" stroke="#334155" stroke-width="8" fill="none"/>' +
+        '<rect x="418" y="342" width="116" height="16" rx="8" fill="' + dark + '"/>' +
+        '<rect x="250" y="392" width="150" height="44" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="3"/>' +
+        '<text x="325" y="421" text-anchor="middle" font-family="Consolas,monospace" font-size="19" font-weight="700" fill="#0f172a">' +
+        escXml(plate || 'XE') + '</text>' +
+        '<text x="624" y="466" text-anchor="end" font-family="Segoe UI,Arial" font-size="14" fill="#94a3b8">Ảnh minh hoạ</text>' +
+        '</svg>';
+      return svgUri(svg);
+    }
+
+    function buildRoomPhotos(room) {
+      var seed = hashStr(room.b + '|' + room.code);
+      var hue = seed % 360;
+      var defs = [
+        { label: 'Phòng ngủ', variant: 'bed' },
+        { label: 'Khu bếp', variant: 'kitchen' },
+        { label: 'WC', variant: 'bath' },
+        { label: 'Ban công', variant: 'balcony' }
+      ];
+      return defs.map(function (d, i) {
+        return { label: d.label, src: roomPhotoSvg(d.variant, (hue + i * 26) % 360, room.code) };
+      });
+    }
+    function daysFromToday(iso) {
+      if (!iso) { return null; }
+      var end = new Date(iso + 'T00:00:00');
+      var today = new Date();
+      today.setHours(0, 0, 0, 0);
+      if (isNaN(end.getTime())) { return null; }
+      return Math.round((end.getTime() - today.getTime()) / 86400000);
+    }
+    function monthsBetween(a, b) {
+      var s = new Date(a + 'T00:00:00');
+      var e = new Date(b + 'T00:00:00');
+      if (isNaN(s.getTime()) || isNaN(e.getTime())) { return null; }
+      return Math.max(1, Math.round((e - s) / (86400000 * 30.44)));
+    }
+    function initials(name) {
+      var parts = String(name || '').trim().split(/\s+/).filter(Boolean);
+      if (!parts.length) { return '?'; }
+      if (parts.length === 1) { return parts[0].charAt(0).toUpperCase(); }
+      return (parts[parts.length - 2].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase();
+    }
+    function chip(text, tone) {
+      var tones = {
+        type: 'bg-indigo-50 text-indigo-700 border-indigo-200',
+        furnish: 'bg-amber-50 text-amber-700 border-amber-200',
+        amenity: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+        neutral: 'bg-gray-100 text-gray-500 border-gray-200'
+      };
+      return '<span class="px-2.5 py-1 rounded-full text-xs font-semibold border ' + (tones[tone] || tones.neutral) + '">' + text + '</span>';
+    }
+    function emptyChips(text) {
+      return '<span class="text-xs text-gray-400">' + text + '</span>';
+    }
+    function roomsOfBuilding(b) {
+      return ROOMS.filter(function (r) { return r.b === b; }).sort(function (x, y) {
+        return (x.f - y.f) || (x.code < y.code ? -1 : (x.code > y.code ? 1 : 0));
+      });
+    }
+    function getRoom(b, code) {
+      return ROOMS.filter(function (r) { return r.b === b && r.code === code; })[0] || null;
+    }
+    function currentRoom() {
+      return getRoom(currentBuildingId, currentRoomCode) || roomsOfBuilding(currentBuildingId)[0];
+    }
+
+    // ---------- TOAST ----------
+    var toastTimer = null;
+    function showToast(msg) {
+      var el = document.getElementById('toast');
+      document.getElementById('toastMsg').textContent = msg;
+      el.classList.remove('hidden');
+      el.classList.add('flex', 'toast-enter');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(function () {
+        el.classList.add('hidden');
+        el.classList.remove('flex', 'toast-enter');
+      }, 2600);
+    }
+
+    // ---------- TABS ----------
+    function setTab(name) {
+      if (['overview', 'contract', 'bills'].indexOf(name) === -1) { name = 'overview'; }
+      currentTab = name;
+
+      Array.prototype.forEach.call(document.querySelectorAll('[data-tab-panel]'), function (panel) {
+        panel.classList.toggle('hidden', panel.getAttribute('data-tab-panel') !== name);
+      });
+      Array.prototype.forEach.call(document.querySelectorAll('[data-tab]'), function (btn) {
+        var on = btn.getAttribute('data-tab') === name;
+        btn.classList.toggle('is-active', on);
+        btn.setAttribute('aria-selected', on ? 'true' : 'false');
+      });
+
+      try {
+        var url = new URL(window.location.href);
+        if (name === 'overview') { url.searchParams.delete('tab'); }
+        else { url.searchParams.set('tab', name); }
+        history.replaceState(null, '', url.toString());
+      } catch (e) { /* bỏ qua trên file:// */ }
+    }
+
+    // ---------- RENDER: HEADER / SELECTS ----------
+    function renderHeader() {
+      var room = currentRoom();
+      var b = BUILDINGS[currentBuildingId];
+      var meta = STATUS_META[room.status] || STATUS_META.available;
+
+      document.getElementById('rdRoomTitle').textContent = 'Phòng ' + room.code;
+      var badge = document.getElementById('rdStatusBadge');
+      badge.textContent = meta.label;
+      badge.className = 'text-xs font-semibold px-2.5 py-1 rounded-full ' + meta.badge;
+      document.getElementById('rdSubtitle').textContent = b.name + ' · Tầng ' + room.f + ' · ' + b.address;
+      document.title = 'RoomForRent – Phòng ' + room.code + ' · ' + b.name;
+
+      var detailHref = '../Detail/BUILDING_DETAIL.html?building=' + encodeURIComponent(currentBuildingId);
+      var configHref = '../Config/ROOM_CONFIG.html?building=' + encodeURIComponent(currentBuildingId);
+      ['backToDetail', 'btnBackBuilding', 'btnOpenBuilding', 'navRoomList', 'navRoomListSub'].forEach(function (id) {
+        var el = document.getElementById(id);
+        if (el) { el.href = detailHref; }
+      });
+      ['btnRoomConfig', 'btnQuickConfig'].forEach(function (id) {
+        var el = document.getElementById(id);
+        if (el) { el.href = configHref; }
+      });
+    }
+
+    function renderSelects() {
+      var bSel = document.getElementById('rdBuildingSelect');
+      bSel.innerHTML = Object.keys(BUILDINGS).map(function (id) {
+        var b = BUILDINGS[id];
+        return '<option value="' + id + '"' + (id === currentBuildingId ? ' selected' : '') + '>' + b.name + '</option>';
+      }).join('');
+
+      var rSel = document.getElementById('rdRoomSelect');
+      rSel.innerHTML = roomsOfBuilding(currentBuildingId).map(function (r) {
+        var meta = STATUS_META[r.status];
+        return '<option value="' + r.code + '"' + (r.code === currentRoomCode ? ' selected' : '') + '>P' + r.code.replace(/^P/, '') + ' · Tầng ' + r.f + ' · ' + meta.label + '</option>';
+      }).join('');
+    }
+
+    // ---------- RENDER: STATS ----------
+    function renderStats() {
+      var room = currentRoom();
+      var c = room.contract;
+      var rent = c ? (c.rent || room.price) : room.price;
+      var deposit = c ? (c.deposit || room.deposit) : room.deposit;
+      var tenants = c ? (c.tenants || []).length : 0;
+
+      document.getElementById('statPrice').textContent = fmtMoney(rent);
+      document.getElementById('statPriceHint').textContent = c
+        ? 'Theo HĐ · định giá ' + fmtMoney(room.price)
+        : 'Giá niêm yết';
+      document.getElementById('statDeposit').textContent = fmtMoney(deposit);
+      document.getElementById('statDepositHint').textContent = c ? 'Đã cọc theo hợp đồng' : 'Mức cọc niêm yết';
+      document.getElementById('statArea').textContent = room.area ? room.area + ' m²' : '-';
+      document.getElementById('statTenants').textContent = tenants + ' người';
+    }
+
+    // ---------- RENDER: INFO ----------
+    function infoRow(label, value, full) {
+      return '<div class="' + (full ? 'sm:col-span-2' : '') + ' flex justify-between gap-4 border-b border-gray-50 pb-2">' +
+        '<span class="text-gray-500 shrink-0">' + label + '</span>' +
+        '<span class="font-semibold text-right">' + value + '</span>' +
+        '</div>';
+    }
+
+    function renderInfo() {
+      var room = currentRoom();
+      var b = BUILDINGS[currentBuildingId];
+      var el = document.getElementById('roomInfoContent');
+
+      var typeChips = room.types.length
+        ? room.types.map(function (t) { return chip(t, 'type'); }).join(' ')
+        : '<span class="text-gray-400 font-normal">Chưa cập nhật</span>';
+      var c = room.contract;
+
+      el.innerHTML =
+        infoRow('Mã phòng', room.code) +
+        infoRow('Tòa nhà', b.name) +
+        infoRow('Tầng', room.f) +
+        infoRow('Diện tích', room.area ? room.area + ' m²' : '-') +
+        infoRow('Giá phòng HĐ', c ? fmtMoney(c.rent) : '<span class="text-gray-400 font-normal">Chưa có HĐ</span>') +
+        infoRow('Định giá phòng', fmtMoney(room.price)) +
+        infoRow('Đã cọc', fmtMoney(c ? c.deposit : room.deposit)) +
+        infoRow('Tiền cọc niêm yết', fmtMoney(room.deposit)) +
+        infoRow('Chỉ số điện', room.electric.toLocaleString('vi-VN') + ' kWh') +
+        infoRow('Chỉ số nước', room.water.toLocaleString('vi-VN') + ' m³') +
+        '<div class="sm:col-span-2 flex justify-between gap-4 border-b border-gray-50 pb-2">' +
+        '  <span class="text-gray-500 shrink-0">Kiểu phòng</span>' +
+        '  <span class="flex flex-wrap justify-end gap-1.5">' + typeChips + '</span>' +
+        '</div>' +
+        '<div class="sm:col-span-2 flex justify-between gap-4">' +
+        '  <span class="text-gray-500 shrink-0">Ghi chú</span>' +
+        '  <span class="font-semibold text-right">' + (room.note ? room.note : '-') + '</span>' +
+        '</div>';
+    }
+
+    // ---------- RENDER: FURNISHINGS / AMENITIES ----------
+    function renderComfort() {
+      var room = currentRoom();
+      var b = BUILDINGS[currentBuildingId];
+
+      document.getElementById('roomTypes').innerHTML = room.types.length
+        ? room.types.map(function (t) { return chip(t, 'type'); }).join('')
+        : emptyChips('Chưa cập nhật kiểu phòng.');
+
+      document.getElementById('roomFurnishings').innerHTML = room.furnishings.length
+        ? room.furnishings.map(function (f) { return chip(f, 'furnish'); }).join('')
+        : emptyChips('Phòng không có nội thất đi kèm.');
+
+      document.getElementById('buildingAmenities').innerHTML = (b.amenities || []).length
+        ? b.amenities.map(function (a) { return chip(a, 'amenity'); }).join('')
+        : emptyChips('Chưa cập nhật tiện ích tòa nhà.');
+    }
+
+    // ---------- RENDER: ROOM GALLERY ----------
+    function renderGallery() {
+      var room = currentRoom();
+      var el = document.getElementById('roomGallery');
+      var photos = room.photos || [];
+
+      var tiles = photos.map(function (p, i) {
+        return '<button type="button" onclick="showRoomImage(' + i + ')" class="gallery-tile" style="aspect-ratio:4/3" title="Xem ảnh ' + escXml(p.label) + '">' +
+          '<img src="' + p.src + '" alt="' + escXml(p.label + ' phòng ' + room.code) + '" loading="lazy">' +
+          '<span class="gallery-cap">' + p.label + '</span>' +
+          '</button>';
+      }).join('');
+
+      var addTile = '<label class="gallery-add" style="aspect-ratio:4/3">' +
+        '<span>' +
+        '<span class="block text-2xl leading-none">📷</span>' +
+        '<span class="mt-1 block text-[11px] font-semibold">Thêm ảnh</span>' +
+        '</span>' +
+        '<input id="roomPhotoInput" type="file" accept="image/*" class="hidden">' +
+        '</label>';
+
+      el.innerHTML = tiles + addTile;
+      document.getElementById('roomPhotoCount').textContent = photos.length;
+    }
+
+    function showImage(src, caption) {
+      if (!src) { return; }
+      document.getElementById('imgViewer').src = src;
+      document.getElementById('imgViewer').alt = caption || '';
+      document.getElementById('imgCaption').textContent = caption || '';
+      document.getElementById('imgOverlay').classList.remove('hidden');
+    }
+    function showRoomImage(i) {
+      var room = currentRoom();
+      var p = (room.photos || [])[i];
+      if (!p) { return; }
+      showImage(p.src, room.code + ' · ' + p.label + ' · ' + BUILDINGS[room.b].name);
+    }
+    function showVehicleImage(i) {
+      var room = currentRoom();
+      var v = room.contract && (room.contract.vehicles || [])[i];
+      if (!v) { return; }
+      showImage(v.image || vehiclePhotoSvg(v.plate, hashStr(v.plate)), 'Xe ' + v.plate + ' · ' + (v.type || 'Xe máy') + ' · ' + room.code);
+    }
+    function closeImage() {
+      document.getElementById('imgOverlay').classList.add('hidden');
+    }
+
+    // ---------- RENDER: CONTRACT ----------
+    function contractOwner(c) {
+      var t = (c.tenants || [])[0];
+      return t && t.name ? t.name : 'Khách thuê';
+    }
+
+    function contractTile(label, value, valueClass) {
+      return '<div class="rounded-lg border border-gray-100 bg-gray-50 p-3">' +
+        '<p class="text-[11px] uppercase tracking-wide text-gray-500">' + label + '</p>' +
+        '<p class="font-semibold mt-1 ' + (valueClass || '') + '">' + value + '</p>' +
+        '</div>';
+    }
+
+    function cccdButton(t, i) {
+      return '<button type="button" onclick="showCccd(' + i + ')" class="mt-1.5 inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-2 py-1 text-left transition hover:border-indigo-200 hover:bg-indigo-50/50">' +
+        '<span class="grid h-7 w-10 place-items-center rounded bg-gray-100 text-sm">🪪</span>' +
+        '<span class="text-[10px] leading-tight text-gray-500">Ảnh CCCD<br><span class="text-gray-700">' + (t.cccdRef || 'TPP - ' + currentRoom().code) + '</span></span>' +
+        '</button>';
+    }
+
+    function tenantFormHtml() {
+      return '<div class="mt-2 rounded-lg border border-indigo-100 bg-indigo-50/40 p-3">' +
+        '<p class="mb-2 text-xs font-semibold text-indigo-800">Thêm khách thuê vào hợp đồng</p>' +
+        '<div class="grid grid-cols-1 sm:grid-cols-2 gap-2">' +
+        '  <input id="nt_name" type="text" placeholder="Họ tên *" class="w-full rounded border px-2 py-1.5 text-sm">' +
+        '  <input id="nt_phone" type="text" placeholder="Số điện thoại" class="w-full rounded border px-2 py-1.5 text-sm">' +
+        '  <input id="nt_cccd" type="text" placeholder="Số CCCD" class="w-full rounded border px-2 py-1.5 text-sm">' +
+        '  <select id="nt_role" class="w-full rounded border px-2 py-1.5 text-sm bg-white">' +
+        '    <option value="Đại diện">Đại diện</option>' +
+        '    <option value="Ở cùng">Ở cùng</option>' +
+        '  </select>' +
+        '</div>' +
+        '<div class="mt-2 flex gap-2">' +
+        '  <button type="button" onclick="saveNewTenant()" class="rounded bg-indigo-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-indigo-700">Thêm khách</button>' +
+        '  <button type="button" onclick="cancelAddTenant()" class="rounded bg-white px-3 py-1.5 text-xs font-semibold text-gray-600 border hover:bg-gray-50">Hủy</button>' +
+        '</div>' +
+        '</div>';
+    }
+
+    function vehicleFormHtml() {
+      return '<div class="mt-2 rounded-lg border border-indigo-100 bg-indigo-50/40 p-3">' +
+        '<p class="mb-2 text-xs font-semibold text-indigo-800">Thêm xe vào hợp đồng</p>' +
+        '<div class="grid grid-cols-1 sm:grid-cols-2 gap-2">' +
+        '  <input id="nv_plate" type="text" placeholder="Biển số xe *" class="w-full rounded border px-2 py-1.5 text-sm">' +
+        '  <input id="nv_type" type="text" placeholder="Loại xe / ghi chú" class="w-full rounded border px-2 py-1.5 text-sm">' +
+        '  <label class="sm:col-span-2 flex cursor-pointer items-center gap-2 rounded border border-dashed border-indigo-200 bg-white px-2 py-1.5 text-xs text-gray-500">' +
+        '    <span>📷 Ảnh xe (tuỳ chọn)</span>' +
+        '    <input id="nv_photo" type="file" accept="image/*" class="ml-auto text-[10px] text-gray-500">' +
+        '  </label>' +
+        '</div>' +
+        '<div class="mt-2 flex gap-2">' +
+        '  <button type="button" onclick="saveNewVehicle()" class="rounded bg-indigo-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-indigo-700">Thêm xe</button>' +
+        '  <button type="button" onclick="cancelAddVehicle()" class="rounded bg-white px-3 py-1.5 text-xs font-semibold text-gray-600 border hover:bg-gray-50">Hủy</button>' +
+        '</div>' +
+        '</div>';
+    }
+
+    function renderContract() {
+      var room = currentRoom();
+      var c = room.contract;
+      var statusEl = document.getElementById('contractStatus');
+      var content = document.getElementById('contractContent');
+      var tabCount = document.getElementById('tabContractCount');
+      if (tabCount) { tabCount.textContent = c ? (c.tenants || []).length : 0; }
+
+      if (!c) {
+        statusEl.textContent = 'Chưa có hợp đồng';
+        statusEl.className = 'text-xs font-semibold px-2.5 py-1 rounded-full bg-gray-100 text-gray-600';
+        content.innerHTML =
+          '<div class="rounded-lg border border-dashed border-gray-200 p-6 text-center">' +
+          '  <p class="text-sm text-gray-500">Phòng chưa có hợp đồng – chưa có khách thuê.</p>' +
+          '  <p class="mt-1 text-xs text-gray-400">Tạo hợp đồng nháp để thêm khách thuê và biển số xe.</p>' +
+          '  <button type="button" onclick="startAddTenant()" class="mt-3 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold px-3 py-2 rounded">+ Tạo hợp đồng &amp; thêm khách</button>' +
+          '</div>';
+        return;
+      }
+
+      statusEl.textContent = c.signed ? 'Đã ký hợp đồng' : 'Chờ ký hợp đồng';
+      statusEl.className = 'text-xs font-semibold px-2.5 py-1 rounded-full ' +
+        (c.signed ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800');
+
+      var left = daysFromToday(c.endDate);
+      var leftHtml = '';
+      if (left === null) {
+        leftHtml = '<span class="text-gray-400">—</span>';
+      } else if (left < 0) {
+        leftHtml = '<span class="text-rose-600 font-semibold">Đã hết hạn ' + Math.abs(left) + ' ngày</span>';
+      } else if (left <= 30) {
+        leftHtml = '<span class="text-amber-600 font-semibold">Sắp hết hạn · còn ' + left + ' ngày</span>';
+      } else {
+        leftHtml = '<span class="text-emerald-600 font-semibold">Còn ' + left + ' ngày</span>';
+      }
+      var months = monthsBetween(c.startDate, c.endDate);
+
+      var tenants = c.tenants || [];
+      var vehicles = c.vehicles || [];
+
+      var tenantsHtml = tenants.map(function (t, i) {
+        return '<div class="flex items-start gap-3 py-2.5">' +
+          '<span class="w-9 h-9 rounded-full bg-indigo-100 text-indigo-700 text-xs font-bold grid place-items-center shrink-0">' + initials(t.name) + '</span>' +
+          '<div class="min-w-0 flex-1">' +
+          '  <div class="flex flex-wrap items-center gap-2">' +
+          '    <span class="text-sm font-semibold text-gray-800">' + (t.name || '—') + '</span>' +
+          '    <span class="text-[10px] font-semibold px-1.5 py-0.5 rounded ' + (t.role === 'Đại diện' ? 'bg-indigo-100 text-indigo-700' : 'bg-gray-100 text-gray-600') + '">' + (t.role || 'Ở cùng') + '</span>' +
+          '    <button type="button" onclick="removeTenant(' + i + ')" class="ml-auto text-gray-300 hover:text-rose-500" title="Xóa khách thuê" aria-label="Xóa khách thuê">✕</button>' +
+          '  </div>' +
+          '  <div class="mt-1 grid grid-cols-1 sm:grid-cols-2 gap-x-3 gap-y-0.5 text-xs text-gray-500">' +
+          '    <span>CCCD: <span class="font-mono text-gray-700">' + (t.cccd || '—') + '</span></span>' +
+          '    <span>SĐT: <span class="text-gray-700">' + (t.phone || 'Chưa có') + '</span></span>' +
+          '  </div>' +
+          cccdButton(t, i) +
+          '</div>' +
+          '</div>';
+      }).join('') || '<p class="text-sm text-gray-400">Chưa cập nhật khách thuê.</p>';
+
+      var vehiclesHtml = vehicles.map(function (v, i) {
+        return '<div class="flex items-center gap-3 py-2">' +
+          '<button type="button" onclick="showVehicleImage(' + i + ')" class="vehicle-thumb" title="Xem ảnh xe ' + escXml(v.plate) + '">' +
+          '  <img src="' + (v.image || vehiclePhotoSvg(v.plate, hashStr(v.plate))) + '" alt="Xe ' + escXml(v.plate) + '">' +
+          '</button>' +
+          '<div class="min-w-0 flex-1">' +
+          '  <p class="truncate font-mono text-xs font-semibold text-gray-800">' + (v.plate || '—') + '</p>' +
+          '  <p class="truncate text-xs text-gray-500">' + (v.type || v.note || 'Xe máy') + '</p>' +
+          '</div>' +
+          '<button type="button" onclick="removeVehicle(' + i + ')" class="text-gray-300 hover:text-rose-500" title="Xóa xe" aria-label="Xóa xe">✕</button>' +
+          '</div>';
+      }).join('') || '<p class="text-sm text-gray-400">Chưa đăng ký biển số xe.</p>';
+
+      content.innerHTML =
+        '<div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-3 text-sm">' +
+          contractTile('Ngày nhận phòng', fmtDateVN(c.startDate)) +
+          contractTile('Ngày kết thúc HĐ', fmtDateVN(c.endDate)) +
+          contractTile('Thời hạn', months === null ? '—' : months + ' tháng') +
+          contractTile('Hiệu lực', '<span class="text-xs">' + leftHtml + '</span>') +
+        '</div>' +
+        '<div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4 text-sm">' +
+          contractTile('Giá phòng HĐ', fmtMoney(c.rent), 'text-indigo-600') +
+          contractTile('Đã cọc', fmtMoney(c.deposit)) +
+          contractTile('Định giá phòng', fmtMoney(room.price)) +
+          contractTile('Số người / Số xe', tenants.length + ' người · ' + vehicles.length + ' xe') +
+        '</div>' +
+        '<div class="grid grid-cols-1 lg:grid-cols-2 gap-5">' +
+        '  <div>' +
+        '    <div class="mb-1 flex items-center justify-between gap-2">' +
+        '      <p class="text-xs uppercase tracking-wide text-gray-500">Khách thuê · ' + tenants.length + ' người</p>' +
+        '      <button type="button" onclick="startAddTenant()" class="text-xs font-semibold text-indigo-600 hover:underline">+ Thêm khách</button>' +
+        '    </div>' +
+        (addingTenant ? tenantFormHtml() : '') +
+        '    <div class="divide-y divide-gray-50">' + tenantsHtml + '</div>' +
+        '  </div>' +
+        '  <div>' +
+        '    <div class="mb-1 flex items-center justify-between gap-2">' +
+        '      <p class="text-xs uppercase tracking-wide text-gray-500">Xe · ' + vehicles.length + ' xe</p>' +
+        '      <button type="button" onclick="startAddVehicle()" class="text-xs font-semibold text-indigo-600 hover:underline">+ Thêm xe</button>' +
+        '    </div>' +
+        (addingVehicle ? vehicleFormHtml() : '') +
+        '    <div class="divide-y divide-gray-50">' + vehiclesHtml + '</div>' +
+        '  </div>' +
+        '</div>' +
+        (c.note ? '<p class="mt-4 rounded-lg bg-gray-50 px-3 py-2 text-xs text-gray-500"><span class="font-semibold text-gray-600">Ghi chú HĐ:</span> ' + c.note + '</p>' : '');
+    }
+
+    // ---------- RENDER: BILLS ----------
+    var BILL_PERIODS = ['11/2026', '10/2026', '09/2026', '08/2026'];
+
+    function billDays(period, c) {
+      var parts = period.split('/');
+      var m = parseInt(parts[0], 10);
+      var y = parseInt(parts[1], 10);
+      var start = new Date(y, m - 1, 1);
+      var end = new Date(y, m, 0);
+      var cs = new Date(c.startDate + 'T00:00:00');
+      var ce = new Date(c.endDate + 'T00:00:00');
+      var from = cs > start ? cs : start;
+      var to = ce < end ? ce : end;
+      var days = Math.floor((to.getTime() - from.getTime()) / 86400000) + 1;
+      if (days <= 0) { return 0; }
+      // Bảng tính dùng 30 ngày cho tháng đủ; tháng nhận/trả phòng giữa tháng thì tính theo ngày thực ở.
+      return days >= 28 ? 30 : days;
+    }
+
+    function billsFor(room) {
+      if (!room.contract || room.status !== 'occupied') { return []; }
+      var c = room.contract;
+      var b = BUILDINGS[room.b];
+      var seed = hashStr(room.b + '|' + room.code);
+      var vehicleCount = (c.vehicles || []).length;
+      var tenantCount = (c.tenants || []).length;
+      var fridgeUnit = room.furnishings.indexOf('Tủ lạnh') !== -1 ? 200000 : 0;
+      var washerUnit = room.furnishings.indexOf('Máy giặt + sấy') !== -1 ? 300000 : 0;
+      var customs = room.customBills || {};
+      // Nếu đã có hóa đơn nhập tay, chuỗi chỉ số cũ của các kỳ trước nối vào chỉ số cũ của kỳ đó.
+      var anchor = null;
+      Object.keys(customs).forEach(function (k) {
+        if (!anchor || periodIndex(k) > periodIndex(anchor.period)) { anchor = customs[k]; }
+      });
+      var eNew = anchor ? anchor.eOld : (room.electric || 0);
+      var wNew = anchor ? anchor.wOld : (room.water || 0);
+      var rows = [];
+
+      BILL_PERIODS.forEach(function (p, i) {
+        if (customs[p]) { return; }
+        var days = billDays(p, c);
+        if (days <= 0) { return; }
+
+        var usedE = 90 + ((seed + i * 37) % 60);
+        var usedW = 4 + ((seed + i * 3) % 6);
+        var eOld = Math.max(0, eNew - usedE);
+        var wOld = Math.max(0, wNew - usedW);
+        usedE = eNew - eOld;
+        usedW = wNew - wOld;
+
+        var rent = Math.round((c.rent || room.price) / 30 * days);
+        var vehicleFee = Math.round(100000 * vehicleCount / 30 * days);
+        var mgmt = Math.round(150000 * tenantCount / 30 * days);
+        var fridge = Math.round(fridgeUnit / 30 * days);
+        var washer = Math.round(washerUnit / 30 * days);
+        var debt = (i === 0 && (seed % 4 === 0 || (room.b === 'A' && room.code === 'P602'))) ? -50000 : 0;
+        var eCost = usedE * b.electricity;
+        var wCost = usedW * b.water;
+        var total = eCost + wCost + rent + vehicleFee + mgmt + fridge + washer + debt;
+
+        var paid = (i === 0)
+          ? ((seed % 5 === 0) ? Math.round(total * 0.4 / 1000) * 1000 : 0)
+          : total;
+
+        rows.push({
+          period: p, days: days,
+          eOld: eOld, eNew: eNew, eUsed: usedE, eCost: eCost,
+          wOld: wOld, wNew: wNew, wUsed: usedW, wCost: wCost,
+          rent: rent, vehicleCount: vehicleCount, vehicleFee: vehicleFee,
+          tenantCount: tenantCount, mgmt: mgmt,
+          fridge: fridge, washer: washer, debt: debt,
+          total: total, paid: paid,
+          note: i === 0
+            ? (paid > 0 ? 'Đã thu một phần – hẹn thu phần còn lại.' : 'Chưa thu – hẹn ngày 03/12.')
+            : 'Đã thu đủ.'
+        });
+
+        eNew = eOld;
+        wNew = wOld;
+      });
+
+      // Hóa đơn đã lập (nhập chỉ số tay) được ưu tiên thay cho hóa đơn minh hoạ cùng kỳ.
+      Object.keys(customs).forEach(function (p) {
+        rows = rows.filter(function (x) { return x.period !== p; });
+        rows.push(customs[p]);
+      });
+      rows.sort(function (x, y) { return periodIndex(y.period) - periodIndex(x.period); });
+
+      return rows;
+    }
+
+    function billState(bill) {
+      if (bill.paid >= bill.total) { return { key: 'paid', label: 'Đã thu', cls: 'bg-emerald-100 text-emerald-800' }; }
+      if (bill.paid > 0) { return { key: 'partial', label: 'Thu một phần', cls: 'bg-amber-100 text-amber-800' }; }
+      return { key: 'unpaid', label: 'Chưa thu', cls: 'bg-rose-100 text-rose-700' };
+    }
+
+    function billRow(label, hint, amount, amountClass) {
+      return '<tr class="bill-row">' +
+        '<td class="font-medium text-gray-700">' + label +
+        (hint ? '<p class="text-[10px] font-normal text-gray-400">' + hint + '</p>' : '') +
+        '</td>' +
+        '<td class="text-right font-semibold whitespace-nowrap ' + (amountClass || '') + '">' + fmtMoney(amount) + '</td>' +
+        '</tr>';
+    }
+
+    function renderBill() {
+      var room = currentRoom();
+      var bills = billsFor(room);
+      var sel = document.getElementById('billPeriodSelect');
+      var detail = document.getElementById('billDetail');
+      var body = document.getElementById('invoiceBody');
+      var btn = document.getElementById('btnCreateInvoice');
+      var hint = document.getElementById('billCreateHint');
+      var tabBadge = document.getElementById('tabBillCount');
+      var canCreate = room.status === 'occupied' && !!room.contract;
+
+      if (tabBadge) {
+        var unpaid = bills.filter(function (x) { return billState(x).key !== 'paid'; }).length;
+        tabBadge.textContent = bills.length;
+        tabBadge.classList.toggle('is-warn', unpaid > 0);
+      }
+
+      // Chỉ phòng "Đang thuê" mới được tạo hóa đơn.
+      btn.disabled = !canCreate;
+      btn.className = canCreate
+        ? 'bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold px-3 py-1.5 rounded'
+        : 'bg-gray-200 text-gray-400 text-sm font-semibold px-3 py-1.5 rounded cursor-not-allowed';
+      btn.title = canCreate
+        ? 'Nhập số điện / nước mới và tạo hóa đơn'
+        : 'Chỉ tạo hóa đơn khi phòng đang thuê';
+      hint.textContent = canCreate
+        ? 'Nhập chỉ số điện / nước mới – hệ thống tự tính số ngày ở và các khoản phí theo ngày.'
+        : 'Chỉ phòng đang thuê mới tạo được hóa đơn.';
+
+      if (!bills.length) {
+        sel.innerHTML = '<option value="">— Chưa có kỳ —</option>';
+        sel.disabled = true;
+        detail.innerHTML =
+          '<div class="rounded-lg border border-dashed border-gray-200 p-6 text-center">' +
+          '  <p class="text-sm text-gray-500">Phòng chưa phát sinh hóa đơn.</p>' +
+          '  <p class="mt-1 text-xs text-gray-400">' +
+          (room.status === 'reserved'
+            ? 'Phòng đang đặt cọc – hóa đơn sẽ có khi hợp đồng hiệu lực.'
+            : 'Cần hợp đồng đang hiệu lực để tạo hóa đơn tháng.') +
+          '  </p>' +
+          '</div>';
+        body.innerHTML = '<tr><td colspan="7" class="p-6 text-center text-sm text-gray-400">Chưa có hóa đơn cho phòng này.</td></tr>';
+        return;
+      }
+
+      sel.disabled = false;
+      if (!currentBillPeriod || !bills.some(function (x) { return x.period === currentBillPeriod; })) {
+        currentBillPeriod = bills[0].period;
+      }
+      sel.innerHTML = bills.map(function (x) {
+        return '<option value="' + x.period + '"' + (x.period === currentBillPeriod ? ' selected' : '') + '>Kỳ ' + x.period + '</option>';
+      }).join('');
+
+      var bill = bills.filter(function (x) { return x.period === currentBillPeriod; })[0];
+      var state = billState(bill);
+      var remaining = bill.total - bill.paid;
+      var c = room.contract;
+      var fridgeHint = [];
+      if (bill.fridge) { fridgeHint.push('Tủ lạnh 200.000đ/tháng'); }
+      if (bill.washer) { fridgeHint.push('Máy giặt 300.000đ/tháng'); }
+      var fridgeTotal = bill.fridge + bill.washer;
+
+      detail.innerHTML =
+        '<div class="grid grid-cols-2 sm:grid-cols-4 gap-3">' +
+          '<div class="bill-tile"><p class="text-[11px] uppercase tracking-wide text-gray-500">Số ngày ở</p><p class="mt-1 text-lg font-bold">' + bill.days + ' ngày</p></div>' +
+          '<div class="bill-tile"><p class="text-[11px] uppercase tracking-wide text-gray-500">Phải thu</p><p class="mt-1 text-lg font-bold text-indigo-600">' + fmtMoney(bill.total) + '</p></div>' +
+          '<div class="bill-tile"><p class="text-[11px] uppercase tracking-wide text-gray-500">Đã thu</p><p class="mt-1 text-lg font-bold text-emerald-600">' + fmtMoney(bill.paid) + '</p></div>' +
+          '<div class="bill-tile"><p class="text-[11px] uppercase tracking-wide text-gray-500">Còn lại</p><p class="mt-1 text-lg font-bold ' + (remaining > 0 ? 'text-rose-600' : 'text-gray-500') + '">' + fmtMoney(remaining) + '</p></div>' +
+        '</div>' +
+        '<div class="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-3">' +
+          '<div class="rounded-lg border border-amber-100 bg-amber-50/50 p-3">' +
+          '  <div class="flex items-center justify-between"><p class="text-[11px] font-semibold uppercase tracking-wide text-amber-700">Điện</p><span class="text-[10px] text-amber-600">4.000đ/kWh</span></div>' +
+          '  <div class="mt-2 flex items-center gap-2 text-sm"><span class="font-mono">' + bill.eOld.toLocaleString('vi-VN') + '</span><span class="text-gray-400">→</span><span class="font-mono font-semibold">' + bill.eNew.toLocaleString('vi-VN') + '</span><span class="ml-auto text-xs text-gray-500">' + bill.eUsed + ' kWh</span></div>' +
+          '  <p class="mt-1 text-right text-base font-bold text-amber-700">' + fmtMoney(bill.eCost) + '</p>' +
+          '</div>' +
+          '<div class="rounded-lg border border-sky-100 bg-sky-50/50 p-3">' +
+          '  <div class="flex items-center justify-between"><p class="text-[11px] font-semibold uppercase tracking-wide text-sky-700">Nước</p><span class="text-[10px] text-sky-600">30.000đ/m³</span></div>' +
+          '  <div class="mt-2 flex items-center gap-2 text-sm"><span class="font-mono">' + bill.wOld.toLocaleString('vi-VN') + '</span><span class="text-gray-400">→</span><span class="font-mono font-semibold">' + bill.wNew.toLocaleString('vi-VN') + '</span><span class="ml-auto text-xs text-gray-500">' + bill.wUsed + ' m³</span></div>' +
+          '  <p class="mt-1 text-right text-base font-bold text-sky-700">' + fmtMoney(bill.wCost) + '</p>' +
+          '</div>' +
+        '</div>' +
+        '<div class="mt-3 overflow-hidden rounded-lg border border-gray-100">' +
+          '<table class="w-full text-sm"><tbody>' +
+            billRow('Tiền phòng', fmtMoney(c.rent) + ' ÷ 30 × ' + bill.days + ' ngày', bill.rent) +
+            billRow('Tiền xe', '100.000đ × ' + bill.vehicleCount + ' xe ÷ 30 × ' + bill.days + ' ngày', bill.vehicleFee) +
+            billRow('Phí quản lý', '150.000đ × ' + bill.tenantCount + ' người ÷ 30 × ' + bill.days + ' ngày', bill.mgmt) +
+            billRow('Tủ lạnh / Máy giặt', fridgeHint.length ? fridgeHint.join(' + ') : 'Không sử dụng', fridgeTotal) +
+            billRow('Nợ cũ / Giảm giá', bill.debt ? 'Điều chỉnh công nợ kỳ trước' : 'Không có', bill.debt, bill.debt < 0 ? 'text-emerald-600' : '') +
+          '</tbody>' +
+          '<tfoot class="bg-gray-50"><tr><td class="px-3 py-2 font-semibold">Tổng phải thu</td><td class="px-3 py-2 text-right text-base font-bold text-indigo-600">' + fmtMoney(bill.total) + '</td></tr></tfoot>' +
+          '</table>' +
+        '</div>' +
+        '<div class="mt-2 flex flex-wrap items-center gap-2 text-xs text-gray-500">' +
+          '<span class="rounded-full px-2 py-0.5 font-semibold ' + state.cls + '">' + state.label + '</span>' +
+          '<span>Ghi chú: ' + bill.note + '</span>' +
+        '</div>';
+
+      body.innerHTML = bills.map(function (x) {
+        var st = billState(x);
+        var selected = x.period === currentBillPeriod;
+        return '<tr data-period="' + x.period + '" class="cursor-pointer hover:bg-indigo-50/60 ' + (selected ? 'bg-indigo-50/70' : '') + '">' +
+          '<td class="p-2 font-semibold whitespace-nowrap">' + x.period + '</td>' +
+          '<td class="p-2 text-right whitespace-nowrap">' + x.days + '</td>' +
+          '<td class="p-2 text-right whitespace-nowrap text-[11px]"><span class="font-mono">' + x.eOld + '</span> → <span class="font-mono font-semibold">' + x.eNew + '</span><span class="block text-[10px] text-gray-400">' + x.eUsed + ' kWh · ' + fmtMoney(x.eCost) + '</span></td>' +
+          '<td class="p-2 text-right whitespace-nowrap text-[11px]"><span class="font-mono">' + x.wOld + '</span> → <span class="font-mono font-semibold">' + x.wNew + '</span><span class="block text-[10px] text-gray-400">' + x.wUsed + ' m³ · ' + fmtMoney(x.wCost) + '</span></td>' +
+          '<td class="p-2 text-right font-semibold whitespace-nowrap">' + fmtMoney(x.total) + '</td>' +
+          '<td class="p-2 text-right whitespace-nowrap">' + fmtMoney(x.paid) + '</td>' +
+          '<td class="p-2 whitespace-nowrap"><span class="rounded-full px-2 py-0.5 text-[10px] font-semibold ' + st.cls + '">' + st.label + '</span></td>' +
+          '</tr>';
+      }).join('');
+    }
+
+    // ---------- RENDER: CONTRACT TIMELINE ----------
+    function buildHistory(room) {
+      var c = room.contract;
+      var seed = hashStr(room.b + '|' + room.code);
+      var out = [];
+
+      if (c) {
+        var gapMonths = 2 + (seed % 4);
+        var prevEnd = addDays(addMonths(c.startDate, -gapMonths), -1);
+        var prevStart = addMonths(prevEnd, -12);
+        out.push({ owner: OWNER_POOL[seed % OWNER_POOL.length], start: prevStart, end: prevEnd });
+        out.push({ owner: contractOwner(c), start: c.startDate, end: c.endDate, current: true, signed: c.signed });
+      } else if (seed % 3 !== 0) {
+        var end = addMonths(todayISO(), -(3 + (seed % 7)));
+        out.push({ owner: OWNER_POOL[seed % OWNER_POOL.length], start: addMonths(end, -12), end: end });
+      }
+
+      return out;
+    }
+
+    function renderTimeline() {
+      var room = currentRoom();
+      var el = document.getElementById('contractTimeline');
+      var hist = buildHistory(room);
+      var today = new Date(todayISO() + 'T00:00:00');
+
+      var minDate, maxDate;
+      if (hist.length) {
+        var starts = hist.map(function (h) { return new Date(h.start + 'T00:00:00'); });
+        var ends = hist.map(function (h) { return new Date(h.end + 'T00:00:00'); });
+        var minT = new Date(Math.min.apply(null, starts));
+        var maxT = new Date(Math.max.apply(null, ends));
+        minDate = new Date(minT.getFullYear(), minT.getMonth() - 2, 1);
+        maxDate = new Date(maxT.getFullYear(), maxT.getMonth() + 2, 1);
+      } else {
+        minDate = new Date(today.getFullYear(), today.getMonth() - 11, 1);
+        maxDate = new Date(today.getFullYear(), today.getMonth() + 6, 1);
+      }
+      if (maxDate < today) { maxDate = new Date(today.getFullYear(), today.getMonth() + 1, 1); }
+
+      var months = [];
+      var cursor = new Date(minDate.getFullYear(), minDate.getMonth(), 1);
+      var last = new Date(maxDate.getFullYear(), maxDate.getMonth(), 1);
+      while (cursor <= last) {
+        months.push(new Date(cursor));
+        cursor = new Date(cursor.getFullYear(), cursor.getMonth() + 1, 1);
+      }
+
+      function atMonth(m) {
+        for (var i = 0; i < hist.length; i++) {
+          var h = hist[i];
+          var s = new Date(h.start + 'T00:00:00');
+          var e = new Date(h.end + 'T00:00:00');
+          var ms = new Date(s.getFullYear(), s.getMonth(), 1);
+          var me = new Date(e.getFullYear(), e.getMonth(), 1);
+          if (m >= ms && m <= me) { return h; }
+        }
+        return null;
+      }
+
+      var segs = [];
+      months.forEach(function (m) {
+        var h = atMonth(m);
+        var key = h ? (h.start + '|' + h.end + '|' + h.owner) : 'gap';
+        var prev = segs[segs.length - 1];
+        if (prev && prev.key === key) { prev.count++; }
+        else { segs.push({ key: key, h: h, count: 1 }); }
+      });
+
+      var total = months.length;
+      var gapMonthsCount = segs.filter(function (s) { return !s.h; }).reduce(function (a, s) { return a + s.count; }, 0);
+      var contractMonthsCount = total - gapMonthsCount;
+
+      var segHtml = segs.map(function (seg) {
+        var pct = seg.count / total * 100;
+        var cls = 'timeline-seg';
+        var label = '';
+        var tip = '';
+        if (seg.h) {
+          label = seg.h.owner;
+          tip = seg.h.owner + ' · ' + fmtDateVN(seg.h.start) + ' → ' + fmtDateVN(seg.h.end);
+          if (seg.h.current && seg.h.signed) { cls += ' current'; }
+          else if (seg.h.current) { cls += ' pending'; }
+          else { cls += ' past'; }
+        } else {
+          cls += ' gap';
+          label = 'Trống';
+          tip = 'Không có hợp đồng';
+        }
+        return '<div class="' + cls + '" style="width:' + pct + '%" title="' + tip + '">' +
+          (seg.count >= 2 ? '<span class="truncate px-1">' + label + '</span>' : '') +
+          '</div>';
+      }).join('');
+
+      var trackStart = months[0].getTime();
+      var lastMonth = months[total - 1];
+      var trackEnd = new Date(lastMonth.getFullYear(), lastMonth.getMonth() + 1, 1).getTime();
+      var todayPct = ((today.getTime() - trackStart) / (trackEnd - trackStart)) * 100;
+      var marker = (todayPct >= 0 && todayPct <= 100)
+        ? '<div class="timeline-today" style="left:' + todayPct + '%"><span>Hôm nay</span></div>'
+        : '';
+
+      var years = [];
+      months.forEach(function (m) {
+        var y = m.getFullYear();
+        var prev = years[years.length - 1];
+        if (prev && prev.year === y) { prev.count++; }
+        else { years.push({ year: y, count: 1 }); }
+      });
+      var yearHtml = years.map(function (y) {
+        return '<span class="text-center" style="width:' + (y.count / total * 100) + '%">' + y.year + '</span>';
+      }).join('');
+
+      var listHtml = hist.slice().sort(function (a, b) { return a.start < b.start ? -1 : 1; }).map(function (h) {
+        var endD = new Date(h.end + 'T00:00:00');
+        var status = h.current
+          ? (h.signed ? 'Đang hiệu lực' : 'Chờ ký')
+          : (endD < today ? 'Đã kết thúc' : 'Sắp hiệu lực');
+        var statusCls = h.current
+          ? (h.signed ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800')
+          : 'bg-gray-100 text-gray-600';
+        return '<div class="flex items-center gap-3 border-b border-gray-50 py-2 last:border-0">' +
+          '<span class="h-2.5 w-2.5 shrink-0 rounded-full ' + (h.current ? 'bg-emerald-500' : 'bg-indigo-400') + '"></span>' +
+          '<div class="min-w-0 flex-1">' +
+          '  <p class="truncate text-sm font-semibold text-gray-800">' + h.owner + '</p>' +
+          '  <p class="text-xs text-gray-500">' + fmtDateVN(h.start) + ' → ' + fmtDateVN(h.end) + '</p>' +
+          '</div>' +
+          '<span class="shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold ' + statusCls + '">' + status + '</span>' +
+          '</div>';
+      }).join('');
+
+      el.innerHTML =
+        '<div class="relative pt-5">' +
+          marker +
+          '<div class="timeline-track">' + segHtml + '</div>' +
+        '</div>' +
+        '<div class="mt-1 flex text-[10px] text-gray-400">' + yearHtml + '</div>' +
+        '<div class="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-gray-500">' +
+          '<span>Có hợp đồng: <b class="text-gray-700">' + contractMonthsCount + ' tháng</b></span>' +
+          '<span>Không có HĐ: <b class="text-gray-700">' + gapMonthsCount + ' tháng</b></span>' +
+          '<span class="text-gray-400">Tổng: ' + total + ' tháng</span>' +
+        '</div>' +
+        '<div class="mt-3 rounded-lg border border-gray-100 bg-gray-50/60 px-3 py-1">' +
+          (listHtml || '<p class="py-2 text-sm text-gray-400">Chưa từng có hợp đồng cho phòng này.</p>') +
+        '</div>';
+    }
+
+    // ---------- CREATE BILL ----------
+    function billPeriodOptions(room) {
+      var c = room.contract;
+      var now = new Date();
+      var start = (c && c.startDate) ? new Date(c.startDate + 'T00:00:00') : now;
+      if (isNaN(start.getTime())) { start = now; }
+      var minEnd = new Date(2026, 11, 1);
+      var thisMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+      var last = minEnd > thisMonth ? minEnd : thisMonth;
+      var cur = new Date(start.getFullYear(), start.getMonth(), 1);
+      var out = [];
+      while (cur <= last) {
+        out.push(periodLabel(cur));
+        cur = new Date(cur.getFullYear(), cur.getMonth() + 1, 1);
+      }
+      if (!out.length) { out.push(periodLabel(now)); }
+      return out.reverse();
+    }
+
+    function openBillModal() {
+      var room = currentRoom();
+      if (room.status !== 'occupied' || !room.contract) {
+        showToast('Chỉ tạo hóa đơn khi phòng đang thuê và có hợp đồng hiệu lực.');
+        return;
+      }
+      var options = billPeriodOptions(room);
+      var bills = billsFor(room);
+      var def = (bills.filter(function (x) { return billState(x).key !== 'paid'; })[0] || bills[0] || {}).period;
+      if (!def || options.indexOf(def) === -1) { def = options[0]; }
+
+      document.getElementById('b_period').innerHTML = options.map(function (p) {
+        return '<option value="' + p + '"' + (p === def ? ' selected' : '') + '>Kỳ ' + p + '</option>';
+      }).join('');
+      document.getElementById('billModalSub').textContent =
+        'Phòng ' + room.code + ' · ' + contractOwner(room.contract) + ' · ' + BUILDINGS[room.b].name;
+      document.getElementById('billError').classList.add('hidden');
+      fillBillForm();
+      document.getElementById('billOverlay').classList.remove('hidden');
+      var focusEl = document.getElementById('b_e_new');
+      if (focusEl) { focusEl.focus(); }
+    }
+
+    function closeBillModal() {
+      document.getElementById('billOverlay').classList.add('hidden');
+    }
+
+    function fillBillForm() {
+      var room = currentRoom();
+      var period = document.getElementById('b_period').value;
+      var all = billsFor(room);
+      var bill = all.filter(function (x) { return x.period === period; })[0];
+      var days = room.contract ? billDays(period, room.contract) : 0;
+      var eOld, wOld;
+
+      if (bill) {
+        eOld = bill.eOld;
+        wOld = bill.wOld;
+      } else if (all.length && periodIndex(period) > periodIndex(all[0].period)) {
+        // Kỳ mới hơn kỳ gần nhất: chỉ số cũ = chỉ số mới của kỳ trước.
+        eOld = all[0].eNew;
+        wOld = all[0].wNew;
+      } else if (all.length) {
+        // Kỳ cũ hơn lịch sử minh hoạ: suy ra chỉ số cũ theo số tháng lùi.
+        var oldest = all[all.length - 1];
+        var back = Math.max(1, periodIndex(oldest.period) - periodIndex(period));
+        var seed = hashStr(room.b + '|' + room.code);
+        eOld = Math.max(0, oldest.eOld - back * (90 + (seed % 40)));
+        wOld = Math.max(0, oldest.wOld - back * (4 + (seed % 4)));
+      } else {
+        eOld = room.electric;
+        wOld = room.water;
+      }
+
+      document.getElementById('b_days').value = days > 0 ? days + ' ngày' : '0 ngày (ngoài hạn HĐ)';
+      document.getElementById('b_e_old').value = eOld;
+      document.getElementById('b_w_old').value = wOld;
+      document.getElementById('b_e_new').value = bill ? bill.eNew : eOld;
+      document.getElementById('b_w_new').value = bill ? bill.wNew : wOld;
+      document.getElementById('b_debt').value = bill ? bill.debt : 0;
+      document.getElementById('b_paid').value = bill ? bill.paid : 0;
+      document.getElementById('b_note').value = bill ? bill.note : '';
+      document.getElementById('billError').classList.add('hidden');
+      updateBillPreview();
+    }
+
+    function billDraftFromForm() {
+      var room = currentRoom();
+      var c = room.contract || {};
+      var b = BUILDINGS[room.b];
+      var period = document.getElementById('b_period').value;
+      var days = c.startDate ? billDays(period, c) : 0;
+      var eOld = parseInt(document.getElementById('b_e_old').value, 10) || 0;
+      var eNew = parseInt(document.getElementById('b_e_new').value, 10) || 0;
+      var wOld = parseInt(document.getElementById('b_w_old').value, 10) || 0;
+      var wNew = parseInt(document.getElementById('b_w_new').value, 10) || 0;
+      var debt = parseInt(document.getElementById('b_debt').value, 10) || 0;
+      var paid = parseInt(document.getElementById('b_paid').value, 10) || 0;
+      var note = document.getElementById('b_note').value.trim();
+
+      var eUsed = Math.max(0, eNew - eOld);
+      var wUsed = Math.max(0, wNew - wOld);
+      var vehicleCount = (c.vehicles || []).length;
+      var tenantCount = (c.tenants || []).length;
+      var fridgeUnit = room.furnishings.indexOf('Tủ lạnh') !== -1 ? 200000 : 0;
+      var washerUnit = room.furnishings.indexOf('Máy giặt + sấy') !== -1 ? 300000 : 0;
+
+      var eCost = eUsed * b.electricity;
+      var wCost = wUsed * b.water;
+      var rent = Math.round((c.rent || room.price) / 30 * days);
+      var vehicleFee = Math.round(100000 * vehicleCount / 30 * days);
+      var mgmt = Math.round(150000 * tenantCount / 30 * days);
+      var fridge = Math.round(fridgeUnit / 30 * days);
+      var washer = Math.round(washerUnit / 30 * days);
+      var total = eCost + wCost + rent + vehicleFee + mgmt + fridge + washer + debt;
+
+      return {
+        period: period, days: days,
+        eOld: eOld, eNew: eNew, eUsed: eUsed, eCost: eCost,
+        wOld: wOld, wNew: wNew, wUsed: wUsed, wCost: wCost,
+        rent: rent, vehicleCount: vehicleCount, vehicleFee: vehicleFee,
+        tenantCount: tenantCount, mgmt: mgmt,
+        fridge: fridge, washer: washer, debt: debt,
+        total: total, paid: paid,
+        note: note || (paid >= total ? 'Đã thu đủ.' : 'Chưa thu.')
+      };
+    }
+
+    function updateBillPreview() {
+      var d = billDraftFromForm();
+      var el = document.getElementById('billPreview');
+      var err = '';
+
+      if (d.days <= 0) {
+        err = 'Hợp đồng không có hiệu lực trong kỳ này (0 ngày ở) – không thể tạo hóa đơn.';
+      } else if (d.eNew < d.eOld || d.wNew < d.wOld) {
+        err = 'Chỉ số mới phải lớn hơn hoặc bằng chỉ số cũ.';
+      } else if (d.paid > d.total) {
+        err = 'Đã thu không được lớn hơn tổng phải thu.';
+      }
+
+      if (err) {
+        el.innerHTML = '<p class="rounded-lg bg-rose-50 px-3 py-2 text-xs font-semibold text-rose-600">' + err + '</p>';
+        return;
+      }
+
+      var fridgeHint = [];
+      if (d.fridge) { fridgeHint.push('Tủ lạnh 200.000đ/tháng'); }
+      if (d.washer) { fridgeHint.push('Máy giặt 300.000đ/tháng'); }
+
+      el.innerHTML =
+        '<div class="overflow-hidden rounded-lg border border-gray-100 bg-gray-50/60">' +
+        '  <div class="flex items-center justify-between border-b border-gray-100 px-3 py-2 text-xs font-semibold text-gray-600">' +
+        '    <span>Tạm tính kỳ ' + d.period + '</span><span>' + d.days + ' ngày ở</span>' +
+        '  </div>' +
+        '  <table class="w-full text-sm"><tbody>' +
+          billRow('Điện', d.eOld + ' → ' + d.eNew + ' · ' + d.eUsed + ' kWh × 4.000đ', d.eCost) +
+          billRow('Nước', d.wOld + ' → ' + d.wNew + ' · ' + d.wUsed + ' m³ × 30.000đ', d.wCost) +
+          billRow('Tiền phòng', 'Giá phòng HĐ ÷ 30 × ' + d.days + ' ngày', d.rent) +
+          billRow('Tiền xe', '100.000đ × ' + d.vehicleCount + ' xe ÷ 30 × ' + d.days + ' ngày', d.vehicleFee) +
+          billRow('Phí quản lý', '150.000đ × ' + d.tenantCount + ' người ÷ 30 × ' + d.days + ' ngày', d.mgmt) +
+          billRow('Tủ lạnh / Máy giặt', fridgeHint.length ? fridgeHint.join(' + ') : 'Không sử dụng', d.fridge + d.washer) +
+          billRow('Nợ cũ / Giảm giá', d.debt ? 'Điều chỉnh công nợ' : 'Không có', d.debt, d.debt < 0 ? 'text-emerald-600' : '') +
+        '</tbody>' +
+        '<tfoot class="bg-white"><tr><td class="px-3 py-2 font-semibold">Tổng phải thu</td>' +
+        '<td class="px-3 py-2 text-right text-base font-bold text-indigo-600">' + fmtMoney(d.total) + '</td></tr></tfoot>' +
+        '</table>' +
+        '</div>';
+    }
+
+    function saveBill() {
+      var room = currentRoom();
+      var errorEl = document.getElementById('billError');
+      function fail(msg) {
+        errorEl.textContent = msg;
+        errorEl.classList.remove('hidden');
+      }
+      errorEl.classList.add('hidden');
+
+      if (room.status !== 'occupied' || !room.contract) {
+        fail('Chỉ tạo hóa đơn khi phòng đang thuê.');
+        return;
+      }
+
+      var d = billDraftFromForm();
+      if (d.days <= 0) { fail('Kỳ này hợp đồng không hiệu lực (0 ngày ở).'); return; }
+      if (d.eNew < d.eOld || d.wNew < d.wOld) { fail('Chỉ số mới phải lớn hơn hoặc bằng chỉ số cũ.'); return; }
+      if (d.paid > d.total) { fail('Đã thu không được lớn hơn tổng phải thu.'); return; }
+
+      var latest = billsFor(room)[0];
+      if (!latest || periodIndex(d.period) >= periodIndex(latest.period)) {
+        room.electric = d.eNew;
+        room.water = d.wNew;
+      }
+
+      room.customBills[d.period] = d;
+      currentBillPeriod = d.period;
+      closeBillModal();
+      renderAll();
+      showToast('Đã lưu hóa đơn kỳ ' + d.period + ' · phải thu ' + fmtMoney(d.total) + '.');
+    }
+
+    // ---------- CONTRACT ACTIONS ----------
+    function ensureContract(room) {
+      if (room.contract) { return room.contract; }
+      var start = todayISO();
+      room.contract = {
+        code: 'HĐ-' + room.b + '-' + room.code,
+        signed: false,
+        startDate: start,
+        endDate: addMonths(start, 12),
+        rent: room.price,
+        deposit: room.deposit,
+        tenants: [],
+        vehicles: [],
+        note: 'Hợp đồng nháp – tạo từ trang chi tiết phòng.'
+      };
+      if (room.status === 'available') { room.status = 'reserved'; }
+      return room.contract;
+    }
+
+    function startAddTenant() {
+      ensureContract(currentRoom());
+      addingTenant = true;
+      addingVehicle = false;
+      renderAll();
+      var el = document.getElementById('nt_name');
+      if (el) { el.focus(); }
+    }
+    function cancelAddTenant() {
+      addingTenant = false;
+      renderContract();
+    }
+    function saveNewTenant() {
+      var room = currentRoom();
+      var c = ensureContract(room);
+      var nameEl = document.getElementById('nt_name');
+      var name = nameEl ? nameEl.value.trim() : '';
+      if (!name) {
+        showToast('Vui lòng nhập họ tên khách thuê.');
+        if (nameEl) { nameEl.focus(); }
+        return;
+      }
+      var phone = document.getElementById('nt_phone').value.trim();
+      var cccd = document.getElementById('nt_cccd').value.trim() || fakeCccd(room, c.tenants.length);
+      var role = document.getElementById('nt_role').value;
+      c.tenants.push({
+        name: name, phone: phone, cccd: cccd, role: role,
+        cccdRef: 'TPP - ' + room.code, cccdImage: true
+      });
+      addingTenant = false;
+      renderAll();
+      showToast('Đã thêm khách thuê ' + name + ' vào hợp đồng.');
+    }
+    function removeTenant(i) {
+      var c = currentRoom().contract;
+      if (!c || !c.tenants[i]) { return; }
+      var name = c.tenants[i].name;
+      c.tenants.splice(i, 1);
+      renderAll();
+      showToast('Đã xóa khách thuê ' + name + ' khỏi hợp đồng.');
+    }
+
+    function startAddVehicle() {
+      ensureContract(currentRoom());
+      addingVehicle = true;
+      addingTenant = false;
+      renderAll();
+      var el = document.getElementById('nv_plate');
+      if (el) { el.focus(); }
+    }
+    function cancelAddVehicle() {
+      addingVehicle = false;
+      renderContract();
+    }
+    function saveNewVehicle() {
+      var room = currentRoom();
+      var c = ensureContract(room);
+      var plateEl = document.getElementById('nv_plate');
+      var plate = plateEl ? plateEl.value.trim() : '';
+      if (!plate) {
+        showToast('Vui lòng nhập biển số xe.');
+        if (plateEl) { plateEl.focus(); }
+        return;
+      }
+      var type = document.getElementById('nv_type').value.trim() || 'Xe máy';
+      c.vehicles.push({
+        plate: plate,
+        type: type,
+        image: pendingVehiclePhoto || vehiclePhotoSvg(plate, hashStr(plate + '|' + room.code))
+      });
+      pendingVehiclePhoto = null;
+      addingVehicle = false;
+      renderAll();
+      showToast('Đã thêm xe ' + plate + ' vào hợp đồng.');
+    }
+    function removeVehicle(i) {
+      var c = currentRoom().contract;
+      if (!c || !c.vehicles[i]) { return; }
+      var plate = c.vehicles[i].plate;
+      c.vehicles.splice(i, 1);
+      renderAll();
+      showToast('Đã xóa xe ' + plate + ' khỏi hợp đồng.');
+    }
+
+    function showCccd(i) {
+      var room = currentRoom();
+      var t = room.contract && room.contract.tenants[i];
+      if (!t) { return; }
+      document.getElementById('cccdName').textContent = t.name || '—';
+      document.getElementById('cccdNumber').textContent = 'Số CCCD: ' + (t.cccd || '—');
+      document.getElementById('cccdRef').textContent = 'Hồ sơ ảnh: ' + (t.cccdRef || ('TPP - ' + room.code));
+      document.getElementById('cccdOverlay').classList.remove('hidden');
+    }
+    function closeCccd() {
+      document.getElementById('cccdOverlay').classList.add('hidden');
+    }
+
+    // ---------- RENDER: STATUS CARD ----------
+    function renderStatusCard() {
+      var room = currentRoom();
+      var el = document.getElementById('statusList');
+      el.innerHTML = STATUS_ORDER.map(function (k) {
+        var m = STATUS_META[k];
+        var active = room.status === k;
+        return '<button type="button" data-status="' + k + '" class="status-option' + (active ? ' is-active' : '') + '">' +
+          '<span class="status-dot ' + m.dot + '"></span>' +
+          '<span class="flex-1">' + m.label + '</span>' +
+          (active ? '<span class="text-indigo-600 font-bold">✓</span>' : '') +
+          '</button>';
+      }).join('');
+      document.getElementById('statusHint').textContent = STATUS_META[room.status].hint;
+    }
+
+    // ---------- RENDER: READINGS ----------
+    function renderReadings() {
+      var room = currentRoom();
+      document.getElementById('readElectric').textContent = room.electric.toLocaleString('vi-VN');
+      document.getElementById('readWater').textContent = room.water.toLocaleString('vi-VN');
+    }
+
+    // ---------- RENDER: MINI BUILDING + OCCUPANCY ----------
+    function renderBuildingMini() {
+      var b = BUILDINGS[currentBuildingId];
+      document.getElementById('miniBuildingContent').innerHTML =
+        '<div class="flex justify-between gap-3"><span class="text-gray-500">Tên</span><span class="font-semibold text-right">' + b.name + '</span></div>' +
+        '<div class="flex justify-between gap-3"><span class="text-gray-500">Địa chỉ</span><span class="font-semibold text-right">' + b.address + '</span></div>' +
+        '<div class="flex justify-between gap-3"><span class="text-gray-500">Chủ nhà</span><span class="font-semibold text-right">' + (b.ownerName || '-') + '</span></div>' +
+        '<div class="flex justify-between gap-3"><span class="text-gray-500">SĐT</span><span class="font-semibold text-right">' + (b.ownerPhone || '-') + '</span></div>';
+
+      var all = ROOMS;
+      var allBusy = all.filter(function (r) { return r.status === 'occupied' || r.status === 'reserved'; }).length;
+      var allPct = all.length ? Math.round((allBusy / all.length) * 100) : 0;
+      document.getElementById('occLabel').textContent = allPct + '%';
+      document.getElementById('occBar').style.width = allPct + '%';
+      document.getElementById('occText').textContent = allBusy + '/' + all.length + ' phòng đang thuê · đặt cọc';
+    }
+
+    // ---------- RENDER ALL ----------
+    function renderAll() {
+      renderHeader();
+      renderSelects();
+      renderStats();
+      renderInfo();
+      renderComfort();
+      renderGallery();
+      renderContract();
+      renderTimeline();
+      renderBill();
+      renderStatusCard();
+      renderReadings();
+      renderBuildingMini();
+    }
+
+    // ---------- ROOM EDITOR ----------
+    function renderEditChips(containerId, name, options, selected) {
+      var c = document.getElementById(containerId);
+      c.innerHTML = options.map(function (o) {
+        var checked = (selected || []).indexOf(o) !== -1 ? ' checked' : '';
+        return '<label class="flex items-center gap-2 border border-gray-200 rounded-full px-3 py-1 text-xs bg-white cursor-pointer hover:bg-gray-50">' +
+          '<input type="checkbox" name="' + name + '" value="' + o + '" class="w-4 h-4"' + checked + '>' +
+          '<span>' + o + '</span></label>';
+      }).join('');
+    }
+    function collectChecks(name) {
+      return Array.prototype.slice.call(document.querySelectorAll('input[name="' + name + '"]:checked'))
+        .map(function (el) { return el.value; });
+    }
+
+    function openRoomEditor() {
+      var room = currentRoom();
+      document.getElementById('roomEditTitle').textContent = 'Sửa phòng ' + room.code;
+      document.getElementById('e_code').value = room.code;
+      document.getElementById('e_price').value = room.price;
+      document.getElementById('e_deposit').value = room.deposit;
+
+      var c = room.contract;
+      var rentEl = document.getElementById('e_rent');
+      var paidEl = document.getElementById('e_deposit_paid');
+      if (c) {
+        rentEl.disabled = false;
+        paidEl.disabled = false;
+        rentEl.value = c.rent || room.price;
+        paidEl.value = c.deposit || room.deposit;
+        rentEl.placeholder = '';
+        paidEl.placeholder = '';
+      } else {
+        rentEl.disabled = true;
+        paidEl.disabled = true;
+        rentEl.value = '';
+        paidEl.value = '';
+        rentEl.placeholder = 'Chưa có hợp đồng';
+        paidEl.placeholder = 'Chưa có hợp đồng';
+      }
+
+      document.getElementById('e_area').value = room.area === null || room.area === undefined ? '' : room.area;
+      document.getElementById('e_electric').value = room.electric;
+      document.getElementById('e_water').value = room.water;
+      document.getElementById('e_note').value = room.note || '';
+      document.getElementById('roomEditError').classList.add('hidden');
+
+      renderEditChips('editTypeChips', 'edit_type', ROOM_TYPE_OPTIONS, room.types);
+      renderEditChips('editFurnishChips', 'edit_furnish', FURNISHING_OPTIONS, room.furnishings);
+
+      document.getElementById('roomEditOverlay').classList.remove('hidden');
+      document.getElementById('e_price').focus();
+    }
+
+    function closeRoomEditor() {
+      document.getElementById('roomEditOverlay').classList.add('hidden');
+    }
+
+    function saveRoomEditor() {
+      var room = currentRoom();
+      var errorEl = document.getElementById('roomEditError');
+      var price = parseInt(document.getElementById('e_price').value, 10) || 0;
+      var deposit = parseInt(document.getElementById('e_deposit').value, 10) || 0;
+      var rentEl = document.getElementById('e_rent');
+      var paidEl = document.getElementById('e_deposit_paid');
+      var contractRent = parseInt(rentEl.value, 10) || 0;
+      var depositPaid = parseInt(paidEl.value, 10) || 0;
+      var areaVal = document.getElementById('e_area').value;
+
+      if (price < 0 || deposit < 0 || contractRent < 0 || depositPaid < 0) {
+        errorEl.textContent = 'Giá thuê và tiền cọc không hợp lệ.';
+        errorEl.classList.remove('hidden');
+        return;
+      }
+
+      room.price = price;
+      room.deposit = deposit;
+      if (room.contract) {
+        if (!rentEl.disabled && rentEl.value !== '') { room.contract.rent = contractRent; }
+        if (!paidEl.disabled && paidEl.value !== '') { room.contract.deposit = depositPaid; }
+      }
+      room.area = areaVal === '' ? null : (parseInt(areaVal, 10) || 0);
+      room.electric = parseInt(document.getElementById('e_electric').value, 10) || 0;
+      room.water = parseInt(document.getElementById('e_water').value, 10) || 0;
+      room.types = collectChecks('edit_type');
+      room.furnishings = collectChecks('edit_furnish');
+      room.note = document.getElementById('e_note').value.trim();
+
+      closeRoomEditor();
+      renderAll();
+      showToast('Đã lưu thông tin phòng ' + room.code + ' (minh hoạ).');
+    }
+
+    // ---------- EVENTS ----------
+    document.getElementById('statusList').addEventListener('click', function (e) {
+      var btn = e.target.closest ? e.target.closest('[data-status]') : null;
+      if (!btn) { return; }
+      var next = btn.getAttribute('data-status');
+      var room = currentRoom();
+      if (room.status === next) { return; }
+      room.status = next;
+      renderAll();
+      showToast('Đã chuyển ' + room.code + ' sang trạng thái “' + STATUS_META[next].label + '”.');
+    });
+
+    document.getElementById('btnEditRoom').addEventListener('click', openRoomEditor);
+    document.getElementById('btnQuickEdit').addEventListener('click', openRoomEditor);
+    document.getElementById('btnAddTenant').addEventListener('click', function () {
+      setTab('contract');
+      startAddTenant();
+      var target = document.getElementById('contractContent');
+      if (target && target.scrollIntoView) { target.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+    });
+    document.getElementById('btnQuickInvoice').addEventListener('click', function () {
+      setTab('bills');
+      var room = currentRoom();
+      if (room.status === 'occupied' && room.contract) {
+        openBillModal();
+        return;
+      }
+      var target = document.getElementById('billDetail');
+      if (target && target.scrollIntoView) { target.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+      showToast('Chỉ phòng đang thuê mới tạo được hóa đơn.');
+    });
+    document.getElementById('btnCreateInvoice').addEventListener('click', openBillModal);
+    document.getElementById('btnViewAllInvoices').addEventListener('click', function () {
+      showToast('Danh sách hóa đơn đầy đủ sẽ có ở view Hóa đơn / Thanh toán.');
+    });
+
+    // Ảnh phòng: thêm ảnh từ máy (lưu tạm trong bộ nhớ).
+    document.getElementById('roomGallery').addEventListener('change', function (e) {
+      var input = e.target;
+      if (!input || input.id !== 'roomPhotoInput') { return; }
+      var file = input.files && input.files[0];
+      if (!file) { return; }
+      var reader = new FileReader();
+      reader.onload = function () {
+        var room = currentRoom();
+        room.photos.push({ label: 'Ảnh tải lên', src: reader.result });
+        renderGallery();
+        showToast('Đã thêm ảnh cho phòng ' + room.code + '.');
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // Ảnh xe trong form thêm xe.
+    document.getElementById('contractContent').addEventListener('change', function (e) {
+      var input = e.target;
+      if (!input || input.id !== 'nv_photo') { return; }
+      var file = input.files && input.files[0];
+      if (!file) { pendingVehiclePhoto = null; return; }
+      var reader = new FileReader();
+      reader.onload = function () { pendingVehiclePhoto = reader.result; };
+      reader.readAsDataURL(file);
+    });
+
+    // Modal tạo hóa đơn: tính lại tạm tính khi nhập chỉ số.
+    ['b_e_new', 'b_w_new', 'b_debt', 'b_paid', 'b_note'].forEach(function (id) {
+      document.getElementById(id).addEventListener('input', updateBillPreview);
+    });
+    document.getElementById('b_period').addEventListener('change', fillBillForm);
+    document.getElementById('imgOverlay').addEventListener('click', closeImage);
+
+    document.getElementById('billPeriodSelect').addEventListener('change', function () {
+      currentBillPeriod = this.value;
+      renderBill();
+    });
+
+    document.getElementById('invoiceBody').addEventListener('click', function (e) {
+      var tr = e.target.closest ? e.target.closest('tr[data-period]') : null;
+      if (!tr) { return; }
+      currentBillPeriod = tr.getAttribute('data-period');
+      renderBill();
+    });
+
+    // Tab bar: bấm để đổi tab.
+    document.getElementById('rdTabs').addEventListener('click', function (e) {
+      var btn = e.target.closest ? e.target.closest('[data-tab]') : null;
+      if (!btn) { return; }
+      setTab(btn.getAttribute('data-tab'));
+    });
+
+    function tabQuery() {
+      return currentTab && currentTab !== 'overview' ? '&tab=' + encodeURIComponent(currentTab) : '';
+    }
+
+    document.getElementById('rdBuildingSelect').addEventListener('change', function () {
+      var nextBuilding = this.value;
+      var first = roomsOfBuilding(nextBuilding)[0];
+      if (!first) { return; }
+      window.location.href = 'ROOM_DETAIL.html?building=' + encodeURIComponent(nextBuilding) + '&room=' + encodeURIComponent(first.code) + tabQuery();
+    });
+
+    document.getElementById('rdRoomSelect').addEventListener('change', function () {
+      window.location.href = 'ROOM_DETAIL.html?building=' + encodeURIComponent(currentBuildingId) + '&room=' + encodeURIComponent(this.value) + tabQuery();
+    });
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key !== 'Escape') { return; }
+      if (!document.getElementById('roomEditOverlay').classList.contains('hidden')) {
+        closeRoomEditor();
+      }
+      if (!document.getElementById('cccdOverlay').classList.contains('hidden')) {
+        closeCccd();
+      }
+      if (!document.getElementById('billOverlay').classList.contains('hidden')) {
+        closeBillModal();
+      }
+      if (!document.getElementById('imgOverlay').classList.contains('hidden')) {
+        closeImage();
+      }
+    });
+
+    // ---------- INIT ----------
+    document.addEventListener('DOMContentLoaded', function () {
+      var params = new URLSearchParams(window.location.search);
+      var b = params.get('building');
+      if (b && BUILDINGS[b]) { currentBuildingId = b; }
+
+      var list = roomsOfBuilding(currentBuildingId);
+      var code = params.get('room');
+      var found = code ? getRoom(currentBuildingId, code) : null;
+      currentRoomCode = found ? found.code : (list[0] ? list[0].code : null);
+
+      if (!currentRoomCode) {
+        document.querySelector('main').innerHTML = '<p class="text-sm text-gray-500">Tòa nhà chưa có phòng nào.</p>';
+        return;
+      }
+
+      renderAll();
+      setTab(params.get('tab') || 'overview');
+    });
+  </script>
+</body>
+</html>
