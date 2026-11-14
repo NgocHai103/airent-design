@@ -1,0 +1,1590 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RoomForRent – Hóa đơn &amp; Thanh toán</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* ===== SIDEBAR ===== */
+    .app-sidebar{
+      background:
+        radial-gradient(120% 55% at 0% 0%, rgba(99,102,241,.22), rgba(99,102,241,0) 60%),
+        radial-gradient(90% 45% at 100% 100%, rgba(20,184,166,.12), rgba(20,184,166,0) 60%),
+        linear-gradient(180deg,#0a0f1f 0%,#0e1528 45%,#0a0f1f 100%);
+      border-right:1px solid rgba(148,163,184,.12);
+      box-shadow:10px 0 40px -24px rgba(2,6,23,.9);
+    }
+    .app-sidebar nav{scrollbar-width:thin;scrollbar-color:rgba(148,163,184,.28) transparent;}
+    .app-sidebar nav::-webkit-scrollbar{width:6px}
+    .app-sidebar nav::-webkit-scrollbar-track{background:transparent}
+    .app-sidebar nav::-webkit-scrollbar-thumb{background:rgba(148,163,184,.25);border-radius:999px}
+    .app-sidebar nav::-webkit-scrollbar-thumb:hover{background:rgba(148,163,184,.4)}
+
+    .brand-mark{
+      width:40px;height:40px;border-radius:13px;display:grid;place-items:center;flex:none;color:#fff;
+      background:linear-gradient(135deg,#6366f1 0%,#8b5cf6 55%,#22d3ee 100%);
+      box-shadow:0 10px 22px -10px rgba(99,102,241,.9),inset 0 1px 0 rgba(255,255,255,.35);
+    }
+
+    .workspace-card{
+      display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:12px;
+      background:rgba(255,255,255,.04);border:1px solid rgba(148,163,184,.12);
+      transition:background .18s ease,border-color .18s ease;
+    }
+    .workspace-card:hover{background:rgba(255,255,255,.08);border-color:rgba(129,140,248,.35)}
+    .ws-avatar{
+      width:30px;height:30px;border-radius:10px;display:grid;place-items:center;flex:none;
+      font-size:10px;font-weight:800;letter-spacing:.04em;color:#c7d2fe;
+      background:rgba(99,102,241,.18);border:1px solid rgba(129,140,248,.32);
+    }
+
+    .nav-group-label{
+      padding:0 12px;margin-bottom:6px;font-size:10px;font-weight:700;
+      letter-spacing:.15em;text-transform:uppercase;color:rgba(148,163,184,.62);
+    }
+
+    .nav-link{
+      position:relative;display:flex;align-items:center;gap:10px;padding:9px 12px;margin-bottom:2px;
+      border-radius:10px;font-size:13px;font-weight:500;color:#cbd5e1;
+      transition:background .18s ease,color .18s ease,transform .18s ease;
+    }
+    .nav-link:hover{background:rgba(255,255,255,.055);color:#fff;transform:translateX(2px)}
+    .nav-ico{width:18px;height:18px;flex:none;color:#64748b;transition:color .18s ease}
+    .nav-link:hover .nav-ico{color:#a5b4fc}
+    .nav-link.active{
+      color:#fff;
+      background:linear-gradient(90deg,rgba(99,102,241,.30),rgba(99,102,241,.06));
+      box-shadow:inset 0 0 0 1px rgba(129,140,248,.26);
+    }
+    .nav-link.active .nav-ico{color:#c7d2fe}
+    .nav-link.active::before{
+      content:"";position:absolute;left:0;top:50%;transform:translateY(-50%);
+      width:3px;height:60%;border-radius:0 3px 3px 0;
+      background:linear-gradient(180deg,#818cf8,#22d3ee);
+    }
+
+    .nav-badge{
+      margin-left:auto;padding:3px 7px;border-radius:999px;font-size:10px;font-weight:700;line-height:1.4;
+      background:rgba(244,63,94,.16);color:#fda4af;border:1px solid rgba(244,63,94,.24);
+    }
+    .nav-badge.info{background:rgba(99,102,241,.18);color:#c7d2fe;border-color:rgba(129,140,248,.28)}
+
+    .nav-sub{
+      margin:2px 0 6px 21px;padding-left:12px;display:flex;flex-direction:column;gap:1px;
+      border-left:1px dashed rgba(148,163,184,.22);
+    }
+    .nav-sub-link{
+      position:relative;display:block;padding:6px 10px;border-radius:8px;font-size:12px;
+      color:#94a3b8;transition:background .15s ease,color .15s ease;
+    }
+    .nav-sub-link:hover{color:#e2e8f0;background:rgba(255,255,255,.05)}
+    .nav-sub-link.active{color:#c7d2fe;font-weight:600;background:rgba(99,102,241,.12)}
+    .nav-sub-link.active::before{
+      content:"";position:absolute;left:-14.5px;top:50%;transform:translateY(-50%);
+      width:5px;height:5px;border-radius:50%;background:#818cf8;
+      box-shadow:0 0 0 3px rgba(99,102,241,.18);
+    }
+
+    .user-avatar{
+      width:34px;height:34px;border-radius:11px;display:grid;place-items:center;flex:none;
+      font-size:11px;font-weight:800;color:#e0e7ff;
+      background:linear-gradient(135deg,rgba(99,102,241,.45),rgba(34,211,238,.35));
+      border:1px solid rgba(129,140,248,.35);
+    }
+
+    /* ===== PAGE ===== */
+    .page-bg{
+      background:
+        radial-gradient(900px 420px at 82% -10%, rgba(99,102,241,.10), rgba(99,102,241,0)),
+        radial-gradient(720px 340px at 4% 0%, rgba(34,211,238,.09), rgba(34,211,238,0)),
+        #f6f7fb;
+    }
+
+    /* ===== HERO ===== */
+    .hero{
+      position:relative;overflow:hidden;border-radius:22px;color:#fff;
+      background:
+        radial-gradient(120% 150% at 88% -10%, rgba(56,189,248,.26), rgba(56,189,248,0) 58%),
+        radial-gradient(90% 130% at 0% 110%, rgba(139,92,246,.38), rgba(139,92,246,0) 62%),
+        linear-gradient(115deg,#101a3a 0%,#1b2452 48%,#0d1428 100%);
+      box-shadow:0 26px 64px -34px rgba(15,23,42,.9), inset 0 1px 0 rgba(255,255,255,.09);
+    }
+    .hero::after{
+      content:"";position:absolute;inset:0;pointer-events:none;
+      background-image:
+        linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px);
+      background-size:38px 38px;
+      -webkit-mask-image:radial-gradient(75% 95% at 55% 0%,#000 15%,transparent 78%);
+      mask-image:radial-gradient(75% 95% at 55% 0%,#000 15%,transparent 78%);
+    }
+    .hero-icon{
+      width:58px;height:58px;border-radius:18px;display:grid;place-items:center;flex:none;color:#e0e7ff;
+      background:linear-gradient(135deg,rgba(129,140,248,.42),rgba(34,211,238,.26));
+      border:1px solid rgba(165,180,252,.45);
+      box-shadow:0 16px 34px -16px rgba(99,102,241,.85), inset 0 1px 0 rgba(255,255,255,.28);
+    }
+    .hero-eyebrow{
+      font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#a5b4fc;
+    }
+    .hero-chip{
+      display:inline-flex;align-items:center;gap:5px;padding:4px 9px;border-radius:999px;
+      font-size:10.5px;font-weight:500;color:#cbd5e1;
+      background:rgba(255,255,255,.07);border:1px solid rgba(148,163,184,.22);
+      backdrop-filter:blur(4px);
+    }
+    .hero-chip b{font-weight:700;color:#fff}
+    .hero-btn{
+      display:inline-flex;align-items:center;justify-content:center;gap:7px;
+      padding:9px 16px;border-radius:11px;font-size:13px;font-weight:600;color:#fff;
+      background:linear-gradient(135deg,#6366f1,#8b5cf6);
+      border:1px solid rgba(199,210,254,.35);
+      box-shadow:0 14px 30px -16px rgba(99,102,241,.95);
+      transition:transform .16s ease,box-shadow .16s ease,filter .16s ease;
+    }
+    .hero-btn:hover{transform:translateY(-1px);filter:brightness(1.07);box-shadow:0 18px 34px -14px rgba(99,102,241,1)}
+    .hero-btn:disabled{opacity:.55;cursor:not-allowed;transform:none;filter:none}
+    .hero-select{
+      appearance:none;padding:9px 34px 9px 14px;border-radius:11px;font-size:13px;font-weight:600;color:#e2e8f0;
+      background-color:rgba(255,255,255,.08);
+      background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='m4 6 4 4 4-4'/%3E%3C/svg%3E");
+      background-repeat:no-repeat;background-position:right 12px center;
+      border:1px solid rgba(148,163,184,.28);
+      cursor:pointer;transition:border-color .16s ease,background-color .16s ease;
+    }
+    .hero-select:hover{border-color:rgba(165,180,252,.6);background-color:rgba(255,255,255,.12)}
+    .hero-select option{color:#0f172a;background:#fff}
+    .occ-card{
+      position:relative;display:grid;place-items:center;flex:none;
+      width:104px;height:104px;border-radius:22px;
+      background:rgba(255,255,255,.06);border:1px solid rgba(148,163,184,.22);
+      backdrop-filter:blur(6px);
+    }
+    .hero-stat{
+      position:relative;padding:12px 14px;border-radius:14px;
+      background:rgba(255,255,255,.055);border:1px solid rgba(148,163,184,.18);
+      transition:background .18s ease,border-color .18s ease,transform .18s ease;
+    }
+    .hero-stat:hover{background:rgba(255,255,255,.09);border-color:rgba(165,180,252,.42);transform:translateY(-2px)}
+    .hs-label{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#94a3b8}
+    .hs-value{margin-top:4px;font-size:26px;font-weight:800;line-height:1.05;letter-spacing:-.01em}
+    .hs-sub{margin-top:3px;font-size:10.5px;color:#94a3b8}
+    .hs-dot{width:7px;height:7px;border-radius:50%;box-shadow:0 0 0 4px rgba(255,255,255,.06)}
+
+    /* ===== PANELS ===== */
+    .panel{
+      background:#fff;border:1px solid #eceef6;border-radius:18px;
+      box-shadow:0 18px 44px -34px rgba(15,23,42,.55);
+    }
+    .panel-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px}
+    .panel-ico{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;flex:none}
+    .panel-title{font-size:14px;font-weight:700;color:#0f172a;letter-spacing:-.01em}
+    .panel-sub{font-size:11px;color:#94a3b8}
+    .ghost-btn{
+      display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border-radius:9px;
+      font-size:12px;font-weight:600;color:#475569;background:#f8fafc;border:1px solid #e2e8f0;
+      transition:background .15s ease,border-color .15s ease,color .15s ease;
+    }
+    .ghost-btn:hover{background:#eef2ff;border-color:#c7d2fe;color:#4338ca}
+
+    /* ===== INFO / CHIPS ===== */
+    .chip{
+      display:inline-flex;align-items:center;padding:3px 9px;border-radius:999px;
+      font-size:11px;font-weight:600;border:1px solid;
+    }
+    .chip-emerald{background:#ecfdf5;color:#047857;border-color:#a7f3d0}
+    .chip-amber{background:#fffbeb;color:#b45309;border-color:#fde68a}
+    .chip-slate{background:#f8fafc;color:#64748b;border-color:#e2e8f0}
+
+    /* ===== TOOLBAR ===== */
+    .tool-input{
+      padding:8px 12px;border-radius:10px;border:1px solid #e2e8f0;background:#fff;
+      font-size:13px;color:#0f172a;outline:none;transition:border-color .15s ease,box-shadow .15s ease;
+    }
+    .tool-input::placeholder{color:#94a3b8}
+    .tool-input:focus{border-color:#a5b4fc;box-shadow:0 0 0 3px rgba(99,102,241,.14)}
+    .tool-btn{
+      display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:10px;
+      font-size:13px;font-weight:600;color:#475569;background:#fff;border:1px solid #e2e8f0;
+      transition:background .15s ease,border-color .15s ease,color .15s ease;
+    }
+    .tool-btn:hover{background:#f8fafc;border-color:#cbd5e1;color:#334155}
+
+    /* ===== ROOM / BILL TABLE ===== */
+    .room-table{border-collapse:separate;border-spacing:0}
+    .room-table thead th{
+      padding:10px 12px;text-align:left;font-size:10px;font-weight:700;letter-spacing:.09em;
+      text-transform:uppercase;color:#94a3b8;background:#f8fafc;
+      border-bottom:1px solid #eef1f7;white-space:nowrap;
+    }
+    .room-table thead th:first-child{padding-left:20px}
+    .room-table thead th:last-child{padding-right:20px}
+    .room-table thead th .th-sub{
+      display:block;margin-top:1px;font-size:9px;font-weight:500;letter-spacing:0;
+      text-transform:none;color:#cbd5e1;
+    }
+    .meter-inline{
+      display:flex;align-items:baseline;gap:4px;white-space:nowrap;
+      font-size:12.5px;font-weight:600;color:#0f172a;font-variant-numeric:tabular-nums;
+    }
+    .meter-old{color:#94a3b8;font-weight:500}
+    .meter-arrow{font-size:10px;color:#c7d2fe}
+    .meter-new{font-weight:800;color:#0f172a}
+    .room-table .td{padding:10px 12px;border-bottom:1px solid #f3f5fa;vertical-align:middle}
+    .room-table .td:first-child{padding-left:20px}
+    .room-table .td:last-child{padding-right:20px}
+    .room-table tbody tr:last-child .td{border-bottom:0}
+    .room-row{transition:background .15s ease;animation:rowIn .28s ease both}
+    .room-row:hover{background:#f7f9ff}
+    .room-row:hover .td:first-child{box-shadow:inset 3px 0 0 #6366f1}
+    @keyframes rowIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+    .room-code{
+      display:inline-flex;align-items:center;gap:6px;font-weight:700;font-size:13px;color:#0f172a;
+      transition:color .15s ease;
+    }
+    .room-code-dot{width:6px;height:6px;border-radius:50%;background:linear-gradient(135deg,#818cf8,#22d3ee);flex:none}
+    .price-main{font-weight:700;color:#4338ca;white-space:nowrap}
+    .status-pill{
+      display:inline-flex;align-items:center;gap:6px;padding:3px 9px;border-radius:999px;
+      font-size:10.5px;font-weight:700;border:1px solid;white-space:nowrap;
+    }
+    .pill-dot{width:6px;height:6px;border-radius:50%;background:currentColor;flex:none}
+    .st-available{background:#ecfdf5;color:#047857;border-color:#a7f3d0}
+    .st-occupied{background:#eef2ff;color:#4338ca;border-color:#c7d2fe}
+    .st-reserved{background:#fffbeb;color:#b45309;border-color:#fde68a}
+    .st-blocked{background:#fff1f2;color:#be123c;border-color:#fecdd3}
+
+    /* ===== PAGINATION ===== */
+    .page-btn{
+      display:inline-flex;align-items:center;justify-content:center;min-width:30px;height:30px;padding:0 8px;
+      border-radius:8px;border:1px solid #e2e8f0;background:#fff;font-size:12px;font-weight:600;color:#475569;
+      transition:background .14s ease,border-color .14s ease,color .14s ease;
+    }
+    .page-btn:hover:not(:disabled){background:#f1f5f9;border-color:#cbd5e1}
+    .page-btn:disabled{opacity:.4;cursor:not-allowed}
+    .page-btn-active{background:linear-gradient(135deg,#6366f1,#8b5cf6);border-color:#6366f1;color:#fff;box-shadow:0 8px 18px -10px rgba(99,102,241,.9)}
+
+    /* ===== BILLING EXTRAS ===== */
+    .money{font-variant-numeric:tabular-nums;white-space:nowrap}
+    .bill-sub{font-size:10.5px;color:#94a3b8;margin-top:1px}
+    .bill-row{cursor:pointer}
+    .chev{width:16px;height:16px;color:#cbd5e1;transition:color .15s ease,transform .15s ease}
+    .bill-row:hover .chev{color:#6366f1;transform:translateX(2px)}
+
+    /* Expense lists */
+    .exp-list{display:flex;flex-direction:column;gap:6px}
+    .exp-item{
+      display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:11px;
+      background:#fafbfe;border:1px solid #f1f3fa;transition:background .15s ease,border-color .15s ease;
+    }
+    .exp-item:hover{background:#f5f7ff;border-color:#e0e7ff}
+    .exp-dot{width:7px;height:7px;border-radius:50%;flex:none;background:linear-gradient(135deg,#818cf8,#22d3ee)}
+    .exp-name{font-size:12px;font-weight:600;color:#0f172a;line-height:1.35}
+    .exp-sub{font-size:10px;color:#94a3b8;margin-top:1px}
+    .exp-amount-wrap{display:flex;align-items:center;gap:2px;flex:none}
+    .exp-amount{
+      width:94px;padding:4px 6px;border:1px solid transparent;border-radius:7px;background:transparent;
+      font-size:11.5px;font-weight:700;color:#0f172a;text-align:right;outline:none;
+      font-variant-numeric:tabular-nums;
+    }
+    .exp-amount:hover{background:#fff;border-color:#e2e8f0}
+    .exp-amount:focus{background:#fff;border-color:#a5b4fc;box-shadow:0 0 0 2px rgba(99,102,241,.12)}
+    .exp-unit{font-size:10px;color:#94a3b8}
+    .exp-del{
+      width:20px;height:20px;border-radius:6px;display:grid;place-items:center;flex:none;
+      font-size:14px;line-height:1;color:#cbd5e1;transition:background .15s ease,color .15s ease;
+    }
+    .exp-del:hover{background:#fff1f2;color:#e11d48}
+
+    /* Summary */
+    .sum-row{
+      display:flex;justify-content:space-between;align-items:baseline;gap:10px;
+      padding:7px 10px;border-radius:9px;font-size:12.5px;color:#475569;
+      transition:background .14s ease;
+    }
+    .sum-row:nth-child(odd){background:#fafbfe}
+    .sum-row:hover{background:#f1f4ff}
+    .sum-row b{color:#0f172a;font-variant-numeric:tabular-nums;text-align:right}
+    .sum-profit{
+      margin:10px 0;padding:14px 15px;border-radius:14px;color:#fff;
+      background:
+        radial-gradient(120% 150% at 90% -20%, rgba(56,189,248,.25), rgba(56,189,248,0) 60%),
+        linear-gradient(120deg,#101a3a,#1b2452 55%,#0d1428);
+      box-shadow:0 18px 34px -24px rgba(15,23,42,.9), inset 0 1px 0 rgba(255,255,255,.08);
+    }
+    .bar-track{height:8px;border-radius:999px;background:#eef1f7;overflow:hidden}
+    .bar-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,#6366f1,#22d3ee);transition:width .5s ease}
+
+    /* Modal */
+    .modal-backdrop{backdrop-filter:blur(4px)}
+    .modal-panel{animation:riseIn .28s ease both}
+    .bill-head{
+      position:relative;overflow:hidden;color:#fff;padding:20px 22px;
+      background:
+        radial-gradient(120% 160% at 88% -20%, rgba(56,189,248,.26), rgba(56,189,248,0) 58%),
+        radial-gradient(90% 130% at 0% 120%, rgba(139,92,246,.38), rgba(139,92,246,0) 62%),
+        linear-gradient(115deg,#101a3a 0%,#1b2452 48%,#0d1428 100%);
+    }
+    .bill-head::after{
+      content:"";position:absolute;inset:0;pointer-events:none;
+      background-image:
+        linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px);
+      background-size:34px 34px;
+      -webkit-mask-image:radial-gradient(75% 95% at 55% 0%,#000 15%,transparent 78%);
+      mask-image:radial-gradient(75% 95% at 55% 0%,#000 15%,transparent 78%);
+    }
+    .meter-card{padding:12px 14px;border-radius:12px;background:#f8fafc;border:1px solid #eef1f7}
+    .meter-val{font-size:19px;font-weight:800;color:#0f172a;font-variant-numeric:tabular-nums;line-height:1.2}
+    .bill-table{width:100%;border-collapse:collapse}
+    .bill-table th{
+      padding:8px 12px;text-align:left;font-size:10px;font-weight:700;letter-spacing:.08em;
+      text-transform:uppercase;color:#94a3b8;background:#f8fafc;border-bottom:1px solid #eef1f7;
+    }
+    .bill-table td{padding:9px 12px;border-bottom:1px solid #f3f5fa;font-size:12.5px;vertical-align:top}
+    .bill-table tr:last-child td{border-bottom:0}
+    .pay-box{padding:14px;border-radius:14px;background:#f8fafc;border:1px solid #eef1f7}
+    .pay-row{display:flex;justify-content:space-between;gap:8px;font-size:12px;padding:3px 0}
+    .pay-row b{font-variant-numeric:tabular-nums;text-align:right}
+
+    /* Toast */
+    #toast{
+      position:fixed;right:22px;bottom:22px;z-index:80;
+      padding:10px 16px;border-radius:12px;font-size:12.5px;font-weight:600;color:#e2e8f0;
+      background:rgba(15,23,42,.96);border:1px solid rgba(148,163,184,.28);
+      box-shadow:0 20px 50px -18px rgba(2,6,23,.85);
+      transition:opacity .2s ease,transform .2s ease;
+    }
+    #toast.hidden{opacity:0;transform:translateY(6px);pointer-events:none}
+
+    .hero,.panel{animation:riseIn .38s ease both}
+    .panel{animation-delay:.05s}
+    @keyframes riseIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+    @media print{
+      body.printing-bill{background:#fff}
+      body.printing-bill *{visibility:hidden}
+      body.printing-bill #billModal,body.printing-bill #billModal *{visibility:visible}
+      body.printing-bill #billModal{position:absolute!important;inset:0;display:block!important;background:#fff;padding:0;overflow:visible}
+      body.printing-bill .modal-panel{max-width:100%!important;box-shadow:none!important;border-radius:0!important}
+      body.printing-bill .no-print{display:none!important}
+    }
+  </style>
+</head>
+<body class="flex min-h-screen bg-gray-50 text-gray-800">
+
+  <!-- ===== SIDEBAR ===== -->
+  <aside class="app-sidebar fixed inset-y-0 left-0 w-64 flex flex-col text-slate-300 z-40">
+    <svg aria-hidden="true" focusable="false" style="position:absolute;width:0;height:0;overflow:hidden">
+      <symbol id="i-logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.6 12 3l9 7.6"/><path d="M5.4 9.6V21h13.2V9.6"/><path d="M9.6 21v-5.8h4.8V21"/></symbol>
+      <symbol id="i-grid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.6"/><rect x="14" y="3" width="7" height="7" rx="1.6"/><rect x="3" y="14" width="7" height="7" rx="1.6"/><rect x="14" y="14" width="7" height="7" rx="1.6"/></symbol>
+      <symbol id="i-building" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v16"/><path d="M15 9h2a2 2 0 0 1 2 2v10"/><path d="M8.5 7h2M8.5 11h2M8.5 15h2"/></symbol>
+      <symbol id="i-door" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21h16"/><path d="M6.5 21V4.5A1.5 1.5 0 0 1 8 3h8a1.5 1.5 0 0 1 1.5 1.5V21"/><circle cx="14.6" cy="12.2" r=".9"/></symbol>
+      <symbol id="i-users" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-1.8a4 4 0 0 0-4-4H6.5a4 4 0 0 0-4 4V21"/><circle cx="9.2" cy="7.3" r="3.8"/><path d="M21.5 21v-1.8a4 4 0 0 0-3-3.87"/><path d="M15.8 3.4a3.8 3.8 0 0 1 0 7.4"/></symbol>
+      <symbol id="i-file" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6.5A2.5 2.5 0 0 0 4 4.5v15A2.5 2.5 0 0 0 6.5 22h11a2.5 2.5 0 0 0 2.5-2.5V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h5"/></symbol>
+      <symbol id="i-receipt" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2.8h12a1 1 0 0 1 1 1V21l-3-1.8-2 1.8-2-1.8-2 1.8-3-1.8V3.8a1 1 0 0 1 1-1z"/><path d="M9 8h6M9 12h6"/></symbol>
+      <symbol id="i-trend" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17.5 9 11l4 4 8-8"/><path d="M14.5 7H21v6.5"/></symbol>
+      <symbol id="i-chart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7.5 18v-6"/><path d="M12 18V8"/><path d="M16.5 18v-4"/><path d="M21 18V5"/></symbol>
+      <symbol id="i-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></symbol>
+      <symbol id="i-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></symbol>
+      <symbol id="i-settings" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></symbol>
+    </svg>
+
+    <!-- Brand -->
+    <div class="relative px-5 pt-6 pb-4">
+      <a href="#" class="flex items-center gap-3">
+        <span class="brand-mark"><svg class="h-5 w-5"><use href="#i-logo"/></svg></span>
+        <span class="min-w-0">
+          <span class="block text-[15px] font-bold leading-tight tracking-tight text-white">RoomForRent</span>
+          <span class="block text-[10px] font-semibold uppercase tracking-[0.16em] text-indigo-300/70">Quản lý nhà trọ</span>
+        </span>
+      </a>
+    </div>
+
+    <!-- Workspace -->
+    <div class="px-4 pb-5">
+      <button type="button" class="workspace-card w-full text-left">
+        <span class="ws-avatar">TP</span>
+        <span class="min-w-0 flex-1">
+          <span class="block text-[10px] font-medium uppercase tracking-wider text-slate-400">Khu vực</span>
+          <span class="block truncate text-[13px] font-semibold text-white">Tân Phú · HCM</span>
+        </span>
+        <svg class="h-4 w-4 shrink-0 text-slate-500"><use href="#i-chevron"/></svg>
+      </button>
+    </div>
+
+    <!-- Nav -->
+    <nav class="flex-1 space-y-5 overflow-y-auto px-3 pb-4">
+      <div>
+        <p class="nav-group-label">Tổng quan</p>
+        <a href="#" class="nav-link">
+          <svg class="nav-ico"><use href="#i-grid"/></svg>
+          <span class="flex-1">Dashboard</span>
+        </a>
+      </div>
+
+      <div>
+        <p class="nav-group-label">Vận hành</p>
+        <a href="../Buidling/Overview/BUILDING.html" class="nav-link">
+          <svg class="nav-ico"><use href="#i-building"/></svg>
+          <span class="flex-1">Tòa nhà</span>
+          <span class="nav-badge info">2</span>
+        </a>
+        <div class="nav-sub">
+          <a href="../Buidling/Overview/BUILDING.html" class="nav-sub-link">Danh sách tòa nhà</a>
+          <a href="../Buidling/Detail/BUILDING_DETAIL.html?building=A" class="nav-sub-link">Chi tiết tòa nhà</a>
+          <a href="../Buidling/Config/ROOM_CONFIG.html?building=A" class="nav-sub-link">Cấu hình phòng</a>
+        </div>
+        <a href="#" class="nav-link">
+          <svg class="nav-ico"><use href="#i-door"/></svg>
+          <span class="flex-1">Phòng</span>
+        </a>
+        <a href="#" class="nav-link">
+          <svg class="nav-ico"><use href="#i-users"/></svg>
+          <span class="flex-1">Khách hàng</span>
+        </a>
+        <a href="#" class="nav-link">
+          <svg class="nav-ico"><use href="#i-file"/></svg>
+          <span class="flex-1">Hợp đồng</span>
+          <span class="nav-badge">2</span>
+        </a>
+      </div>
+
+      <div>
+        <p class="nav-group-label">Kinh doanh</p>
+        <a href="BILLING.html" class="nav-link active" aria-current="page">
+          <svg class="nav-ico"><use href="#i-receipt"/></svg>
+          <span class="flex-1">Hóa đơn / Thanh toán</span>
+          <span class="nav-badge">3</span>
+        </a>
+        <div class="nav-sub">
+          <a href="#bills" class="nav-sub-link active">Bảng hóa đơn</a>
+          <a href="#expenses" class="nav-sub-link">Chi phí vận hành</a>
+          <a href="#summary" class="nav-sub-link">Lợi nhuận tháng</a>
+        </div>
+        <a href="#" class="nav-link">
+          <svg class="nav-ico"><use href="#i-trend"/></svg>
+          <span class="flex-1">Tài chính</span>
+        </a>
+        <a href="#" class="nav-link">
+          <svg class="nav-ico"><use href="#i-chart"/></svg>
+          <span class="flex-1">Báo cáo</span>
+        </a>
+      </div>
+    </nav>
+
+    <!-- Footer -->
+    <div>
+      <div class="mx-3 mb-3 rounded-xl border border-white/5 bg-white/[0.04] p-3">
+        <div class="flex items-center justify-between text-[11px]">
+          <span class="text-slate-400">Tỷ lệ lấp đầy</span>
+          <span class="font-semibold text-emerald-300">46%</span>
+        </div>
+        <div class="mt-2 h-1.5 overflow-hidden rounded-full bg-white/10">
+          <div class="h-full w-[46%] rounded-full bg-gradient-to-r from-emerald-400 to-teal-300"></div>
+        </div>
+        <p class="mt-2 text-[10px] text-slate-500">12/26 phòng đang thuê · đặt cọc</p>
+      </div>
+      <div class="border-t border-white/5 p-3">
+        <div class="flex cursor-pointer items-center gap-3 rounded-xl px-2 py-2 transition hover:bg-white/5">
+          <span class="user-avatar">MN</span>
+          <div class="min-w-0 flex-1">
+            <p class="truncate text-[13px] font-semibold text-white">Nguyễn Minh</p>
+            <p class="truncate text-[10px] text-slate-400">Quản trị viên</p>
+          </div>
+          <svg class="h-4 w-4 shrink-0 text-slate-500"><use href="#i-settings"/></svg>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ===== CONTENT ===== -->
+  <main class="page-bg ml-64 min-h-screen flex-1 p-8">
+    <div class="mx-auto max-w-[1480px]">
+      <a href="../Buidling/Overview/BUILDING.html" class="group mb-5 inline-flex items-center gap-2 text-sm font-semibold text-indigo-600 hover:text-indigo-800">
+        <span class="grid h-6 w-6 place-items-center rounded-full bg-white shadow-sm ring-1 ring-indigo-100 transition group-hover:-translate-x-0.5">←</span>
+        Quản lý Tòa nhà
+      </a>
+
+      <!-- ===== HERO ===== -->
+      <section class="hero mb-6 p-6 sm:p-7">
+        <div class="relative z-10 flex flex-col gap-7 xl:flex-row xl:items-center xl:justify-between">
+          <div class="flex min-w-0 items-start gap-4">
+            <span class="hero-icon">
+              <svg class="h-7 w-7"><use href="#i-receipt"/></svg>
+            </span>
+            <div class="min-w-0">
+              <div class="flex flex-wrap items-center gap-2">
+                <span class="hero-eyebrow">Hóa đơn &amp; thanh toán</span>
+                <span id="heroMonthChip" class="hero-chip">Tháng 10/2026</span>
+                <span id="heroSourceChip" class="hero-chip">Nguồn: Excel T10</span>
+              </div>
+              <h1 class="mt-1.5 text-3xl font-bold tracking-tight text-white">Tòa nhà A</h1>
+              <p class="mt-1 text-sm text-slate-300/85">43/5 TPP · Tân Phú, Hồ Chí Minh</p>
+              <div class="mt-3.5 flex flex-wrap items-center gap-2">
+                <span class="hero-chip">🚪 <b id="heroBillCount">47</b> phòng</span>
+                <span class="hero-chip">🧾 <b>47</b> hóa đơn</span>
+                <span class="hero-chip">👤 <b>Anh Nam</b></span>
+                <span class="hero-chip">🏦 PTT <b>15%</b></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-4 sm:flex-row sm:items-center xl:justify-end">
+            <div class="occ-card" title="Tỷ lệ đã thu trên tổng phải thu">
+              <svg viewBox="0 0 88 88" class="h-[76px] w-[76px] -rotate-90">
+                <defs>
+                  <linearGradient id="payGrad" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0" stop-color="#34d399"/><stop offset="1" stop-color="#22d3ee"/>
+                  </linearGradient>
+                </defs>
+                <circle cx="44" cy="44" r="34" fill="none" stroke="rgba(255,255,255,.16)" stroke-width="8"/>
+                <circle id="payRingArc" cx="44" cy="44" r="34" fill="none" stroke="url(#payGrad)" stroke-width="8" stroke-linecap="round" stroke-dasharray="213.63" stroke-dashoffset="213.63"/>
+              </svg>
+              <div class="pointer-events-none absolute inset-0 grid place-items-center">
+                <div class="text-center leading-none">
+                  <p id="payRingValue" class="text-base font-bold text-white">0%</p>
+                  <p class="mt-1 text-[8px] font-semibold uppercase tracking-[0.14em] text-slate-400">đã thu</p>
+                </div>
+              </div>
+            </div>
+            <div class="flex flex-col gap-2">
+              <select id="monthSelect" class="hero-select" aria-label="Chọn tháng">
+                <option value="1">Tháng 01/2026</option>
+                <option value="2">Tháng 02/2026</option>
+                <option value="3">Tháng 03/2026</option>
+                <option value="4">Tháng 04/2026</option>
+                <option value="5">Tháng 05/2026</option>
+                <option value="6">Tháng 06/2026</option>
+                <option value="7">Tháng 07/2026</option>
+                <option value="8">Tháng 08/2026</option>
+                <option value="9">Tháng 09/2026</option>
+                <option value="10" selected>Tháng 10/2026</option>
+                <option value="11">Tháng 11/2026</option>
+                <option value="12">Tháng 12/2026</option>
+              </select>
+              <button id="btnExport" class="hero-btn" type="button">
+                <span>⬇</span> Xuất CSV
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="relative z-10 mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <div class="hero-stat">
+            <div class="flex items-center justify-between">
+              <p class="hs-label">Tổng doanh thu</p>
+              <span class="hs-dot bg-indigo-400"></span>
+            </div>
+            <p id="statRevenue" class="hs-value text-white">0</p>
+            <p id="statRevenueSub" class="hs-sub">0 ₫ · 0 hóa đơn</p>
+          </div>
+          <div class="hero-stat">
+            <div class="flex items-center justify-between">
+              <p class="hs-label">Đã thu</p>
+              <span class="hs-dot bg-emerald-400"></span>
+            </div>
+            <p id="statPaid" class="hs-value text-emerald-300">0</p>
+            <p id="statPaidSub" class="hs-sub">Còn 0 ₫</p>
+          </div>
+          <div class="hero-stat">
+            <div class="flex items-center justify-between">
+              <p class="hs-label">Tổng chi phí</p>
+              <span class="hs-dot bg-amber-400"></span>
+            </div>
+            <p id="statExpense" class="hs-value text-amber-300">0</p>
+            <p id="statExpenseSub" class="hs-sub">Cố định + phát sinh</p>
+          </div>
+          <div class="hero-stat">
+            <div class="flex items-center justify-between">
+              <p class="hs-label">Lợi nhuận</p>
+              <span class="hs-dot bg-cyan-400"></span>
+            </div>
+            <p id="statProfit" class="hs-value text-cyan-300">0</p>
+            <p id="statProfitSub" class="hs-sub">Trước chia PTT/CĐT</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== BILLS + SUMMARY ===== -->
+      <div class="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1fr)_360px] items-start">
+        <!-- Bills -->
+        <section id="bills" class="panel overflow-hidden">
+          <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 px-5 py-4">
+            <div class="flex items-center gap-3">
+              <span class="panel-ico bg-indigo-50 text-indigo-600">
+                <svg class="h-4 w-4"><use href="#i-receipt"/></svg>
+              </span>
+              <div>
+                <h3 class="panel-title">
+                  Hóa đơn phòng
+                  <span id="billCountBadge" class="ml-1 inline-flex min-w-[24px] justify-center rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-bold text-slate-600">0</span>
+                </h3>
+                <p class="panel-sub">Số điện &amp; nước: chỉ số cũ → chỉ số mới · Nhấn dòng để xem hóa đơn</p>
+              </div>
+            </div>
+            <div class="flex flex-wrap items-center gap-2">
+              <div class="relative">
+                <svg class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.2-3.2"/></svg>
+                <input id="billSearch" type="text" placeholder="Tìm phòng / khách…" class="tool-input w-52 pl-9">
+              </div>
+              <select id="billFilter" class="tool-input" aria-label="Lọc trạng thái">
+                <option value="all">Tất cả trạng thái</option>
+                <option value="paid">Đã thu đủ</option>
+                <option value="partial">Thu một phần</option>
+                <option value="unpaid">Chưa thu</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="room-table w-full min-w-[920px] text-sm">
+              <thead>
+                <tr>
+                  <th>Phòng</th>
+                  <th>Khách thuê</th>
+                  <th>Điện <span class="th-sub">cũ → mới</span></th>
+                  <th>Nước <span class="th-sub">cũ → mới</span></th>
+                  <th class="text-right">Tiền phòng</th>
+                  <th class="text-right">Phải thu</th>
+                  <th class="text-right">Đã thu</th>
+                  <th class="text-center">Trạng thái</th>
+                </tr>
+              </thead>
+              <tbody id="billTableBody"></tbody>
+            </table>
+          </div>
+
+          <div class="flex flex-wrap items-center justify-between gap-2 border-t border-slate-100 bg-slate-50/60 px-5 py-3">
+            <p id="billTableFoot" class="text-[11.5px] text-slate-500">0 hóa đơn</p>
+            <div id="billPagination" class="flex items-center gap-1"></div>
+          </div>
+        </section>
+
+        <!-- Summary -->
+        <section id="summary" class="panel p-5 xl:sticky xl:top-6">
+          <div class="panel-head mb-4">
+            <div class="flex items-center gap-3">
+              <span class="panel-ico bg-cyan-50 text-cyan-600">
+                <svg class="h-4 w-4"><use href="#i-trend"/></svg>
+              </span>
+              <div>
+                <h3 class="panel-title">Tổng quan lợi nhuận</h3>
+                <p id="summaryMonth" class="panel-sub">Tháng 10/2026</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="space-y-1">
+            <div class="sum-row"><span>Doanh thu (phải thu)</span><b id="sumRevenue">0 ₫</b></div>
+            <div class="sum-row"><span>Chi phí cố định</span><b id="sumFixed">0 ₫</b></div>
+            <div class="sum-row"><span>Chi phí phát sinh</span><b id="sumIncurred">0 ₫</b></div>
+            <div class="sum-row"><span class="font-semibold text-slate-700">Tổng chi phí hàng tháng</span><b id="sumMonthly">0 ₫</b></div>
+          </div>
+
+          <div class="sum-profit">
+            <p class="text-[10px] font-bold uppercase tracking-[0.16em] text-indigo-200">Tổng lợi nhuận</p>
+            <p id="sumProfit" class="mt-1 text-2xl font-extrabold tracking-tight money">0 ₫</p>
+            <p class="mt-1 text-[11px] text-slate-300/80">Doanh thu − chi phí hàng tháng</p>
+          </div>
+
+          <div class="space-y-1">
+            <div class="sum-row"><span>Trả PTT (15%)</span><b id="sumPtt">0 ₫</b></div>
+            <div class="sum-row"><span>PTT chi trước cho CĐT</span><b id="sumPttAdvance">0 ₫</b></div>
+            <div class="sum-row"><span class="font-semibold text-slate-700">Tổng trả CĐT</span><b id="sumOwner" class="text-indigo-700">0 ₫</b></div>
+            <div class="sum-row"><span>Còn phải thu</span><b id="sumOutstanding" class="text-rose-600">0 ₫</b></div>
+          </div>
+
+          <div class="mt-3">
+            <div class="flex items-center justify-between text-[11px] text-slate-500">
+              <span>Tỷ lệ đã thu</span>
+              <span id="sumCollectedRate" class="font-bold text-slate-700">0%</span>
+            </div>
+            <div class="bar-track mt-1.5"><div id="sumBar" class="bar-fill" style="width:0%"></div></div>
+            <p id="sumPaidLabel" class="mt-1.5 text-[10.5px] text-slate-400">0 ₫ / 0 ₫</p>
+          </div>
+        </section>
+      </div>
+
+      <!-- ===== EXPENSES ===== -->
+      <div id="expenses" class="mt-6 grid grid-cols-1 gap-5 xl:grid-cols-3">
+        <section class="panel p-5">
+          <div class="panel-head mb-4">
+            <div class="flex items-center gap-3">
+              <span class="panel-ico bg-indigo-50 text-indigo-600">
+                <svg class="h-4 w-4"><use href="#i-file"/></svg>
+              </span>
+              <div>
+                <h3 class="panel-title">Chi phí cố định</h3>
+                <p class="panel-sub">Điện, nước, rác, vệ sinh, xếp xe</p>
+              </div>
+            </div>
+            <span id="expFixedTotal" class="text-sm font-extrabold text-indigo-700 money">0 ₫</span>
+          </div>
+          <div id="expFixedList" class="exp-list"></div>
+          <button type="button" class="ghost-btn mt-3 w-full justify-center no-print" data-add="fixed">＋ Thêm khoản</button>
+        </section>
+
+        <section class="panel p-5">
+          <div class="panel-head mb-4">
+            <div class="flex items-center gap-3">
+              <span class="panel-ico bg-amber-50 text-amber-600">
+                <svg class="h-4 w-4"><use href="#i-file"/></svg>
+              </span>
+              <div>
+                <h3 class="panel-title">Chi phí phát sinh</h3>
+                <p class="panel-sub">Sửa chữa, vật tư, vệ sinh, phí khác</p>
+              </div>
+            </div>
+            <span id="expIncurredTotal" class="text-sm font-extrabold text-amber-700 money">0 ₫</span>
+          </div>
+          <div id="expIncurredList" class="exp-list"></div>
+          <button type="button" class="ghost-btn mt-3 w-full justify-center no-print" data-add="incurred">＋ Thêm khoản</button>
+        </section>
+
+        <section class="panel p-5">
+          <div class="panel-head mb-4">
+            <div class="flex items-center gap-3">
+              <span class="panel-ico bg-violet-50 text-violet-600">
+                <svg class="h-4 w-4"><use href="#i-file"/></svg>
+              </span>
+              <div>
+                <h3 class="panel-title">PTT chi trước cho CĐT</h3>
+                <p class="panel-sub">Chi phí ban đầu &amp; đối chiếu</p>
+              </div>
+            </div>
+            <span id="expPttTotal" class="text-sm font-extrabold text-violet-700 money">0 ₫</span>
+          </div>
+          <div id="expPttList" class="exp-list"></div>
+          <button type="button" class="ghost-btn mt-3 w-full justify-center no-print" data-add="ptt">＋ Thêm khoản</button>
+        </section>
+      </div>
+
+      <p class="mt-4 text-[11px] text-slate-400">
+        Số liệu tháng 10/2026 lấy từ file <span class="font-semibold text-slate-500">TOA NHA A - NĂM 2026.xlsx</span> (sheet THANG 10).
+        Các tháng khác được tạo tự động từ dữ liệu gốc để minh họa.
+      </p>
+    </div>
+  </main>
+
+  <!-- ===== BILL MODAL ===== -->
+  <div id="billModal" class="modal-backdrop fixed inset-0 z-50 hidden items-start justify-center overflow-y-auto bg-slate-950/60 p-4 sm:p-8" role="dialog" aria-modal="true" aria-label="Chi tiết hóa đơn">
+    <div class="modal-panel w-full max-w-3xl overflow-hidden rounded-2xl bg-white shadow-2xl">
+      <div id="billModalHead" class="bill-head"></div>
+      <div id="billModalBody" class="p-5 sm:p-6"></div>
+      <div class="no-print flex flex-wrap items-center justify-between gap-2 border-t border-slate-100 bg-slate-50 px-5 py-3">
+        <button id="btnCloseBill" type="button" class="ghost-btn">Đóng</button>
+        <div class="flex flex-wrap gap-2">
+          <button id="btnPrintBill" type="button" class="ghost-btn">🖨 In hóa đơn</button>
+          <button id="btnConfirmPaid" type="button" class="hero-btn">✓ Xác nhận đã thu</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== ADD EXPENSE MODAL ===== -->
+  <div id="expenseModal" class="modal-backdrop fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/60 p-4" role="dialog" aria-modal="true" aria-label="Thêm khoản chi phí">
+    <div class="modal-panel w-full max-w-md rounded-2xl bg-white p-5 shadow-2xl">
+      <h3 class="panel-title text-base">Thêm khoản chi phí</h3>
+      <p class="panel-sub mb-4">Khoản chi sẽ được cộng vào báo cáo lợi nhuận của tháng.</p>
+      <form id="expForm" class="space-y-3">
+        <div>
+          <label class="text-xs font-semibold text-slate-500" for="expCat">Nhóm chi phí</label>
+          <select id="expCat" class="tool-input mt-1 w-full">
+            <option value="fixed">Chi phí cố định</option>
+            <option value="incurred">Chi phí phát sinh</option>
+            <option value="ptt">PTT chi trước cho CĐT</option>
+          </select>
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-slate-500" for="expName">Tên khoản chi</label>
+          <input id="expName" type="text" class="tool-input mt-1 w-full" placeholder="Ví dụ: Sửa bóng đèn hành lang" required>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="text-xs font-semibold text-slate-500" for="expAmount">Thành tiền (₫)</label>
+            <input id="expAmount" type="number" step="1000" class="tool-input mt-1 w-full" placeholder="0" required>
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-slate-500" for="expDay">Ngày (1–31)</label>
+            <input id="expDay" type="number" min="1" max="31" class="tool-input mt-1 w-full" placeholder="Không bắt buộc">
+          </div>
+        </div>
+        <div class="flex justify-end gap-2 pt-1">
+          <button type="button" id="btnCancelExpense" class="ghost-btn">Hủy</button>
+          <button type="submit" class="hero-btn">Thêm khoản</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="toast" class="hidden"></div>
+
+  <script>
+    /* ============================================================
+       DỮ LIỆU GỐC – TOA NHA A - NĂM 2026.xlsx (sheet THANG 10)
+       ============================================================ */
+    const BUILDING = {
+      code: 'A',
+      name: 'Tòa nhà A',
+      address: '43/5 TPP · Tân Phú, Hồ Chí Minh',
+      owner: 'Anh Nam',
+      pttRate: 0.15
+    };
+
+    const RATES = { electric: 4000, water: 30000, vehicle: 100000, mgmt: 150000 };
+
+    const BASE_ROOMS = [{"room":"P001","days":30,"eOld":624,"eNew":799,"wOld":34,"wNew":43,"contract":5300000,"debt":0,"paid":6620000,"people":3,"vehicles":2,"deposit":5300000,"valuation":5300000,"name":"Bùi Thị Bích Truyền","phone":"0932131455","note":"TM","custNote":null,"tttv":"ĐÃ CÓ TTTV"},
+{"room":"P002","days":30,"eOld":674,"eNew":894,"wOld":18,"wNew":28,"contract":5300000,"debt":0,"paid":6730000,"people":2,"vehicles":1,"deposit":5300000,"valuation":5300000,"name":"Hoàng Thị Dạ Thi","phone":"0937247897","note":"TM","custNote":"Đã pass hợp đồng T9/2026\nVõ Tuyết Ngân","tttv":null},
+{"room":"P003","days":30,"eOld":432,"eNew":631,"wOld":15,"wNew":25,"contract":5300000,"debt":0,"paid":6446000,"people":3,"vehicles":1,"deposit":5300000,"valuation":5300000,"name":"Nguyễn Quang Minh","phone":"0765287724","note":"13/10: TPP P003 TPT10","custNote":"Đã tính doanh thu T8/2026\nNguyễn Lan Khanh \nNguyễn Thế Hoan","tttv":null},
+{"room":"P004","days":30,"eOld":796,"eNew":1081,"wOld":24,"wNew":33,"contract":5300000,"debt":0,"paid":6990000,"people":4,"vehicles":2,"deposit":5300000,"valuation":5300000,"name":"Hồ Trần Thị Thảo Hiền","phone":"0787727499","note":"TM","custNote":null,"tttv":"ĐÃ CÓ TTTV"},
+{"room":"P005","days":30,"eOld":839,"eNew":839,"wOld":36,"wNew":36,"contract":0,"debt":0,"paid":0,"people":0,"vehicles":0,"deposit":0,"valuation":5300000,"name":null,"phone":null,"note":null,"custNote":"Đã tính toán doanh thu T10/2026\nDương Thị Quyên","tttv":null},
+{"room":"P006","days":30,"eOld":541,"eNew":746,"wOld":21,"wNew":23,"contract":5200000,"debt":-50000,"paid":6280000,"people":2,"vehicles":1,"deposit":5200000,"valuation":5300000,"name":"Trương Quang Khải","phone":"0938607485","note":"14/10: TPP P006 TPT10","custNote":null,"tttv":"CÁ NHÂN ĐKI CHƯA TC"},
+{"room":"P007","days":30,"eOld":969,"eNew":1284,"wOld":39,"wNew":48,"contract":5300000,"debt":0,"paid":7480000,"people":3,"vehicles":2,"deposit":0,"valuation":5300000,"name":"Phạm Tuyết Giao","phone":"0838414939","note":"TM","custNote":null,"tttv":"ĐÃ CÓ TTTV"},
+{"room":"P008","days":30,"eOld":902,"eNew":1204,"wOld":16,"wNew":29,"contract":5300000,"debt":0,"paid":0,"people":3,"vehicles":0,"deposit":5300000,"valuation":5300000,"name":"Phan Hồng Phi Yến","phone":"0902333894","note":"15/10: 2,000,000\n20/10: 5,048,000","custNote":null,"tttv":"CÁ NHÂN ĐKI CHƯA TC"},
+{"room":"P009","days":30,"eOld":1191,"eNew":1608,"wOld":26,"wNew":34,"contract":5300000,"debt":0,"paid":7458000,"people":3,"vehicles":1,"deposit":5300000,"valuation":5300000,"name":"Nguyễn Thị Trinh","phone":"0399967951","note":"TM","custNote":null,"tttv":"CÁ NHÂN ĐKI CHƯA TC"},
+{"room":"P010","days":30,"eOld":403,"eNew":548,"wOld":23,"wNew":28,"contract":5200000,"debt":0,"paid":6280000,"people":2,"vehicles":2,"deposit":5200000,"valuation":5300000,"name":"Lâm Đức Huy","phone":"0877235509","note":"TM","custNote":null,"tttv":null},
+{"room":"P011","days":30,"eOld":652,"eNew":817,"wOld":18,"wNew":21,"contract":5300000,"debt":0,"paid":6400000,"people":2,"vehicles":2,"deposit":5300000,"valuation":5300000,"name":"Lưu Trương Cẩm Tú","phone":"0906798234","note":"TM","custNote":"Tinhd toán doanh thu T8/26\nBùi Mỹ Linh \nMai Xuân Vinh\nBùi Minh Đát\nLê Thị Nụ","tttv":"ĐÃ CÓ TTTV"},
+{"room":"P012","days":30,"eOld":595,"eNew":734,"wOld":30,"wNew":36,"contract":5300000,"debt":0,"paid":6486000,"people":2,"vehicles":1,"deposit":5300000,"valuation":5300000,"name":"Đăng Nguyễn Phúc Vinh","phone":"0906100695","note":"TM","custNote":null,"tttv":"ĐÃ CÓ TTTV"},
+{"room":"P013","days":30,"eOld":715,"eNew":960,"wOld":24,"wNew":30,"contract":5300000,"debt":0,"paid":6810000,"people":2,"vehicles":2,"deposit":5300000,"valuation":5300000,"name":"Lê Mộng Nghi","phone":"0392886645","note":"TM","custNote":null,"tttv":"ĐÃ CÓ TTTV"},
+{"room":"P101","days":30,"eOld":577,"eNew":731,"wOld":33,"wNew":37,"contract":5300000,"debt":0,"paid":6286000,"people":1,"vehicles":1,"deposit":5300000,"valuation":5300000,"name":"Trần Minh Trí","phone":"0357399887","note":"11/10: TPP P101 TPT10","custNote":null,"tttv":"ĐÃ CÓ TTTV"},
+{"room":"P102","days":30,"eOld":506,"eNew":650,"wOld":15,"wNew":21,"contract":5300000,"debt":0,"paid":6426000,"people":2,"vehicles":2,"deposit":5300000,"valuation":5300000,"name":"Phan Thanh Hoàng","phone":"0379239222","note":"TM","custNote":null,"tttv":"ĐÃ CÓ TTTV"},
+{"room":"P103","days":30,"eOld":457,"eNew":671,"wOld":14,"wNew":19,"contract":5200000,"debt":0,"paid":6456000,"people":1,"vehicles":1,"deposit":5200000,"valuation":5300000,"name":"Trần Vũ Anh Khoa","phone":"0785015603","note":"TM","custNote":null,"tttv":"ĐÃ CÓ TTTV"},
+{"room":"P104","days":30,"eOld":845,"eNew":1089,"wOld":35,"wNew":47,"contract":5300000,"debt":0,"paid":0,"people":3,"vehicles":1,"deposit":7300000,"valuation":5300000,"name":"Nguyễn Trung Ngọc","phone":"0778218166","note":"14/10: 7,386,000\n14/10: 100,000","custNote":null,"tttv":"CÁ NHÂN ĐKI CHƯA TC"},
+{"room":"P105","days":30,"eOld":599,"eNew":599,"wOld":24,"wNew":24,"contract":5300000,"debt":0,"paid":2035000,"people":3,"vehicles":1,"deposit":5300000,"valuation":5300000,"name":"Lê Thảo My","phone":"0786074567","note":"Nhận phòng 20/10\n20/10: TPP P105 TPT10","custNote":"Đã tinh doanh thu T10/2026\nTăng Vĩnh Phú\nTrương Nguyễn Anh Trâm","tttv":"CÁ NHÂN ĐKI CHƯA TC"},
+{"room":"P106","days":30,"eOld":301,"eNew":398,"wOld":10,"wNew":12,"contract":5300000,"debt":0,"paid":6098000,"people":2,"vehicles":2,"deposit":5300000,"valuation":5300000,"name":"Trần Bình Chương","phone":"0823388343","note":"TM","custNote":null,"tttv":"ĐÃ CÓ TTTV"},
+{"room":"P107","days":30,"eOld":506,"eNew":735,"wOld":19,"wNew":24,"contract":5200000,"debt":0,"paid":6616000,"people":2,"vehicles":2,"deposit":5200000,"valuation":5300000,"name":"Huỳnh Thị Thanh Thảo","phone":"0396872253","note":"TM","custNote":null,"tttv":"ĐÃ CÓ TTTV"},
+{"room":"P108","days":30,"eOld":579,"eNew":762,"wOld":9,"wNew":13,"contract":5200000,"debt":0,"paid":6602000,"people":1,"vehicles":1,"deposit":6200000,"valuation":5300000,"name":"Đỗ Bảo Phánh","phone":"0772456550","note":"TM","custNote":null,"tttv":"ĐÃ CÓ TTTV"},
+{"room":"P109","days":30,"eOld":477,"eNew":643,"wOld":13,"wNew":17,"contract":5200000,"debt":0,"paid":6334000,"people":2,"vehicles":2,"deposit":5200000,"valuation":5200000,"name":"Nguyễn Cao Thy","phone":"0964368716","note":"TM","custNote":null,"tttv":"CÁ NHÂN ĐKI CHƯA TC"},
+{"room":"P110","days":30,"eOld":358,"eNew":513,"wOld":31,"wNew":41,"contract":5300000,"debt":100000,"paid":6570000,"people":2,"vehicles":1,"deposit":5300000,"valuation":5300000,"name":"Nguyễn  Hồng Phương Uyên","phone":"0912475656","note":"10/10: TPP P110 TPT10","custNote":"Đã tính doanh thu T8/2026\nNguyễn Thị Thu Hồng\nNguyễn Thanh Bo","tttv":null},
+{"room":"P111","days":30,"eOld":278,"eNew":366,"wOld":5,"wNew":7,"contract":5200000,"debt":0,"paid":5862000,"people":1,"vehicles":1,"deposit":5200000,"valuation":5300000,"name":"Nguyễn Bùi Nguyên Khoa","phone":"0353922912","note":"TM","custNote":null,"tttv":"ĐÃ CÓ TTTV"},
+{"room":"P112","days":30,"eOld":628,"eNew":852,"wOld":28,"wNew":38,"contract":5200000,"debt":0,"paid":6746000,"people":4,"vehicles":2,"deposit":5200000,"valuation":5300000,"name":"Ngô Thị Tuyết Nhung","phone":"0934134691","note":"TM","custNote":null,"tttv":"ĐÃ CÓ TTTV"},
+{"room":"P113","days":30,"eOld":662,"eNew":864,"wOld":29,"wNew":35,"contract":5200000,"debt":0,"paid":6538000,"people":4,"vehicles":2,"deposit":5200000,"valuation":5300000,"name":"Phạm Hoàng Em","phone":"0794080797","note":"TM","custNote":null,"tttv":"ĐÃ CÓ TTTV"},
+{"room":"P114","days":30,"eOld":85,"eNew":105,"wOld":5,"wNew":7,"contract":5200000,"debt":0,"paid":5590000,"people":2,"vehicles":1,"deposit":5200000,"valuation":5300000,"name":"Nguyễn Thanh Cường","phone":"0931106926","note":"TM","custNote":null,"tttv":"TÒA NHÀ ĐKI"},
+{"room":"P115","days":30,"eOld":614,"eNew":808,"wOld":139,"wNew":145,"contract":5300000,"debt":0,"paid":6506000,"people":2,"vehicles":1,"deposit":5300000,"valuation":5300000,"name":"Phạm Hoàng Lực","phone":"0363108485","note":"TM","custNote":null,"tttv":"ĐÃ CÓ TTTV"},
+{"room":"P116","days":30,"eOld":532,"eNew":885,"wOld":23,"wNew":33,"contract":0,"debt":0,"paid":0,"people":2,"vehicles":1,"deposit":5200000,"valuation":5300000,"name":"Đặng Đức Toàn","phone":"0969909910","note":"TM: 6,364,000\n31/10: 798,000","custNote":null,"tttv":"ĐÃ CÓ TTTV"},
+{"room":"P118","days":30,"eOld":832,"eNew":1138,"wOld":13,"wNew":18,"contract":5200000,"debt":0,"paid":6924000,"people":2,"vehicles":2,"deposit":5200000,"valuation":5300000,"name":"Huỳnh Thị Kim Ngân","phone":"0977405693","note":"TM","custNote":null,"tttv":"ĐÃ CÓ TTTV"},
+{"room":"P201","days":30,"eOld":342,"eNew":437,"wOld":6,"wNew":8,"contract":5100000,"debt":0,"paid":5790000,"people":1,"vehicles":1,"deposit":5100000,"valuation":5200000,"name":"Đoàn Thị Kiều Dung","phone":"0981755805","note":"TM","custNote":null,"tttv":"ĐÃ CÓ TTTV"},
+{"room":"P202","days":30,"eOld":477,"eNew":571,"wOld":6,"wNew":8,"contract":5200000,"debt":0,"paid":6086000,"people":1,"vehicles":1,"deposit":0,"valuation":5200000,"name":"Nguyễn Minh Quân","phone":"0919978877","note":"TM","custNote":null,"tttv":"ĐÃ CÓ TTTV"},
+{"room":"P203","days":30,"eOld":780,"eNew":1049,"wOld":18,"wNew":24,"contract":5200000,"debt":0,"paid":0,"people":1,"vehicles":1,"deposit":5200000,"valuation":5200000,"name":"Võ Thị Như Hạ","phone":"0786791507","note":"TM: 6,200,000\n06/10: 506,000","custNote":null,"tttv":"CÁ NHÂN ĐKI CHƯA TC"},
+{"room":"P204","days":30,"eOld":671,"eNew":918,"wOld":14,"wNew":20,"contract":5100000,"debt":0,"paid":6518000,"people":3,"vehicles":1,"deposit":5100000,"valuation":5200000,"name":"Lê Thị Hồng Nhi","phone":"0332446142","note":"TM","custNote":null,"tttv":"ĐÃ CÓ TTTV"},
+{"room":"P205","days":30,"eOld":279,"eNew":370,"wOld":10,"wNew":14,"contract":5100000,"debt":0,"paid":5834000,"people":2,"vehicles":1,"deposit":5100000,"valuation":5200000,"name":"Trần Thị Ngọc Thu","phone":"0765911113","note":"TM","custNote":null,"tttv":"TÒA NHÀ ĐKI "},
+{"room":"P206","days":30,"eOld":806,"eNew":1077,"wOld":27,"wNew":39,"contract":5100000,"debt":0,"paid":6794000,"people":3,"vehicles":1,"deposit":5100000,"valuation":5200000,"name":"Vũ Thành Đạt","phone":"0937759539","note":"13/10: TPP P206 TPT10","custNote":null,"tttv":"đợi thông tin hủy tttv cũ"},
+{"room":"P207","days":30,"eOld":867,"eNew":1072,"wOld":18,"wNew":25,"contract":5200000,"debt":0,"paid":6670000,"people":2,"vehicles":1,"deposit":5200000,"valuation":5200000,"name":"Trần Thị Thúy Mai","phone":"0963578437","note":"TM","custNote":null,"tttv":null},
+{"room":"P208","days":30,"eOld":353,"eNew":512,"wOld":5,"wNew":8,"contract":5200000,"debt":0,"paid":6276000,"people":2,"vehicles":2,"deposit":5200000,"valuation":5200000,"name":"Dương Kim Khánh","phone":"0908226 346","note":"TM","custNote":null,"tttv":"đợi thông tin"},
+{"room":"P209","days":30,"eOld":819,"eNew":819,"wOld":26,"wNew":26,"contract":5100000,"debt":0,"paid":2180000,"people":2,"vehicles":2,"deposit":5100000,"valuation":5200000,"name":"Huỳnh Đức Thắng","phone":"0775073792","note":"Nhận phòng 19/10\nTM","custNote":"Đã tính doanh thu T10/2026\nNguyễn Hoàng Xuân Vy\nTrịnh Trường Giang","tttv":null},
+{"room":"P210","days":30,"eOld":646,"eNew":868,"wOld":21,"wNew":30,"contract":5100000,"debt":0,"paid":6608000,"people":3,"vehicles":2,"deposit":5100000,"valuation":5100000,"name":"Hồ Văn Hiền","phone":"0914388470","note":"TM","custNote":null,"tttv":"ĐÃ CÓ TTTV"},
+{"room":"P211","days":30,"eOld":519,"eNew":690,"wOld":15,"wNew":20,"contract":5100000,"debt":0,"paid":6284000,"people":2,"vehicles":2,"deposit":5100000,"valuation":5200000,"name":"Đặng Ngọc Vy","phone":"0898655863","note":"TM","custNote":null,"tttv":"ĐÃ CÓ TTTV"},
+{"room":"P212","days":30,"eOld":526,"eNew":615,"wOld":13,"wNew":16,"contract":5200000,"debt":5333,"paid":5901000,"people":4,"vehicles":1,"deposit":5200000,"valuation":5200000,"name":"Quách Thị Yến Nhi","phone":"0899179908","note":"TM","custNote":"Đã tính doanh thu T8\nNguyễn Chí Tài","tttv":null},
+{"room":"P213","days":30,"eOld":317,"eNew":443,"wOld":13,"wNew":18,"contract":5100000,"debt":0,"paid":6104000,"people":2,"vehicles":2,"deposit":5100000,"valuation":5200000,"name":"Bùi Đặng Bích Tuyền","phone":"0702948007","note":"TM","custNote":null,"tttv":"CÁ NHÂN ĐKI CHƯA TC"},
+{"room":"P214","days":30,"eOld":559,"eNew":561,"wOld":24,"wNew":24,"contract":5100000,"debt":0,"paid":5358000,"people":1,"vehicles":1,"deposit":5100000,"valuation":5200000,"name":"Huỳnh Thanh Bé","phone":"0772667124","note":"10/10: TPP P214 TPT10","custNote":"Đã tinh toán doanh thu T9/2026\nĐặng Bảo Mai (chủ hđ không ở)\nHuỳnh Thị Nam Phương","tttv":"TÒA NHÀ ĐKI"},
+{"room":"P215","days":30,"eOld":386,"eNew":474,"wOld":11,"wNew":13,"contract":5100000,"debt":0,"paid":5762000,"people":2,"vehicles":1,"deposit":5100000,"valuation":5200000,"name":"Lê Văn Ngay","phone":"0933948542","note":"TM","custNote":null,"tttv":"TÒA NHÀ ĐKI CHƯA TC "},
+{"room":"P216","days":30,"eOld":763,"eNew":1060,"wOld":9,"wNew":12,"contract":5200000,"debt":0,"paid":6728000,"people":2,"vehicles":1,"deposit":5200000,"valuation":5200000,"name":"Nguyễn Thị Như Ý","phone":"0788826631","note":"TM","custNote":null,"tttv":"TÒA NHÀ ĐKI - 1 ng"},
+{"room":"P218","days":30,"eOld":484,"eNew":754,"wOld":27,"wNew":45,"contract":5200000,"debt":0,"paid":6730000,"people":2,"vehicles":2,"deposit":5200000,"valuation":5200000,"name":"Nguyễn Ngọc Châu","phone":"0906357558","note":"TM","custNote":null,"tttv":"TÒA NHÀ ĐKI"}];
+
+    const BASE_EXPENSES = {
+      fixed: [
+        { name: 'Tiền điện', sub: '8.460 kWh', amount: 21745584, day: 5 },
+        { name: 'Tiền nước', sub: '284 m³', amount: 5619110, day: 20 },
+        { name: 'Tiền Wifi', sub: 'Chưa nhập', amount: 0 },
+        { name: 'Tiền rác', amount: 1400000 },
+        { name: 'Vệ sinh (C Hòa)', amount: 4000000 },
+        { name: 'Phí xếp xe', amount: 500000 }
+      ],
+      incurred: [
+        { name: 'Túi đựng tiền TPP', amount: 33810, day: 3 },
+        { name: 'Vật tư chống thấm TPP (Huy Phát)', amount: 300000, day: 3 },
+        { name: 'Sơn nước chống thấm + công tường giáp hàng xóm', amount: 2100000, day: 7 },
+        { name: 'TT Cova chống thấm TPP (1) – Huy Phát', amount: 630000, day: 7 },
+        { name: 'TT Cova chống thấm TPP (2) – Huy Phát', amount: 2380000, day: 7 },
+        { name: 'Vệ sinh sofa P209 + P105', amount: 400000, day: 17 },
+        { name: 'Phí ship chân sofa P209', amount: 84000, day: 22 },
+        { name: 'Rác phát sinh TPP', amount: 500000, day: 24 },
+        { name: 'Vật tư vệ sinh TPP (C Hòa)', amount: 149000, day: 24 },
+        { name: 'CAKV TPP', amount: 3000000, day: 27 },
+        { name: 'Thanh tra điện lực TPP', amount: 1000000, day: 27 },
+        { name: 'Vệ sinh sofa P005', amount: 250000, day: 27 }
+      ],
+      ptt: [
+        { name: 'CP ĐTBĐ (dư nợ đến hiện tại) – chi phí ban đầu', amount: 3850000, note: 'PTT chi trước' },
+        { name: 'HĐ 6 tháng (50% PMG – 50% hoàn chủ nhà)', amount: 7700000, note: 'Đối chiếu 05/10' },
+        { name: 'DT CĐT âm tháng trước (T9/26)', amount: -1250000, note: 'Bù trừ' }
+      ]
+    };
+
+    const STATUS = {
+      paid:    { label: 'Đã thu đủ',   cls: 'st-available' },
+      partial: { label: 'Thu một phần', cls: 'st-reserved' },
+      unpaid:  { label: 'Chưa thu',     cls: 'st-blocked' }
+    };
+
+    const state = {
+      month: 10,
+      year: 2026,
+      bills: [],
+      expenses: null,
+      filter: 'all',
+      search: '',
+      page: 1,
+      current: null
+    };
+
+    const PAGE_SIZE = 10;
+
+    /* ============================================================
+       HELPERS
+       ============================================================ */
+    const $ = function (id) { return document.getElementById(id); };
+    const nf = new Intl.NumberFormat('vi-VN');
+
+    function fmt(v) {
+      return nf.format(Math.round(Number(v) || 0)) + ' ₫';
+    }
+    function shortMoney(v) {
+      var n = Math.round(Number(v) || 0);
+      var abs = Math.abs(n);
+      if (abs >= 1e9) return (n / 1e9).toFixed(1).replace('.', ',') + ' tỷ';
+      if (abs >= 1e6) return (n / 1e6).toFixed(1).replace('.', ',') + ' tr';
+      if (abs >= 1e3) return Math.round(n / 1e3) + ' k';
+      return String(n);
+    }
+    function esc(s) {
+      return String(s == null ? '' : s)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+    function monthLabel() {
+      return 'Tháng ' + String(state.month).padStart(2, '0') + '/' + state.year;
+    }
+    function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+    function floorLabel(room) {
+      var n = parseInt(String(room).slice(1), 10) || 0;
+      var f = Math.floor(n / 100);
+      return f === 0 ? 'Tầng trệt' : 'Tầng ' + f;
+    }
+
+    /* ============================================================
+       BUILD BILLS
+       ============================================================ */
+    function paidFromNote(r) {
+      if (r.paid) return r.paid;
+      if (!r.note) return 0;
+      var matches = r.note.match(/\d{1,3}(?:[.,]\d{3})+/g) || [];
+      return matches.reduce(function (sum, s) {
+        return sum + Number(s.replace(/[.,]/g, ''));
+      }, 0);
+    }
+
+    function buildBills(month) {
+      var isOct = month === 10;
+
+      return BASE_ROOMS.map(function (r, idx) {
+        var contract = r.contract || (r.people > 0 ? r.valuation : 0);
+        var eBase = Math.max(r.eNew - r.eOld, 0);
+        var wBase = Math.max(r.wNew - r.wOld, 0);
+        var eOld, eNew, wOld, wNew, paid, debt, note;
+
+        if (isOct) {
+          eOld = r.eOld; eNew = r.eNew;
+          wOld = r.wOld; wNew = r.wNew;
+          paid = paidFromNote(r);
+          debt = r.debt || 0;
+          note = r.note || '';
+        } else {
+          var f = 0.8 + ((idx * 7 + month * 5) % 9) * 0.05; /* 0.80 – 1.20 */
+          var eCons = Math.round(eBase * f);
+          var wCons = Math.round(wBase * f);
+          var k = month - 10;
+          eNew = r.eNew + k * eBase;
+          eOld = eNew - eCons;
+          wNew = r.wNew + k * wBase;
+          wOld = wNew - wCons;
+          debt = 0;
+          note = '';
+        }
+
+        var eCons2 = Math.max(eNew - eOld, 0);
+        var wCons2 = Math.max(wNew - wOld, 0);
+
+        var elecFee = eCons2 * RATES.electric;
+        var waterFee = wCons2 * RATES.water;
+        var roomFee = contract / 30 * r.days;
+        var vehicleFee = RATES.vehicle * r.vehicles / 30 * r.days;
+        var mgmtFee = RATES.mgmt / 30 * r.days;
+        var otherFee = 0;
+        var total = elecFee + waterFee + roomFee + vehicleFee + mgmtFee + otherFee + debt;
+
+        if (!isOct) {
+          var p = (idx * 7 + month * 11) % 10;
+          paid = p < 6 ? total : (p < 8 ? Math.round(total * 0.5 / 1000) * 1000 : 0);
+        }
+
+        var displayName = r.name;
+        if (!displayName && r.custNote) {
+          var lines = r.custNote.split('\n').map(function (x) { return x.trim(); }).filter(Boolean);
+          displayName = lines.length ? lines[lines.length - 1] : null;
+        }
+
+        return {
+          room: r.room,
+          name: displayName,
+          phone: r.phone,
+          people: r.people,
+          vehicles: r.vehicles,
+          deposit: r.deposit,
+          contract: contract,
+          valuation: r.valuation,
+          days: r.days,
+          eOld: eOld, eNew: eNew, eCons: eCons2,
+          wOld: wOld, wNew: wNew, wCons: wCons2,
+          elecFee: elecFee, waterFee: waterFee,
+          roomFee: roomFee, vehicleFee: vehicleFee, mgmtFee: mgmtFee,
+          otherFee: otherFee, debt: debt, total: total,
+          paid: paid, note: note,
+          custNote: r.custNote || '',
+          tttv: r.tttv || ''
+        };
+      });
+    }
+
+    function buildExpenses() {
+      return {
+        fixed: BASE_EXPENSES.fixed.map(function (x) { return Object.assign({}, x); }),
+        incurred: BASE_EXPENSES.incurred.map(function (x) { return Object.assign({}, x); }),
+        ptt: BASE_EXPENSES.ptt.map(function (x) { return Object.assign({}, x); })
+      };
+    }
+
+    function sumExp(cat) {
+      return state.expenses[cat].reduce(function (s, x) { return s + (Number(x.amount) || 0); }, 0);
+    }
+
+    function statusOf(b) {
+      if (b.total > 0 && b.paid >= b.total - 1) return 'paid';
+      if (b.paid > 0) return 'partial';
+      return 'unpaid';
+    }
+
+    function totals() {
+      var rev = 0, paid = 0, outstanding = 0, overpaid = 0;
+      state.bills.forEach(function (b) {
+        rev += b.total;
+        paid += b.paid;
+        outstanding += Math.max(b.total - b.paid, 0);
+        overpaid += Math.max(b.paid - b.total, 0);
+      });
+      var fixed = sumExp('fixed');
+      var incurred = sumExp('incurred');
+      var ptt = sumExp('ptt');
+      var monthly = fixed + incurred;
+      var profit = rev - monthly;
+      var pttFee = profit * BUILDING.pttRate;
+      var owner = profit - ptt;
+      var rate = rev > 0 ? Math.min(100, paid / rev * 100) : 0;
+
+      return {
+        rev: rev, paid: paid, outstanding: outstanding, overpaid: overpaid,
+        fixed: fixed, incurred: incurred, ptt: ptt, monthly: monthly,
+        profit: profit, pttFee: pttFee, owner: owner, rate: rate
+      };
+    }
+
+    /* ============================================================
+       RENDER – BILL TABLE
+       ============================================================ */
+    function rowHtml(b) {
+      var st = statusOf(b);
+      var meta = STATUS[st];
+
+      return '<tr class="room-row bill-row" data-room="' + esc(b.room) + '" tabindex="0">' +
+        '<td class="td">' +
+          '<span class="room-code"><span class="room-code-dot"></span>' + esc(b.room) + '</span>' +
+          '<p class="bill-sub">' + floorLabel(b.room) + '</p>' +
+        '</td>' +
+        '<td class="td">' +
+          '<p class="font-semibold text-slate-800">' + esc(b.name || 'Phòng trống') + '</p>' +
+          '<p class="bill-sub">' + (b.phone ? esc(b.phone) : '—') + '</p>' +
+        '</td>' +
+        '<td class="td">' +
+          '<p class="meter-inline"><span class="meter-old">' + b.eOld + '</span>' +
+            '<span class="meter-arrow">→</span><span class="meter-new">' + b.eNew + '</span></p>' +
+          '<p class="bill-sub">' + b.eCons + ' kWh · ' + fmt(b.elecFee) + '</p>' +
+        '</td>' +
+        '<td class="td">' +
+          '<p class="meter-inline"><span class="meter-old">' + b.wOld + '</span>' +
+            '<span class="meter-arrow">→</span><span class="meter-new">' + b.wNew + '</span></p>' +
+          '<p class="bill-sub">' + b.wCons + ' m³ · ' + fmt(b.waterFee) + '</p>' +
+        '</td>' +
+        '<td class="td text-right price-main">' + fmt(b.roomFee) + '</td>' +
+        '<td class="td text-right"><span class="font-extrabold text-indigo-700 money">' + fmt(b.total) + '</span></td>' +
+        '<td class="td text-right"><span class="font-semibold money ' + (b.paid > 0 ? 'text-emerald-600' : 'text-slate-400') + '">' + fmt(b.paid) + '</span></td>' +
+        '<td class="td text-center"><span class="status-pill ' + meta.cls + '"><span class="pill-dot"></span>' + meta.label + '</span></td>' +
+      '</tr>';
+    }
+
+    function renderTable() {
+      var q = state.search.trim().toLowerCase();
+      var filtered = state.bills.filter(function (b) {
+        var okQ = !q ||
+          b.room.toLowerCase().indexOf(q) !== -1 ||
+          String(b.name || '').toLowerCase().indexOf(q) !== -1 ||
+          String(b.phone || '').indexOf(q) !== -1;
+        var okF = state.filter === 'all' || statusOf(b) === state.filter;
+        return okQ && okF;
+      });
+
+      var pageCount = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+      if (state.page > pageCount) state.page = pageCount;
+      if (state.page < 1) state.page = 1;
+      var start = (state.page - 1) * PAGE_SIZE;
+      var list = filtered.slice(start, start + PAGE_SIZE);
+
+      var body = $('billTableBody');
+      if (!list.length) {
+        body.innerHTML = '<tr><td colspan="8" class="td py-10 text-center text-sm text-slate-400">Không tìm thấy hóa đơn phù hợp.</td></tr>';
+      } else {
+        body.innerHTML = list.map(rowHtml).join('');
+      }
+
+      $('billCountBadge').textContent = state.bills.length;
+
+      var subRev = 0, subPaid = 0;
+      filtered.forEach(function (b) { subRev += b.total; subPaid += b.paid; });
+
+      var from = filtered.length ? start + 1 : 0;
+      var to = Math.min(start + PAGE_SIZE, filtered.length);
+      $('billTableFoot').innerHTML =
+        '<span class="font-semibold text-slate-600">' + from + '–' + to + '/' + filtered.length + ' hóa đơn</span>' +
+        ' · Phải thu <span class="font-semibold text-indigo-700">' + fmt(subRev) + '</span>' +
+        ' · Đã thu <span class="font-semibold text-emerald-600">' + fmt(subPaid) + '</span>';
+
+      renderPagination(pageCount);
+    }
+
+    function renderPagination(pageCount) {
+      var el = $('billPagination');
+      if (!el) return;
+      var html = '<button type="button" class="page-btn" data-page="prev"' + (state.page <= 1 ? ' disabled' : '') + '>‹</button>';
+      for (var i = 1; i <= pageCount; i++) {
+        html += '<button type="button" class="page-btn' + (i === state.page ? ' page-btn-active' : '') + '" data-page="' + i + '">' + i + '</button>';
+      }
+      html += '<button type="button" class="page-btn" data-page="next"' + (state.page >= pageCount ? ' disabled' : '') + '>›</button>';
+      el.innerHTML = html;
+    }
+
+    /* ============================================================
+       RENDER – EXPENSES
+       ============================================================ */
+    function expItemHtml(cat, item, idx) {
+      var dateTxt = item.day ? String(item.day).padStart(2, '0') + '/' + String(state.month).padStart(2, '0') : '';
+      var sub = [dateTxt, item.sub || item.note || ''].filter(Boolean).join(' · ');
+
+      return '<div class="exp-item">' +
+        '<span class="exp-dot"></span>' +
+        '<div class="min-w-0 flex-1">' +
+          '<p class="exp-name">' + esc(item.name) + '</p>' +
+          (sub ? '<p class="exp-sub">' + esc(sub) + '</p>' : '') +
+        '</div>' +
+        '<div class="exp-amount-wrap">' +
+          '<input class="exp-amount" type="number" step="1000" value="' + Math.round(item.amount) + '" data-cat="' + cat + '" data-idx="' + idx + '" aria-label="' + esc(item.name) + '">' +
+          '<span class="exp-unit">₫</span>' +
+        '</div>' +
+        '<button type="button" class="exp-del no-print" data-cat="' + cat + '" data-idx="' + idx + '" title="Xóa khoản này">×</button>' +
+      '</div>';
+    }
+
+    function renderExpenses() {
+      ['fixed', 'incurred', 'ptt'].forEach(function (cat) {
+        var list = $('exp' + cap(cat) + 'List');
+        list.innerHTML = state.expenses[cat].map(function (item, idx) {
+          return expItemHtml(cat, item, idx);
+        }).join('');
+        $('exp' + cap(cat) + 'Total').textContent = fmt(sumExp(cat));
+      });
+    }
+
+    /* ============================================================
+       RENDER – SUMMARY / HERO
+       ============================================================ */
+    function renderNumbers() {
+      var t = totals();
+
+      $('statRevenue').textContent = shortMoney(t.rev);
+      $('statRevenueSub').textContent = fmt(t.rev) + ' · ' + state.bills.length + ' hóa đơn';
+      $('statPaid').textContent = shortMoney(t.paid);
+      $('statPaidSub').textContent = 'Còn ' + fmt(t.outstanding);
+      $('statExpense').textContent = shortMoney(t.monthly);
+      $('statExpenseSub').textContent = 'Cố định ' + shortMoney(t.fixed) + ' · Phát sinh ' + shortMoney(t.incurred);
+      $('statProfit').textContent = shortMoney(t.profit);
+      $('statProfitSub').textContent = 'Trước chia PTT/CĐT';
+
+      var C = 2 * Math.PI * 34;
+      var arc = $('payRingArc');
+      arc.setAttribute('stroke-dasharray', C.toFixed(2));
+      arc.setAttribute('stroke-dashoffset', (C * (1 - t.rate / 100)).toFixed(2));
+      $('payRingValue').textContent = Math.round(t.rate) + '%';
+
+      $('heroMonthChip').textContent = monthLabel();
+      $('heroSourceChip').textContent = state.month === 10 ? 'Nguồn: Excel T10' : 'Dữ liệu demo';
+      $('heroBillCount').textContent = state.bills.length;
+
+      $('sumRevenue').textContent = fmt(t.rev);
+      $('sumFixed').textContent = fmt(t.fixed);
+      $('sumIncurred').textContent = fmt(t.incurred);
+      $('sumMonthly').textContent = fmt(t.monthly);
+      $('sumProfit').textContent = fmt(t.profit);
+      $('sumPtt').textContent = fmt(t.pttFee);
+      $('sumPttAdvance').textContent = fmt(t.ptt);
+      $('sumOwner').textContent = fmt(t.owner);
+      $('sumOutstanding').textContent = fmt(t.outstanding);
+      $('sumCollectedRate').textContent = Math.round(t.rate) + '%';
+      $('sumBar').style.width = Math.max(0, Math.min(100, t.rate)) + '%';
+      $('sumPaidLabel').textContent = fmt(t.paid) + ' / ' + fmt(t.rev);
+      $('summaryMonth').textContent = monthLabel();
+
+      $('expFixedTotal').textContent = fmt(t.fixed);
+      $('expIncurredTotal').textContent = fmt(t.incurred);
+      $('expPttTotal').textContent = fmt(t.ptt);
+    }
+
+    function renderAll() {
+      renderExpenses();
+      renderTable();
+      renderNumbers();
+    }
+
+    /* ============================================================
+       BILL DETAIL MODAL
+       ============================================================ */
+    function billLine(label, detail, amount) {
+      return '<tr>' +
+        '<td class="font-semibold text-slate-700">' + label + '</td>' +
+        '<td class="text-slate-500">' + detail + '</td>' +
+        '<td class="text-right font-semibold text-slate-800 money">' + fmt(amount) + '</td>' +
+      '</tr>';
+    }
+
+    function renderBillModal(b) {
+      var st = statusOf(b);
+      var meta = STATUS[st];
+      var remain = b.total - b.paid;
+
+      $('billModalHead').innerHTML =
+        '<div class="relative z-10 flex flex-wrap items-start justify-between gap-4">' +
+          '<div class="flex items-start gap-3">' +
+            '<span class="hero-icon" style="width:46px;height:46px;border-radius:14px">' +
+              '<svg class="h-6 w-6"><use href="#i-receipt"/></svg>' +
+            '</span>' +
+            '<div>' +
+              '<p class="hero-eyebrow">Thông báo tiền phòng</p>' +
+              '<h2 class="mt-1 text-2xl font-bold tracking-tight text-white">' + esc(b.room) +
+                ' <span class="text-base font-medium text-slate-300/70">· ' + monthLabel() + '</span></h2>' +
+              '<p class="mt-1 text-xs text-slate-300/85">' + esc(b.name || 'Phòng trống') +
+                (b.phone ? ' · ' + esc(b.phone) : '') + '</p>' +
+            '</div>' +
+          '</div>' +
+          '<div class="flex items-center gap-2">' +
+            '<span class="status-pill ' + meta.cls + '"><span class="pill-dot"></span>' + meta.label + '</span>' +
+            '<button id="btnCloseBillX" type="button" class="no-print grid h-8 w-8 place-items-center rounded-lg bg-white/10 text-white/80 transition hover:bg-white/20" aria-label="Đóng">✕</button>' +
+          '</div>' +
+        '</div>';
+
+      var closeX = $('btnCloseBillX');
+      if (closeX) closeX.addEventListener('click', closeBill);
+
+      $('billModalBody').innerHTML =
+        '<div class="grid gap-3 sm:grid-cols-2">' +
+          '<div class="meter-card">' +
+            '<div class="flex items-center justify-between">' +
+              '<p class="hs-label text-slate-500">Điện</p>' +
+              '<span class="chip chip-slate">4.000 ₫/kWh</span>' +
+            '</div>' +
+            '<p class="meter-val mt-1">' + b.eCons + ' kWh</p>' +
+            '<p class="mt-0.5 text-[11px] text-slate-500">Số cũ ' + b.eOld + ' → số mới ' + b.eNew + ' · ' + fmt(b.elecFee) + '</p>' +
+          '</div>' +
+          '<div class="meter-card">' +
+            '<div class="flex items-center justify-between">' +
+              '<p class="hs-label text-slate-500">Nước</p>' +
+              '<span class="chip chip-slate">30.000 ₫/m³</span>' +
+            '</div>' +
+            '<p class="meter-val mt-1">' + b.wCons + ' m³</p>' +
+            '<p class="mt-0.5 text-[11px] text-slate-500">Số cũ ' + b.wOld + ' → số mới ' + b.wNew + ' · ' + fmt(b.waterFee) + '</p>' +
+          '</div>' +
+        '</div>' +
+
+        '<div class="mt-4 overflow-hidden rounded-xl border border-slate-100">' +
+          '<table class="bill-table">' +
+            '<thead><tr><th>Khoản</th><th>Chi tiết</th><th class="text-right">Thành tiền</th></tr></thead>' +
+            '<tbody>' +
+              billLine('Tiền phòng', b.days + ' ngày · ' + fmt(b.contract) + '/tháng', b.roomFee) +
+              billLine('Tiền điện', b.eCons + ' kWh × 4.000 ₫', b.elecFee) +
+              billLine('Tiền nước', b.wCons + ' m³ × 30.000 ₫', b.waterFee) +
+              billLine('Tiền xe', b.vehicles + ' xe × 100.000 ₫', b.vehicleFee) +
+              billLine('Phí quản lý', '150.000 ₫/tháng', b.mgmtFee) +
+              billLine('Tủ lạnh / Máy giặt', b.otherFee ? 'Theo phòng' : 'Không sử dụng', b.otherFee) +
+              billLine('Nợ cũ / Giảm giá', b.debt ? (b.debt > 0 ? 'Cộng vào hóa đơn' : 'Giảm trừ') : 'Không có', b.debt) +
+              '<tr class="bg-indigo-50/60">' +
+                '<td class="font-extrabold text-indigo-800">Tổng cộng</td>' +
+                '<td></td>' +
+                '<td class="text-right text-base font-extrabold text-indigo-800 money">' + fmt(b.total) + '</td>' +
+              '</tr>' +
+            '</tbody>' +
+          '</table>' +
+        '</div>' +
+
+        '<div class="mt-4 grid gap-3 sm:grid-cols-2">' +
+          '<div class="rounded-xl border border-slate-100 bg-white p-4">' +
+            '<p class="text-[10px] font-bold uppercase tracking-[.14em] text-slate-400">Thông tin khách hàng</p>' +
+            '<div class="mt-2 space-y-1.5 text-[12px]">' +
+              '<div class="flex justify-between gap-2"><span class="text-slate-500">Họ tên</span><span class="font-semibold text-right">' + esc(b.name || '—') + '</span></div>' +
+              '<div class="flex justify-between gap-2"><span class="text-slate-500">Số điện thoại</span><span class="font-semibold">' + (b.phone ? esc(b.phone) : '—') + '</span></div>' +
+              '<div class="flex justify-between gap-2"><span class="text-slate-500">Số người</span><span class="font-semibold">' + b.people + '</span></div>' +
+              '<div class="flex justify-between gap-2"><span class="text-slate-500">Số xe</span><span class="font-semibold">' + b.vehicles + '</span></div>' +
+              '<div class="flex justify-between gap-2"><span class="text-slate-500">Tiền cọc</span><span class="font-semibold">' + fmt(b.deposit) + '</span></div>' +
+              '<div class="flex justify-between gap-2"><span class="text-slate-500">Giá hợp đồng</span><span class="font-semibold">' + fmt(b.contract) + '</span></div>' +
+            '</div>' +
+            (b.note ? '<p class="mt-2 rounded-lg bg-amber-50 px-2.5 py-1.5 text-[11px] text-amber-700">📝 ' + esc(b.note).replace(/\n/g, '<br>') + '</p>' : '') +
+            (b.custNote ? '<p class="mt-1.5 text-[10.5px] leading-relaxed text-slate-400">' + esc(b.custNote).replace(/\n/g, '<br>') + '</p>' : '') +
+          '</div>' +
+
+          '<div class="pay-box">' +
+            '<p class="text-[10px] font-bold uppercase tracking-[.14em] text-slate-400">Thanh toán</p>' +
+            '<div class="mt-2">' +
+              '<div class="pay-row"><span class="text-slate-500">Tổng cộng</span><b class="text-slate-900">' + fmt(b.total) + '</b></div>' +
+              '<div class="pay-row"><span class="text-slate-500">Đã thu</span><b class="text-emerald-600">' + fmt(b.paid) + '</b></div>' +
+              '<div class="pay-row border-t border-slate-200 pt-2"><span class="font-semibold text-slate-700">' + (remain < 0 ? 'Thu thừa' : 'Còn lại') + '</span><b class="' + (remain > 0 ? 'text-rose-600' : 'text-emerald-600') + '">' + fmt(Math.abs(remain)) + '</b></div>' +
+            '</div>' +
+            '<div class="mt-2"><span class="status-pill ' + meta.cls + '"><span class="pill-dot"></span>' + meta.label + '</span></div>' +
+          '</div>' +
+        '</div>';
+
+      var btn = $('btnConfirmPaid');
+      if (st === 'paid') {
+        btn.textContent = '✓ Đã thu đủ';
+        btn.disabled = true;
+      } else {
+        btn.textContent = '✓ Xác nhận đã thu';
+        btn.disabled = false;
+        btn.onclick = function () {
+          b.paid = b.total;
+          renderBillModal(b);
+          renderTable();
+          renderNumbers();
+          toast('Đã ghi nhận thanh toán ' + b.room + ' · ' + fmt(b.total));
+        };
+      }
+    }
+
+    function openBill(room) {
+      var b = state.bills.find(function (x) { return x.room === room; });
+      if (!b) return;
+      state.current = room;
+      renderBillModal(b);
+      show($('billModal'));
+    }
+
+    function closeBill() {
+      state.current = null;
+      hide($('billModal'));
+    }
+
+    /* ============================================================
+       MODAL HELPERS
+       ============================================================ */
+    function syncScrollLock() {
+      var open = !$('billModal').classList.contains('hidden') ||
+                 !$('expenseModal').classList.contains('hidden');
+      document.body.style.overflow = open ? 'hidden' : '';
+    }
+    function show(el) {
+      el.classList.remove('hidden');
+      el.classList.add('flex');
+      syncScrollLock();
+    }
+    function hide(el) {
+      el.classList.add('hidden');
+      el.classList.remove('flex');
+      syncScrollLock();
+    }
+
+    function openExpenseModal(cat) {
+      $('expForm').reset();
+      $('expCat').value = cat || 'fixed';
+      show($('expenseModal'));
+      setTimeout(function () { $('expName').focus(); }, 30);
+    }
+    function closeExpenseModal() { hide($('expenseModal')); }
+
+    /* ============================================================
+       TOAST / CSV
+       ============================================================ */
+    var toastTimer = null;
+    function toast(msg) {
+      var el = $('toast');
+      el.textContent = msg;
+      el.classList.remove('hidden');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(function () { el.classList.add('hidden'); }, 2600);
+    }
+
+    function exportCsv() {
+      var rows = [[
+        'Phòng', 'Khách thuê', 'SĐT', 'Điện cũ', 'Điện mới', 'kWh', 'Tiền điện',
+        'Nước cũ', 'Nước mới', 'm³', 'Tiền nước', 'Tiền phòng', 'Tiền xe',
+        'Phí QL', 'Nợ cũ/Giảm', 'Phải thu', 'Đã thu', 'Chênh lệch', 'Trạng thái'
+      ]];
+
+      state.bills.forEach(function (b) {
+        rows.push([
+          b.room, b.name || '', b.phone || '',
+          b.eOld, b.eNew, b.eCons, b.elecFee,
+          b.wOld, b.wNew, b.wCons, b.waterFee,
+          b.roomFee, b.vehicleFee, b.mgmtFee, b.debt,
+          b.total, b.paid, b.paid - b.total, STATUS[statusOf(b)].label
+        ]);
+      });
+
+      var csv = rows.map(function (r) {
+        return r.map(function (v) {
+          return '"' + String(v).replace(/"/g, '""') + '"';
+        }).join(',');
+      }).join('\r\n');
+
+      var blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'hoa-don-toa-' + BUILDING.code + '-' + String(state.month).padStart(2, '0') + '-' + state.year + '.csv';
+      a.click();
+      URL.revokeObjectURL(a.href);
+      toast('Đã xuất CSV tháng ' + String(state.month).padStart(2, '0') + '/' + state.year);
+    }
+
+    /* ============================================================
+       EVENTS
+       ============================================================ */
+    $('monthSelect').addEventListener('change', function () {
+      state.month = Number(this.value);
+      state.bills = buildBills(state.month);
+      state.expenses = buildExpenses();
+      state.filter = 'all';
+      state.search = '';
+      state.page = 1;
+      $('billSearch').value = '';
+      $('billFilter').value = 'all';
+      renderAll();
+      toast('Đã chuyển sang ' + monthLabel());
+    });
+
+    $('billSearch').addEventListener('input', function () {
+      state.search = this.value;
+      state.page = 1;
+      renderTable();
+    });
+
+    $('billFilter').addEventListener('change', function () {
+      state.filter = this.value;
+      state.page = 1;
+      renderTable();
+    });
+
+    $('billPagination').addEventListener('click', function (e) {
+      var btn = e.target.closest('button[data-page]');
+      if (!btn || btn.disabled) return;
+      var val = btn.dataset.page;
+      if (val === 'prev') state.page = Math.max(1, state.page - 1);
+      else if (val === 'next') state.page = state.page + 1;
+      else state.page = Number(val);
+      renderTable();
+    });
+
+    $('billTableBody').addEventListener('click', function (e) {
+      var tr = e.target.closest('tr[data-room]');
+      if (tr) openBill(tr.dataset.room);
+    });
+    $('billTableBody').addEventListener('keydown', function (e) {
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      var tr = e.target.closest('tr[data-room]');
+      if (tr) { e.preventDefault(); openBill(tr.dataset.room); }
+    });
+
+    $('btnExport').addEventListener('click', exportCsv);
+
+    $('btnCloseBill').addEventListener('click', closeBill);
+    $('btnPrintBill').addEventListener('click', function () {
+      document.body.classList.add('printing-bill');
+      window.print();
+      setTimeout(function () { document.body.classList.remove('printing-bill'); }, 800);
+    });
+    window.addEventListener('afterprint', function () {
+      document.body.classList.remove('printing-bill');
+    });
+
+    $('billModal').addEventListener('click', function (e) {
+      if (e.target === this) closeBill();
+    });
+
+    ['fixed', 'incurred', 'ptt'].forEach(function (cat) {
+      var list = $('exp' + cap(cat) + 'List');
+
+      list.addEventListener('change', function (e) {
+        var inp = e.target.closest('.exp-amount');
+        if (!inp) return;
+        var idx = Number(inp.dataset.idx);
+        state.expenses[cat][idx].amount = Number(inp.value) || 0;
+        $('exp' + cap(cat) + 'Total').textContent = fmt(sumExp(cat));
+        renderNumbers();
+      });
+
+      list.addEventListener('click', function (e) {
+        var del = e.target.closest('.exp-del');
+        if (!del) return;
+        var idx = Number(del.dataset.idx);
+        var name = state.expenses[cat][idx].name;
+        state.expenses[cat].splice(idx, 1);
+        renderExpenses();
+        renderNumbers();
+        toast('Đã xóa khoản: ' + name);
+      });
+    });
+
+    document.querySelectorAll('[data-add]').forEach(function (btn) {
+      btn.addEventListener('click', function () { openExpenseModal(btn.dataset.add); });
+    });
+
+    $('btnCancelExpense').addEventListener('click', closeExpenseModal);
+    $('expenseModal').addEventListener('click', function (e) {
+      if (e.target === this) closeExpenseModal();
+    });
+
+    $('expForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      var cat = $('expCat').value;
+      var name = $('expName').value.trim();
+      var amount = Number($('expAmount').value) || 0;
+      var day = Number($('expDay').value) || null;
+      if (!name) { $('expName').focus(); return; }
+
+      state.expenses[cat].push({ name: name, amount: amount, day: day });
+      renderExpenses();
+      renderNumbers();
+      closeExpenseModal();
+      toast('Đã thêm khoản chi: ' + name);
+    });
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key !== 'Escape') return;
+      if (!$('billModal').classList.contains('hidden')) closeBill();
+      else if (!$('expenseModal').classList.contains('hidden')) closeExpenseModal();
+    });
+
+    /* ============================================================
+       INIT
+       ============================================================ */
+    state.bills = buildBills(state.month);
+    state.expenses = buildExpenses();
+    renderAll();
+  </script>
+</body>
+</html>
